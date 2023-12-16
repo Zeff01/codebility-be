@@ -28,7 +28,7 @@ export default class UserController extends Api {
   ) => {
     try {
       const user = await this.userService.getAdminInfo(
-        req.user?.id as string
+        req.body
       );
       this.send(res, user, HttpStatusCode.Created, 'getAdminInfo');
     } catch (e) {
@@ -51,40 +51,70 @@ export default class UserController extends Api {
 
   public updateUser = async (
     req: Request,
-    res: CustomResponse<users>,
+    res: CustomResponse<Users>,
     next: NextFunction
   ) => {
     try {
-      const user = await this.userService.updateUser(req.body);
+      const user = await this.userService.updateUser(req.params?.id as string && req.body);
       this.send(res, user, HttpStatusCode.Created, 'updateUser');
     } catch (e) {
       next(e);
     }
   };
 
-  public createMember = async (
+  // public createMember = async (
+  //   req: Request,
+  //   res: CustomResponse<users>,
+  //   next: NextFunction
+  // ) => {
+  //   try {
+  //     const user = await this.userService.createMember(req.body);
+  //     this.send(res, user, HttpStatusCode.Created, 'createMember');
+  //   } catch (e) {
+  //     next(e);
+  //   }
+  // };
+
+  public getUsers = async (
     req: Request,
-    res: CustomResponse<users>,
+    res: CustomResponse<Users>,
     next: NextFunction
   ) => {
     try {
-      const user = await this.userService.createMember(req.body);
-      this.send(res, user, HttpStatusCode.Created, 'createMember');
+      const user = await this.userService.getUsers(
+        req.body
+      );
+      this.send(res, user, HttpStatusCode.Created, 'getUsers');
     } catch (e) {
       next(e);
     }
   };
 
-  public getMemberInfo = async (
+  public getUserInterns = async (
     req: Request,
-    res: CustomResponse<users>,
+    res: CustomResponse<Users>,
     next: NextFunction
   ) => {
     try {
-      const user = await this.userService.getMemberInfo(
-        req.query?.email as string
+      const user = await this.userService.getUserInterns(
+        req.body
       );
-      this.send(res, user, HttpStatusCode.Created, 'getMemberInfo');
+      this.send(res, user, HttpStatusCode.Created, 'getUserInterns');
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  public getUserMentors = async (
+    req: Request,
+    res: CustomResponse<Users>,
+    next: NextFunction
+  ) => {
+    try {
+      const user = await this.userService.getUserMentors(
+        req.body
+      );
+      this.send(res, user, HttpStatusCode.Created, 'getUserMentors');
     } catch (e) {
       next(e);
     }

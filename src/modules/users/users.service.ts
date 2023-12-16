@@ -1,13 +1,23 @@
 import { type Prisma, UserTypeEnum,RoleTypeEnum, type Users, $Enums } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import LogMessage from '@/decorators/log-message.decorator';
-import { CreateUserDto, LoginAdminDto } from '@/dto/user.dto';
+import { CreateUserDto, LoginAdminDto, UpdateUserDto } from '@/dto/user.dto';
 import { HttpNotFoundError } from '@/lib/errors';
 import { GeneratorProvider } from '@/lib/bcrypt';
 import JwtUtil from '@/lib/jwt';
 import { JwtPayload } from '@/types/common.type';
 
 export default class UserService {
+
+  public async getUser(
+    data: Prisma.UsersWhereInput,
+    select?: Prisma.UsersSelect
+  ) {
+    return await prisma.users.findFirst({
+      where: data,
+      select,
+    });
+  }
 
   @LogMessage<[Users]>({ message: 'User Created' })
   public async createUser(data: CreateUserDto) {
@@ -29,28 +39,26 @@ export default class UserService {
     });
   }
 
-  public async getAdminInfo(id: string) {
+  public async getAdminInfo(data: Users) {
     return prisma.users.findFirst({
       where: {
-        id: id,
-        userType: UserTypeEnum.ADMIN,
+        email_address: data.email_address,
+       
       },
     });
   }
 
-  // public async getMemberInfo(email: string) {
-  //   if (!email) throw new HttpNotFoundError('User not found.');
-  //   return prisma.users.findFirst({
-  //     where: {
-  //       email: email,
-  //       type: UserTypeEnum.USER,
-  //     },
-  //     include: {
-  //       sessions: true,
-  //       payments: true,
-  //     },
-  //   });
-  // }
+  public async getUsers(data: Users) {
+   
+    return await prisma.users.findMany({
+      where: {
+        userType:{
+          equals: "USER" && "ADMIN"
+        }
+       
+      },
+    });
+  }
 
   public async login(data: LoginAdminDto) {
     console.log(data);
@@ -108,40 +116,44 @@ export default class UserService {
     }
   }
 
-  public async getUser(
-    data: Prisma.UsersWhereInput,
-    select?: Prisma.UsersSelect
-  ) {
-    return await prisma.users.findFirst({
-      where: data,
-      select,
+ 
+
+  @LogMessage<[Users]>({ message: 'User Updated' })
+  public async updateUser(data: Users) {
+    const { id, ...updateData } = data;
+    console.log(data);
+    return await prisma.users.update({
+      where: {
+        id: id,
+      },
+      data: updateData,
     });
   }
 
-  
+  public async getUserInterns(data: Users) {
+    
+    return await prisma.users.findMany({
+      where: {
+        roleType:{
+          equals: "INTERN"
+        }
+        }
+       
+      
+    });
+  }
 
-  // @LogMessage<[users]>({ message: 'User Updated' })
-  // public async updateUser(data: users) {
-  //   return await prisma.users.update({
-  //     where: {
-  //       id: data.id,
-  //     },
-  //     data: {
-  //       ...data,
-  //       type: UserTypeEnum.FOUNDER,
-  //     },
-  //   });
-  // }
+  public async getUserMentors(data: Users) {
+    
+    return await prisma.users.findMany({
+      where: {
+        roleType:{
+          equals: "MENTOR"
+        }
+        }
+       
+      
+    });
+  }
 
-  // @LogMessage<[users]>({ message: 'User Updated' })
-  // public async createMember(data: users) {
-  //   console.log(data);
-  //   return prisma.users.create({
-  //     data: {
-  //       ...data,
-  //       phone: '',
-  //       type: UserTypeEnum.USER,
-  //     },
-  //   });
-  // }
 }

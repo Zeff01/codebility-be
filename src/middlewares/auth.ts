@@ -35,10 +35,10 @@ export const verifyAuthToken = async (
     { id: true, email_address: true, userType: true }
   );
 
-  if (user.userType === UserTypeEnum.USER) {
-    res.status(403).send('Access denied. You do not have admin privileges.');
-    return;
-  }
+  // if (user.userType === UserTypeEnum.USER) {
+  //   res.status(403).send('Access denied. You do not have admin privileges.');
+  //   return;
+  // }
 
   // Token is valid, you can access the decoded payload in `decodedPayload`
   // For example, you can store it in the request for further middleware/routes

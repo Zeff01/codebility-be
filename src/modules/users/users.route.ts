@@ -35,10 +35,7 @@ const controller = new Controller();
  * @param {CreateUserDto} request.body.required
  * @return {User} 201 - user created
  */
-users
-  .route('')
-  .post(RequestValidator.validate(CreateUserDto), controller.createUser)
-  .get(verifyAuthToken, controller.getAdminInfo);
+
 
 /**
  * Update user body
@@ -59,8 +56,14 @@ users
  * @param {UpdateUserDto} request.body.required
  * @return {User} 201 - user created
  */
+
+users
+  .route('/add')
+  .post(RequestValidator.validate(CreateUserDto), controller.createUser);
+  // .get(verifyAuthToken, controller.getAdminInfo);
+
 users.patch(
-  '',
+  '/:id',
   verifyAuthToken,
   RequestValidator.validate(UpdateUserDto),
   controller.updateUser
@@ -73,8 +76,15 @@ users.post(
 );
 
 users
-  .route('/member')
-  .post(RequestValidator.validate(ICreateMemberDto), controller.createMember)
-  .get(controller.getMemberInfo);
+  .route('/')
+  .get(controller.getUsers);
+
+  users
+  .route('/interns')
+  .get(controller.getUserInterns);
+
+  users
+  .route('/mentors')
+  .get(controller.getUserMentors);
 
 export default users;
