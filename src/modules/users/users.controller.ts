@@ -1,5 +1,5 @@
 import { type NextFunction, type Request } from 'express';
-import { type users } from '@prisma/client';
+import { type Users } from '@prisma/client';
 import { HttpStatusCode } from 'axios';
 import UserService from './users.service';
 import { type CustomResponse } from '@/types/common.type';
@@ -10,7 +10,7 @@ export default class UserController extends Api {
 
   public createUser = async (
     req: Request,
-    res: CustomResponse<users>,
+    res: CustomResponse<Users>,
     next: NextFunction
   ) => {
     try {
@@ -21,9 +21,24 @@ export default class UserController extends Api {
     }
   };
 
+  public getAdminInfo = async (
+    req: Request,
+    res: CustomResponse<Users>,
+    next: NextFunction
+  ) => {
+    try {
+      const user = await this.userService.getAdminInfo(
+        req.user?.id as string
+      );
+      this.send(res, user, HttpStatusCode.Created, 'getAdminInfo');
+    } catch (e) {
+      next(e);
+    }
+  };
+
   public login = async (
     req: Request,
-    res: CustomResponse<users>,
+    res: CustomResponse<Users>,
     next: NextFunction
   ) => {
     try {
@@ -75,18 +90,5 @@ export default class UserController extends Api {
     }
   };
 
-  public getFounderInfo = async (
-    req: Request,
-    res: CustomResponse<users>,
-    next: NextFunction
-  ) => {
-    try {
-      const user = await this.userService.getFounderInfo(
-        req.user?.id as string
-      );
-      this.send(res, user, HttpStatusCode.Created, 'getFounderInfo');
-    } catch (e) {
-      next(e);
-    }
-  };
+ 
 }

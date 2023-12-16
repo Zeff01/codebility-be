@@ -2,6 +2,7 @@ import { type NextFunction, type Request, type Response } from 'express';
 import { HttpUnAuthorizedError } from '@/lib/errors';
 import JwtUtil from '@/lib/jwt';
 import UserService from '@/modules/users/users.service';
+import { UserTypeEnum } from '@prisma/client';
 
 const userService = new UserService();
 
@@ -31,8 +32,13 @@ export const verifyAuthToken = async (
 
   const user: any = await userService.getUser(
     { id: decodedPayload?.id }, // Use optional chain here
-    { id: true, email: true, type: true }
+    { id: true, email_address: true, userType: true }
   );
+
+  if (user.userType === UserTypeEnum.USER) {
+    res.status(403).send('Access denied. You do not have admin privileges.');
+    return;
+  }
 
   // Token is valid, you can access the decoded payload in `decodedPayload`
   // For example, you can store it in the request for further middleware/routes

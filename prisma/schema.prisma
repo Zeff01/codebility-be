@@ -11,39 +11,42 @@ datasource db {
 }
 
 model Users {
-  id                String       @id @default(uuid()) @map("_id")
+  id                String         @id @default(uuid()) @map("_id")
   name              String
   address           String
   email_address     String
   github_link       String
   portfolio_website String
-  tech_stacks       String[]     @default(["HTML", "CSS", "JAVASCRIPT", "TYPESCRIPT", "REACT JS", "NEXT JS", "NODE JS", "EXPRESS JS", "MONGODB", "POSTRGRESQL", "DOCKER", "VERCEL"])
+  tech_stacks       String[]
   password          String
-  createdAt         DateTime     @default(now()) @map("created_at")
-  updatedAt         DateTime     @default(now()) @map("updated_at")
-  schedule          String[]     @default(["08:00AM - 05:00PM", "01:00PM - 10:00PM", "10:00PM - 07:00AM"])
-  position          String[]     @default(["junior", "mid", "senior"])
-  userType          RoleTypeEnum
-  orgChart          org_chart    @relation(fields: [orgChartId], references: [id])
-  orgChartId        String       @unique
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @default(now()) @map("updated_at")
+  schedule          String[]
+  position          String[]
+  orgChart          org_chart?
   timeLogs          time_logs[]
-  todolist          todo_list[]
+  userprojects      UserProjects[]
+  userclients       UserClients[]
+  todoList          todo_list[]
   note              Notes[]
-  projectId         String
-  project           Projects     @relation(fields: [projectId], references: [id])
-  clientId          String
-  client            Clients      @relation(fields: [clientId], references: [id])
+  roleType          RoleTypeEnum
+  userType          UserTypeEnum   @default(USER)
+
+  @@unique([email_address])
 }
 
 model org_chart {
   id        String   @id @default(uuid()) @map("_id")
-  user      Users?
+  userId    String   @unique
+  user      Users    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 }
 
 model time_logs {
-  id                 String   @id @default(uuid()) @map("_id") @db.ObjectId
+  id                 String   @id @default(uuid()) @map("_id")
+  userId             String   @unique
+  user               Users    @relation(fields: [userId], references: [id])
   time_in            DateTime @default(now()) @map("time_in")
   time_out           DateTime @default(now()) @map("time_out")
   total_worked_hours Int
@@ -51,60 +54,78 @@ model time_logs {
   total_ot_time      Int
   scheduled_time_in  DateTime
   scheduled_time_out DateTime
-  timeLogsId         String
-  userTimeLogs       Users    @relation(fields: [timeLogsId], references: [id])
 }
 
 model Projects {
-  id          String      @id @default(uuid()) @map("_id")
-  name        String
-  github_link String
-  createdAt   DateTime    @default(now()) @map("created_at")
-  updatedAt   DateTime    @default(now()) @map("updated_at")
-  user        Users[]
-  clientId    String
-  client      Clients     @relation(fields: [clientId], references: [id])
+  id          String         @id @default(uuid()) @map("_id")
+  project     UserProjects[]
+  clientId    String         @unique
+  client      Clients        @relation(fields: [clientId], references: [id])
   todoList    todo_list[]
   note        Notes[]
+  name        String
+  github_link String
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @default(now()) @map("updated_at")
 }
 
 model Clients {
-  id             String     @id @default(uuid()) @map("_id")
+  id             String        @id @default(uuid()) @map("_id")
+  client         UserClients[]
+  project        Projects[]
   company_name   String
   email          String
   contact_number String
   linkedin_link  String
   location       String
-  working_hours  String[]   @default(["08:00AM - 05:00PM", "01:00PM - 10:00PM", "10:00PM - 07:00AM"])
-  user           Users[]
-  project        Projects[]
 }
 
 model todo_list {
   id          String   @id @default(uuid()) @map("_id")
+  userId      String   @unique
+  user        Users    @relation(fields: [userId], references: [id])
+  projectId   String   @unique
+  project     Projects @relation(fields: [userId], references: [id])
   title       String
   github_link String
   description String
   createdAt   DateTime @default(now()) @map("created_at")
-  userId      String
-  user        Users    @relation(fields: [userId], references: [id])
-  projectId   String
-  project     Projects @relation(fields: [projectId], references: [id])
 }
 
 model Notes {
   id          String   @id @default(uuid()) @map("_id")
+  userId      String   @unique
+  user        Users    @relation(fields: [userId], references: [id])
+  projectId   String   @unique
+  project     Projects @relation(fields: [userId], references: [id])
   title       String
   github_link String
   description String
   createdAt   DateTime @default(now()) @map("created_at")
-  userId      String
-  user        Users    @relation(fields: [userId], references: [id])
-  projectId   String
-  project     Projects @relation(fields: [projectId], references: [id])
+}
+
+model UserProjects {
+  id        String   @id @default(uuid()) @map("_id")
+  userId    String   @unique
+  user      Users    @relation(fields: [userId], references: [id])
+  projectId String   @unique
+  project   Projects @relation(fields: [userId], references: [id])
+}
+
+model UserClients {
+  id       String  @id @default(uuid()) @map("_id")
+  userId   String  @unique
+  user     Users   @relation(fields: [userId], references: [id])
+  clientId String  @unique
+  client   Clients @relation(fields: [clientId], references: [id])
 }
 
 enum RoleTypeEnum {
   MENTOR
   INTERN
+}
+
+enum UserTypeEnum {
+  ADMIN
+  USER
 }

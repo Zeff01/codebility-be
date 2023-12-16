@@ -1,5 +1,7 @@
+import { $Enums } from '@prisma/client';
 import {
   IsEmail,
+  IsEnum,
   IsMobilePhone,
   IsNotEmpty,
   IsOptional,
@@ -9,26 +11,42 @@ import {
 } from 'class-validator';
 
 export class CreateUserDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  address: string;
+
   @IsEmail()
-  email: string;
+  email_address: string;
+
+  @IsString()
+  @IsOptional()
+  github_link: string;
+
+  @IsString()
+  @IsOptional()
+  portfolio_website: string;
+
+  @IsString()
+  @IsOptional()
+  tech_stacks: string;
 
   @IsString()
   @IsNotEmpty()
   password: string;
 
   @IsString()
-  firstName: string;
-
+  @IsOptional()
+  schedule: string;
+ 
   @IsString()
-  lastName: string;
+  @IsOptional()
+  position: string;
 
-  @IsString()
-  @IsUrl()
-  profilePic: string;
-
-  @IsString()
-  @IsMobilePhone()
-  phone?: string;
+ 
 }
 
 export class UpdateUserDto {
@@ -48,9 +66,9 @@ export class UpdateUserDto {
   phone?: string;
 }
 
-export class LoginFounderDto {
+export class LoginAdminDto {
   @IsEmail()
-  email: string;
+  email_address: string;
 
   @IsNotEmpty()
   password: string;

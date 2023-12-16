@@ -3,7 +3,7 @@ import Controller from './users.controller';
 import {
   CreateUserDto,
   ICreateMemberDto,
-  LoginFounderDto,
+  LoginAdminDto,
   UpdateUserDto,
 } from '@/dto/user.dto';
 import RequestValidator from '@/middlewares/request-validator';
@@ -38,7 +38,7 @@ const controller = new Controller();
 users
   .route('')
   .post(RequestValidator.validate(CreateUserDto), controller.createUser)
-  .get(verifyAuthToken, controller.getFounderInfo);
+  .get(verifyAuthToken, controller.getAdminInfo);
 
 /**
  * Update user body
@@ -68,7 +68,7 @@ users.patch(
 
 users.post(
   '/login',
-  RequestValidator.validate(LoginFounderDto),
+  RequestValidator.validate(LoginAdminDto),
   controller.login
 );
 
