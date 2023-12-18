@@ -10,75 +10,122 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model users {
-  id         String       @id @default(uuid()) @map("_id")
-  firstName  String
-  lastName   String
-  email      String?
-  password   String?
-  phone      String
-  profilePic String?
-  link       String?
-  age        Int?
-  addres     String?
-  createdAt  DateTime?    @default(now()) @map("created_at")
-  updatedAt  DateTime?    @default(now()) @map("updated_at")
-  type       UserTypeEnum
-  clubs      clubs[]
-  sessions   sessions[]
-  payments   payments[]
+model Users {
+  id                String         @id @default(uuid()) @map("_id")
+  name              String
+  address           String
+  email_address     String
+  github_link       String
+  portfolio_website String
+  tech_stacks       String[]
+  password          String
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @default(now()) @map("updated_at")
+  schedule          String[]
+  position          String[]
+  orgChart          org_chart?
+  timeLogs          time_logs[]
+  userprojects      UserProjects[]
+  userclients       UserClients[]
+  todoList          todo_list[]
+  note              Notes[]
+  roleType          RoleTypeEnum
+  userType          UserTypeEnum   @default(USER)
 
-  @@unique([email])
+  @@unique([email_address])
 }
 
-model clubs {
-  id        String    @id @default(uuid()) @map("_id")
-  clubName  String
-  package   String
-  founderId String
-  createdAt DateTime? @default(now()) @map("created_at")
-  updatedAt DateTime? @default(now()) @map("updated_at")
-  founder   users     @relation(fields: [founderId], references: [id])
+model org_chart {
+  id        String   @id @default(uuid()) @map("_id")
+  userId    String   @unique
+  user      Users    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
 }
 
-model sessions {
-  id        String     @id @default(uuid()) @map("_id")
-  name      String
-  teams     String[]
-  maxMember Int
-  price     Float
-  founderId String
-  code      String     @unique
-  createdAt DateTime?  @default(now()) @map("created_at")
-  updatedAt DateTime?  @default(now()) @map("updated_at")
-  founder   users      @relation(fields: [founderId], references: [id])
-  payments  payments[]
+model time_logs {
+  id                 String   @id @default(uuid()) @map("_id")
+  userId             String   @unique
+  user               Users    @relation(fields: [userId], references: [id])
+  time_in            DateTime @default(now()) @map("time_in")
+  time_out           DateTime @default(now()) @map("time_out")
+  total_worked_hours Int
+  total_late_hours   Int
+  total_ot_time      Int
+  scheduled_time_in  DateTime
+  scheduled_time_out DateTime
 }
 
-model payments {
-  id                String            @id @default(uuid()) @map("_id")
-  email             String
-  sessionId         String
-  amount            Float
-  xenditReferenceId String
-  xenditPayoutId    String
-  createdAt         DateTime?         @default(now()) @map("created_at")
-  updatedAt         DateTime?         @default(now()) @map("updated_at")
-  status            PaymentStatusEnum
-  session           sessions          @relation(fields: [sessionId], references: [id])
-  user              users             @relation(fields: [email], references: [email])
+model Projects {
+  id          String         @id @default(uuid()) @map("_id")
+  project     UserProjects[]
+  clientId    String         @unique
+  client      Clients        @relation(fields: [clientId], references: [id])
+  todoList    todo_list[]
+  note        Notes[]
+  name        String
+  github_link String
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @default(now()) @map("updated_at")
+}
+
+model Clients {
+  id             String        @id @default(uuid()) @map("_id")
+  client         UserClients[]
+  project        Projects[]
+  company_name   String
+  email          String
+  contact_number String
+  linkedin_link  String
+  location       String
+}
+
+model todo_list {
+  id          String   @id @default(uuid()) @map("_id")
+  userId      String   @unique
+  user        Users    @relation(fields: [userId], references: [id])
+  projectId   String   @unique
+  project     Projects @relation(fields: [userId], references: [id])
+  title       String
+  github_link String
+  description String
+  createdAt   DateTime @default(now()) @map("created_at")
+}
+
+model Notes {
+  id          String   @id @default(uuid()) @map("_id")
+  userId      String   @unique
+  user        Users    @relation(fields: [userId], references: [id])
+  projectId   String   @unique
+  project     Projects @relation(fields: [userId], references: [id])
+  title       String
+  github_link String
+  description String
+  createdAt   DateTime @default(now()) @map("created_at")
+}
+
+model UserProjects {
+  id        String   @id @default(uuid()) @map("_id")
+  userId    String   @unique
+  user      Users    @relation(fields: [userId], references: [id])
+  projectId String   @unique
+  project   Projects @relation(fields: [userId], references: [id])
+}
+
+model UserClients {
+  id       String  @id @default(uuid()) @map("_id")
+  userId   String  @unique
+  user     Users   @relation(fields: [userId], references: [id])
+  clientId String  @unique
+  client   Clients @relation(fields: [clientId], references: [id])
+}
+
+enum RoleTypeEnum {
+  MENTOR
+  INTERN
 }
 
 enum UserTypeEnum {
   ADMIN
-  FOUNDER
   USER
-}
-
-enum PaymentStatusEnum {
-  SUCCESS
-  FAILED
-  REFUND
-  CANCELLED
-  PENDING
 }

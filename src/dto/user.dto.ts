@@ -1,5 +1,7 @@
+import { $Enums } from '@prisma/client';
 import {
   IsEmail,
+  IsEnum,
   IsMobilePhone,
   IsNotEmpty,
   IsOptional,
@@ -9,48 +11,84 @@ import {
 } from 'class-validator';
 
 export class CreateUserDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  address: string;
+
   @IsEmail()
-  email: string;
+  email_address: string;
+
+  @IsString()
+  @IsOptional()
+  github_link: string;
+
+  @IsString()
+  @IsOptional()
+  portfolio_website: string;
+
+  @IsString()
+  @IsOptional()
+  tech_stacks: string;
 
   @IsString()
   @IsNotEmpty()
   password: string;
 
   @IsString()
-  firstName: string;
-
+  @IsOptional()
+  schedule: string;
+ 
   @IsString()
-  lastName: string;
+  @IsOptional()
+  position: string;
 
-  @IsString()
-  @IsUrl()
-  profilePic: string;
-
-  @IsString()
-  @IsMobilePhone()
-  phone?: string;
+ 
 }
 
 export class UpdateUserDto {
-  @IsUUID()
-  id: string;
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 
+  @IsString()
+  @IsNotEmpty()
+  address: string;
+
+  @IsEmail()
+  email_address: string;
+
+  @IsString()
   @IsOptional()
-  @IsString()
-  firstName?: string;
+  github_link?: string;
 
-  @IsOptional()
-  @IsString()
-  lastName?: string;
+  // @IsString()
+  // @IsOptional()
+  // portfolio_website?: string;
 
-  @IsString()
-  @IsMobilePhone()
-  phone?: string;
+  // @IsString()
+  // @IsOptional()
+  // tech_stacks?: string;
+
+  // @IsString()
+  // @IsOptional()
+  // password?: string;
+
+  // @IsString()
+  // @IsOptional()
+  // schedule?: string;
+ 
+  // @IsString()
+  // @IsOptional()
+  // position?: string;
 }
 
-export class LoginFounderDto {
+export class LoginAdminDto {
   @IsEmail()
-  email: string;
+  email_address: string;
 
   @IsNotEmpty()
   password: string;
