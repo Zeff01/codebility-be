@@ -1,14 +1,19 @@
-import { type Prisma, UserTypeEnum,RoleTypeEnum, type Users, $Enums } from '@prisma/client';
-import prisma from '@/lib/prisma';
-import LogMessage from '@/decorators/log-message.decorator';
-import { CreateUserDto, LoginAdminDto, UpdateUserDto } from '@/dto/user.dto';
-import { HttpNotFoundError } from '@/lib/errors';
-import { GeneratorProvider } from '@/lib/bcrypt';
-import JwtUtil from '@/lib/jwt';
-import { JwtPayload } from '@/types/common.type';
+import {
+  type Prisma,
+  UserTypeEnum,
+  RoleTypeEnum,
+  type Users,
+  $Enums,
+} from "@prisma/client";
+import prisma from "@/lib/prisma";
+import LogMessage from "@/decorators/log-message.decorator";
+import { CreateUserDto, LoginAdminDto, UpdateUserDto } from "@/dto/user.dto";
+import { HttpNotFoundError } from "@/lib/errors";
+import { GeneratorProvider } from "@/lib/bcrypt";
+import JwtUtil from "@/lib/jwt";
+import { JwtPayload } from "@/types/common.type";
 
 export default class UserService {
-
   public async getUser(
     data: Prisma.UsersWhereInput,
     select?: Prisma.UsersSelect
@@ -19,18 +24,18 @@ export default class UserService {
     });
   }
 
-  @LogMessage<[Users]>({ message: 'User Created' })
+  @LogMessage<[Users]>({ message: "User Created" })
   public async createUser(data: CreateUserDto) {
-  console.log(data);
+    console.log(data);
     return await prisma.users.create({
-     data: {
-          name: data.name,
-          address: data.address,
-          email_address: data.email_address,
-          github_link: data.github_link,
-          portfolio_website: data.portfolio_website,
-          tech_stacks: [],
-          password: GeneratorProvider.generateHash(data.password),
+      data: {
+        name: data.name,
+        address: data.address,
+        email_address: data.email_address,
+        github_link: data.github_link,
+        portfolio_website: data.portfolio_website,
+        tech_stacks: [],
+        password: GeneratorProvider.generateHash(data.password),
         schedule: [],
         position: [],
         roleType: RoleTypeEnum.MENTOR,
@@ -43,19 +48,16 @@ export default class UserService {
     return prisma.users.findFirst({
       where: {
         email_address: data.email_address,
-       
       },
     });
   }
 
   public async getUsers(data: Users) {
-   
     return await prisma.users.findMany({
       where: {
-        userType:{
-          equals: "USER" && "ADMIN"
-        }
-       
+        userType: {
+          equals: "USER" || "ADMIN",
+        },
       },
     });
   }
@@ -73,22 +75,22 @@ export default class UserService {
           },
         },
       });
-  
+
       if (!isExist) {
-        throw new HttpNotFoundError('Invalid login');
+        throw new HttpNotFoundError("Invalid login");
       }
-  
+
       const matchPassword = GeneratorProvider.validateHash(
         data.password,
         isExist.password!
       );
-  
+
       if (!matchPassword) {
-        throw new HttpNotFoundError('Invalid login');
+        throw new HttpNotFoundError("Invalid login");
       }
-  
-      let payload: JwtPayload 
-  
+
+      let payload: JwtPayload;
+
       if (isExist.userType === UserTypeEnum.ADMIN) {
         // If user is an ADMIN
         payload = {
@@ -96,7 +98,7 @@ export default class UserService {
           email: isExist.email_address!,
           userType: isExist.userType,
         };
-      } else if(isExist.userType === UserTypeEnum.USER){
+      } else if (isExist.userType === UserTypeEnum.USER) {
         // If user is not an ADMIN
         payload = {
           id: isExist.id,
@@ -105,7 +107,7 @@ export default class UserService {
           // Add additional properties or customize as needed
         };
       }
-  
+
       return {
         user: isExist,
         token: JwtUtil.generateToken(payload),
@@ -116,9 +118,7 @@ export default class UserService {
     }
   }
 
- 
-
-  @LogMessage<[Users]>({ message: 'User Updated' })
+  @LogMessage<[Users]>({ message: "User Updated" })
   public async updateUser(data: Users) {
     const { id, ...updateData } = data;
     console.log(data);
@@ -130,30 +130,29 @@ export default class UserService {
     });
   }
 
-  public async getUserInterns(data: Users) {
-    
+  public async getUserInterns() {
     return await prisma.users.findMany({
       where: {
-        roleType:{
-          equals: "INTERN"
-        }
-        }
-       
-      
+        roleType: {
+          equals: "INTERN",
+        },
+      },
     });
   }
 
-  public async getUserMentors(data: Users) {
-    
+  public async getUserMentors() {
     return await prisma.users.findMany({
       where: {
-        roleType:{
-          equals: "MENTOR"
-        }
-        }
-       
-      
+        roleType: {
+          equals: "MENTOR",
+        },
+      },
     });
   }
 
+  public async getUserById(id: string) {
+    return await prisma.users.findFirst({
+      where: { id: id },
+    });
+  }
 }

@@ -1,13 +1,13 @@
-import { Router } from 'express';
-import Controller from './users.controller';
+import { Router } from "express";
+import Controller from "./users.controller";
 import {
   CreateUserDto,
   ICreateMemberDto,
   LoginAdminDto,
   UpdateUserDto,
-} from '@/dto/user.dto';
-import RequestValidator from '@/middlewares/request-validator';
-import { verifyAuthToken } from '@/middlewares/auth';
+} from "@/dto/user.dto";
+import RequestValidator from "@/middlewares/request-validator";
+import { verifyAuthToken } from "@/middlewares/auth";
 
 const users: Router = Router();
 const controller = new Controller();
@@ -36,7 +36,6 @@ const controller = new Controller();
  * @return {User} 201 - user created
  */
 
-
 /**
  * Update user body
  * @typedef {object} UpdateUserDto
@@ -56,35 +55,32 @@ const controller = new Controller();
  * @param {UpdateUserDto} request.body.required
  * @return {User} 201 - user created
  */
+users.route("/interns").get(controller.getUserInterns);
+
+users.route("/mentors").get(controller.getUserMentors);
 
 users
-  .route('/add')
+  .route("/add")
   .post(RequestValidator.validate(CreateUserDto), controller.createUser);
-  // .get(verifyAuthToken, controller.getAdminInfo);
+// .get(verifyAuthToken, controller.getAdminInfo);
 
 users.patch(
-  '/:id',
+  "/:id",
   verifyAuthToken,
   RequestValidator.validate(UpdateUserDto),
   controller.updateUser
 );
 
 users.post(
-  '/login',
+  "/login",
   RequestValidator.validate(LoginAdminDto),
   controller.login
 );
 
-users
-  .route('/')
-  .get(controller.getUsers);
+users.route("/:id").get(controller.getUserById);
 
-  users
-  .route('/interns')
-  .get(controller.getUserInterns);
+users.route("/").get(controller.getUsers);
 
-  users
-  .route('/mentors')
-  .get(controller.getUserMentors);
+
 
 export default users;
