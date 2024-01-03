@@ -8,7 +8,11 @@ import {
 import prisma from "@/lib/prisma";
 import LogMessage from "@/decorators/log-message.decorator";
 import { CreateUserDto, LoginAdminDto, UpdateUserDto } from "@/dto/user.dto";
-import { HttpNotFoundError } from "@/lib/errors";
+import {
+  HttpBadRequestError,
+  HttpInternalServerError,
+  HttpNotFoundError,
+} from "@/lib/errors";
 import { GeneratorProvider } from "@/lib/bcrypt";
 import JwtUtil from "@/lib/jwt";
 import { JwtPayload } from "@/types/common.type";
@@ -154,5 +158,47 @@ export default class UserService {
     return await prisma.users.findFirst({
       where: { id: id },
     });
+  }
+
+  public async changeUserPassword(
+    id: string,
+    oldPassword: string,
+    newPassword: string
+  ) {
+    try {
+      // Get the user
+      const user = await prisma.users.findUnique({
+        where: {
+          id: id,
+        },
+      });
+
+      // Check if the old password matches the current password
+      if (!GeneratorProvider.validateHash(oldPassword, user.password)) {
+        throw new HttpBadRequestError("Old password does not match", []);
+      }
+
+      if (oldPassword === newPassword) {
+        throw new HttpBadRequestError(
+          "New password cannot be the same as the old password",
+          []
+        );
+      }
+
+      // Update the password
+      return await prisma.users.update({
+        where: {
+          id: id,
+        },
+        data: {
+          password: GeneratorProvider.generateHash(newPassword),
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while changing the password"
+      );
+    }
   }
 }
