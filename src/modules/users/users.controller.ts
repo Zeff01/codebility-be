@@ -21,7 +21,6 @@ export default class UserController extends Api {
     }
   };
 
-
   public createUser = async (
     req: Request,
     res: CustomResponse<Users>,
@@ -89,7 +88,6 @@ export default class UserController extends Api {
   //   }
   // };
 
-  
   public getUserInterns = async (
     req: Request,
     res: CustomResponse<Users>,
@@ -124,6 +122,23 @@ export default class UserController extends Api {
     try {
       const user = await this.userService.getUserById(req.params.id as string);
       this.send(res, user, HttpStatusCode.Ok, "getUserById");
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  public changeUserPassword = async (
+    req: Request,
+    res: CustomResponse<Users>,
+    next: NextFunction
+  ) => {
+    try {
+      const user = await this.userService.changeUserPassword(
+        req.params.id,
+        req.body.oldPassword,
+        req.body.newPassword
+      );
+      this.send(res, user, HttpStatusCode.Created, "changeUserPassword");
     } catch (e) {
       next(e);
     }

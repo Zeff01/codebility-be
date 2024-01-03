@@ -1,5 +1,5 @@
-import { NextFunction, Request, Router } from "express";
-import Controller from "./users.controller";
+import { Router } from "express";
+import Controller from "./timeLogs.controller";
 import {
   CreateUserDto,
   ICreateMemberDto,
@@ -8,10 +8,9 @@ import {
 } from "@/dto/user.dto";
 import RequestValidator from "@/middlewares/request-validator";
 import { verifyAuthToken } from "@/middlewares/auth";
-import { CustomResponse } from "@/types/common.type";
-import { Users } from "@prisma/client";
+import { CreateTimeDto } from "@/dto/timeLogs.dto";
 
-const users: Router = Router();
+const logs: Router = Router();
 const controller = new Controller();
 
 /**
@@ -57,37 +56,42 @@ const controller = new Controller();
  * @param {UpdateUserDto} request.body.required
  * @return {User} 201 - user created
  */
-users.route("/interns").get(controller.getUserInterns);
+// users.route("/interns").get(controller.getUserInterns);
 
-users.route("/mentors").get(controller.getUserMentors);
+// users.route("/mentors").get(controller.getUserMentors);
 
-users
-  .route("/add")
-  .post(RequestValidator.validate(CreateUserDto), controller.createUser);
-// .get(verifyAuthToken, controller.getAdminInfo);
-
-users.patch(
-  "/:id",
+logs.post(
+  "/timein",
   verifyAuthToken,
-  RequestValidator.validate(UpdateUserDto),
-  controller.updateUser
+  RequestValidator.validate(CreateTimeDto),
+  controller.createTimeIn
 );
 
-users.post(
-  "/login",
-  RequestValidator.validate(LoginAdminDto),
-  controller.login
-);
-
-users.route("/:id").get(controller.getUserById);
-
-users.route("/").get(controller.getUsers);
-
-users.put(
-  "/changePassword/:id",
+logs.post(
+  "/timeout",
   verifyAuthToken,
-  RequestValidator.validate(UpdateUserDto),
-  controller.changeUserPassword
+  RequestValidator.validate(CreateTimeDto),
+  controller.createTimeOut
 );
 
-export default users;
+logs.get("", controller.getLogs);
+
+logs.route("/:id").get(controller.getLogsByUserId);
+// users.patch(
+//   "/:id",.
+//   verifyAuthToken,
+//   RequestValidator.validate(UpdateUserDto),
+//   controller.updateUser
+// );
+
+// users.post(
+//   "/login",
+//   RequestValidator.validate(LoginAdminDto),
+//   controller.login
+// );
+
+// users.route("/:id").get(controller.getUserById);
+
+// users.route("/").get(controller.getUsers);
+
+export default logs;

@@ -44,16 +44,19 @@ model org_chart {
 }
 
 model time_logs {
-  id                 String   @id @default(uuid()) @map("_id")
-  userId             String   @unique
-  user               Users    @relation(fields: [userId], references: [id])
-  time_in            DateTime @default(now()) @map("time_in")
-  time_out           DateTime @default(now()) @map("time_out")
-  total_worked_hours Int
-  total_late_hours   Int
-  total_ot_time      Int
-  scheduled_time_in  DateTime
-  scheduled_time_out DateTime
+  id                 String    @id @default(uuid()) @map("_id")
+  userId             String
+  user               Users     @relation(fields: [userId], references: [id])
+  email_address      String?
+  time_in            DateTime?
+  time_out           DateTime?
+  total_worked_hours Int?
+  total_late_hours   Int?
+  total_ot_time      Int?
+  scheduled_time_in  DateTime?
+  scheduled_time_out DateTime?
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @default(now()) @map("updated_at")
 }
 
 model Projects {
