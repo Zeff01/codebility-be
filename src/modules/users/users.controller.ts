@@ -127,6 +127,20 @@ export default class UserController extends Api {
     }
   };
 
+  public getUserByTeam = async (
+    req: Request,
+    res: CustomResponse<Users>,
+    next: NextFunction
+  ) => {
+    try {
+      const user = await this.userService.getUserByTeam(
+        req.query.position as string
+      );
+      this.send(res, user, HttpStatusCode.Ok, "getUserByTeam");
+    } catch (e) {
+      next(e);
+    }
+  };
   public changeUserPassword = async (
     req: Request,
     res: CustomResponse<Users>,

@@ -61,6 +61,8 @@ users.route("/interns").get(controller.getUserInterns);
 
 users.route("/mentors").get(controller.getUserMentors);
 
+users.route("/team?:position").get(controller.getUserByTeam);
+
 users
   .route("/add")
   .post(RequestValidator.validate(CreateUserDto), controller.createUser);

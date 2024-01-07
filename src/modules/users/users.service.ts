@@ -159,7 +159,16 @@ export default class UserService {
       where: { id: id },
     });
   }
-
+  public async getUserByTeam(position: string) {
+    const positionArr = position.split(",");
+    return await prisma.users.findMany({
+      where: {
+        position: {
+          hasEvery: positionArr,
+        },
+      },
+    });
+  }
   public async changeUserPassword(
     id: string,
     oldPassword: string,
