@@ -2,6 +2,7 @@ import { NextFunction, Request, Router } from "express";
 import Controller from "./users.controller";
 import {
   CreateUserDto,
+  EmailDto,
   ICreateMemberDto,
   LoginAdminDto,
   UpdateUserDto,
@@ -81,13 +82,19 @@ users.post(
 
 users.route("/:id").get(controller.getUserById);
 
+/**
+ * GET /users
+ * @summary Get All Users
+ * @tags users
+ * @return {User} 200 - success response - application/json
+ */
+
 users.route("/").get(controller.getUsers);
 
-users.put(
-  "/changePassword/:id",
-  verifyAuthToken,
-  RequestValidator.validate(UpdateUserDto),
-  controller.changeUserPassword
+users.post(
+  "/forgot-password",
+  RequestValidator.validate(EmailDto),
+  controller.forgotPassword
 );
 
 export default users;

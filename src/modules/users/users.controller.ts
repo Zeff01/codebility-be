@@ -127,18 +127,17 @@ export default class UserController extends Api {
     }
   };
 
-  public changeUserPassword = async (
+  public forgotPassword = async (
     req: Request,
     res: CustomResponse<Users>,
     next: NextFunction
   ) => {
     try {
-      const user = await this.userService.changeUserPassword(
-        req.params.id,
-        req.body.oldPassword,
-        req.body.newPassword
+      const user = await this.userService.forgotPassword(
+        req.body.email_address
       );
-      this.send(res, user, HttpStatusCode.Created, "changeUserPassword");
+      console.log(user);
+      this.send(res, user, HttpStatusCode.Ok, "forgotPassword");
     } catch (e) {
       next(e);
     }

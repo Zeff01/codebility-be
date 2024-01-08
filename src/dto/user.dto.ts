@@ -1,4 +1,4 @@
-import { $Enums } from '@prisma/client';
+import { $Enums } from "@prisma/client";
 import {
   IsEmail,
   IsEnum,
@@ -8,7 +8,7 @@ import {
   IsString,
   IsUUID,
   IsUrl,
-} from 'class-validator';
+} from "class-validator";
 
 export class CreateUserDto {
   @IsString()
@@ -41,15 +41,13 @@ export class CreateUserDto {
   @IsString()
   @IsOptional()
   schedule: string;
- 
+
   @IsString()
   @IsOptional()
   position: string;
-
- 
 }
 
-export class UpdateUserDto {
+export class IUpdateUserDto {
   @IsString()
   @IsNotEmpty()
   oldPassword: string;
@@ -73,7 +71,7 @@ export class UpdateUserDto {
   // @IsString()
   // @IsOptional()
   // schedule?: string;
- 
+
   // @IsString()
   // @IsOptional()
   // position?: string;
@@ -88,16 +86,61 @@ export class LoginAdminDto {
 }
 
 export class ICreateMemberDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  address: string;
+
   @IsEmail()
-  email: string;
+  email_address: string;
 
   @IsString()
-  firstName: string;
+  @IsOptional()
+  github_link: string;
 
   @IsString()
-  lastName: string;
+  @IsOptional()
+  portfolio_website: string;
 
   @IsString()
-  @IsUrl()
-  profilePic: string;
+  @IsOptional()
+  tech_stacks: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+
+  @IsString()
+  @IsOptional()
+  schedule: string;
+
+  @IsString()
+  @IsOptional()
+  position: string;
+}
+
+export class UpdateUserDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  address: string;
+
+  @IsEmail()
+  email_address: string;
+
+  @IsString()
+  @IsOptional()
+  github_link?: string;
+}
+
+export class EmailDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email_address: string;
 }
