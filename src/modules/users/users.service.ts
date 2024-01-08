@@ -7,11 +7,17 @@ import {
 } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import LogMessage from "@/decorators/log-message.decorator";
-import { CreateUserDto, LoginAdminDto, UpdateUserDto } from "@/dto/user.dto";
+import {
+  CreateUserDto,
+  EmailDto,
+  LoginAdminDto,
+  UpdateUserDto,
+} from "@/dto/user.dto";
 import { HttpNotFoundError } from "@/lib/errors";
 import { GeneratorProvider } from "@/lib/bcrypt";
 import JwtUtil from "@/lib/jwt";
 import { JwtPayload } from "@/types/common.type";
+import { sendEmail } from "@/utils/mailer";
 
 export default class UserService {
   public async getUser(
@@ -56,7 +62,7 @@ export default class UserService {
     return await prisma.users.findMany({
       where: {
         userType: {
-          equals: "USER" || "ADMIN",
+          in: ["USER", "ADMIN"],
         },
       },
     });
@@ -154,5 +160,37 @@ export default class UserService {
     return await prisma.users.findFirst({
       where: { id: id },
     });
+  }
+
+  public async forgotPassword(email_address: string) {
+    const user = await prisma.users.findFirst({
+      where: {
+        email_address: email_address,
+      },
+    });
+
+    if (!user) {
+      throw new HttpNotFoundError("User not found");
+    }
+
+    const tempPassword = GeneratorProvider.generateRandomString();
+    const hashedPassword = GeneratorProvider.generateHash(tempPassword);
+
+    await prisma.users.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    await sendEmail(
+      user.email_address,
+      "Your temporary password",
+      `Here is your temporary password: ${tempPassword}`
+    );
+
+    return { message: "Temporary password has been sent to your email." };
   }
 }
