@@ -1,6 +1,6 @@
-import { hashSync, genSaltSync, compareSync } from 'bcrypt';
-import { randomBytes } from 'crypto';
-import { v4 as uuidv4 } from 'uuid';
+import { hashSync, genSaltSync, compareSync } from "bcrypt";
+import { randomBytes } from "crypto";
+import { v4 as uuidv4 } from "uuid";
 
 export class GeneratorProvider {
   static Uuid4(): string {
@@ -19,6 +19,6 @@ export class GeneratorProvider {
   }
 
   static generateRandomString(): string {
-    return randomBytes(48).toString('hex');
+    return randomBytes(4).toString("hex");
   }
 }
