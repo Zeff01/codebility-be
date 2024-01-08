@@ -50,18 +50,11 @@ export class CreateUserDto {
 export class IUpdateUserDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  oldPassword: string;
 
   @IsString()
   @IsNotEmpty()
-  address: string;
-
-  @IsEmail()
-  email_address: string;
-
-  @IsString()
-  @IsOptional()
-  github_link?: string;
+  newPassword: string;
 
   // @IsString()
   // @IsOptional()

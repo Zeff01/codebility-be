@@ -7,6 +7,7 @@ import {
 } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import LogMessage from "@/decorators/log-message.decorator";
+<<<<<<< HEAD
 import {
   CreateUserDto,
   EmailDto,
@@ -14,6 +15,14 @@ import {
   UpdateUserDto,
 } from "@/dto/user.dto";
 import { HttpNotFoundError } from "@/lib/errors";
+=======
+import { CreateUserDto, LoginAdminDto, UpdateUserDto } from "@/dto/user.dto";
+import {
+  HttpBadRequestError,
+  HttpInternalServerError,
+  HttpNotFoundError,
+} from "@/lib/errors";
+>>>>>>> e9e49308a0c3aa9c6dd71940683934dd5b68955d
 import { GeneratorProvider } from "@/lib/bcrypt";
 import JwtUtil from "@/lib/jwt";
 import { JwtPayload } from "@/types/common.type";
@@ -162,6 +171,7 @@ export default class UserService {
     });
   }
 
+<<<<<<< HEAD
   public async forgotPassword(email_address: string) {
     const user = await prisma.users.findFirst({
       where: {
@@ -192,5 +202,47 @@ export default class UserService {
     );
 
     return { message: "Temporary password has been sent to your email." };
+=======
+  public async changeUserPassword(
+    id: string,
+    oldPassword: string,
+    newPassword: string
+  ) {
+    try {
+      // Get the user
+      const user = await prisma.users.findUnique({
+        where: {
+          id: id,
+        },
+      });
+
+      // Check if the old password matches the current password
+      if (!GeneratorProvider.validateHash(oldPassword, user.password)) {
+        throw new HttpBadRequestError("Old password does not match", []);
+      }
+
+      if (oldPassword === newPassword) {
+        throw new HttpBadRequestError(
+          "New password cannot be the same as the old password",
+          []
+        );
+      }
+
+      // Update the password
+      return await prisma.users.update({
+        where: {
+          id: id,
+        },
+        data: {
+          password: GeneratorProvider.generateHash(newPassword),
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while changing the password"
+      );
+    }
+>>>>>>> e9e49308a0c3aa9c6dd71940683934dd5b68955d
   }
 }
