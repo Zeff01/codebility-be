@@ -129,14 +129,13 @@ export default class UserService {
   }
 
   @LogMessage<[Users]>({ message: "User Updated" })
-  public async updateUser(data: Users) {
-    const { id, ...updateData } = data;
-    console.log(data);
+  public async updateUser(id: string, data: UpdateUserDto) {
+    console.log(id, data);
     return await prisma.users.update({
       where: {
         id: id,
       },
-      data: updateData,
+      data: data,
     });
   }
 

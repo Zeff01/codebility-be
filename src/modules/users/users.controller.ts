@@ -66,10 +66,10 @@ export default class UserController extends Api {
     next: NextFunction
   ) => {
     try {
-      const user = await this.userService.updateUser(
-        (req.params?.id as string) && req.body
-      );
-      this.send(res, user, HttpStatusCode.Created, "updateUser");
+      const id = req.params.id as string;
+      const updateData = req.body;
+      const user = await this.userService.updateUser(id, updateData);
+      this.send(res, user, HttpStatusCode.Ok, "updateUser");
     } catch (e) {
       next(e);
     }
@@ -127,6 +127,25 @@ export default class UserController extends Api {
     }
   };
 
+  public changeUserPassword = async (
+    req: Request,
+    res: CustomResponse<Users>,
+    next: NextFunction
+  ) => {
+    try {
+      const id = req.params.id as string;
+      const { oldPassword, newPassword } = req.body;
+      const user = await this.userService.changeUserPassword(
+        id,
+        oldPassword,
+        newPassword
+      );
+      this.send(res, user, HttpStatusCode.Ok, "Password updated successfully");
+    } catch (e) {
+      next(e);
+    }
+  };
+
   public forgotPassword = async (
     req: Request,
     res: CustomResponse<Users>,
@@ -136,7 +155,7 @@ export default class UserController extends Api {
       const user = await this.userService.forgotPassword(
         req.body.email_address
       );
-      console.log(user);
+
       this.send(res, user, HttpStatusCode.Ok, "forgotPassword");
     } catch (e) {
       next(e);

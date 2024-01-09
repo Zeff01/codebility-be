@@ -6,6 +6,7 @@ import {
   ICreateMemberDto,
   LoginAdminDto,
   UpdateUserDto,
+  changePasswordDto,
 } from "@/dto/user.dto";
 import RequestValidator from "@/middlewares/request-validator";
 import { verifyAuthToken } from "@/middlewares/auth";
@@ -16,48 +17,79 @@ const users: Router = Router();
 const controller = new Controller();
 
 /**
- * Create user body
- * @typedef {object} CreateUserBody
- * @property {string} email.required - email of user
- * @property {string} name.required - name of user
- * @property {string} cognitoId.required - cognito id
- * @property {string} phone - phone number
+ * GET /users
+ * @summary Get All Users
+ * @tags users
+ * @return {Users} 200 - success response - application/json
  */
 /**
- * User
- * @typedef {object} User
- * @property {string} email - email of user
- * @property {string} name - name of user
- * @property {string} cognitoId - cognito id
- * @property {string} phone - phone number
+ * GET /users/{id}
+ * @summary Get Users by ID
+ * @tags users
+ * @param {string} id.path - id param description
+ * @return {Users} 200 - success response - application/json
  */
 /**
- * POST /users
+ * GET /users/interns
+ * @summary Get Users by Interns
+ * @tags users
+ * @return {Users} 200 - success response - application/json
+ */
+/**
+ * GET /users/mentors
+ * @summary Get Users by Mentors
+ * @tags users
+ * @return {Users} 200 - success response - application/json
+ */
+/**
+ * POST /users/login
+ * @typedef {object} LoginAdminDto
+ * @summary Login User
+ * @tags users
+ * @param {LoginAdminDto} request.body.required
+ * @return {Users} 201 - User Logged In
+ */
+/**
+ * POST /users/add
  * @summary Create user
  * @tags users
  * @param {CreateUserDto} request.body.required
- * @return {User} 201 - user created
- */
-
-/**
- * Update user body
- * @typedef {object} UpdateUserDto
- * @property {string} name - name of user
- * @property {string} phone - phone number
+ * @return {Users} 201 - user created
  */
 /**
  * User
- * @typedef {object} User
- * @property {string} name - name of user
- * @property {string} phone - phone number
+ * @typedef {object} Users
+ * @property {string} email - email of user
  */
 /**
- * PATCH /users
- * @summary Create user
+ * PATCH /users/{id}
+ * @typedef {object} UpdateUserDto
+ * @summary Edit User Info
  * @tags users
+ * @param {string} id.path - id param description
  * @param {UpdateUserDto} request.body.required
- * @return {User} 201 - user created
+ * @return {Users} 201 - user data updated
+ * @security BearerAuth
  */
+/**
+ * PUT /users/changePassword/{id}
+ * @typedef {object} changePasswordDto
+ * @summary Edit User Password
+ * @tags users
+ * @param {string} id.path - id param description
+ * @param {changePasswordDto} request.body.required
+ * @return {Users} 201 - user data updated
+ * @security BearerAuth
+ */
+/**
+ * POST /users/forgot-password
+ * @typedef {object} EmailDto
+ * @summary Reset User Password
+ * @tags users
+ * @param {EmailDto} request.body.required
+ * @return {Users} 201 - user data updated
+ */
+
 users.route("/interns").get(controller.getUserInterns);
 
 users.route("/mentors").get(controller.getUserMentors);
@@ -82,14 +114,13 @@ users.post(
 
 users.route("/:id").get(controller.getUserById);
 
-/**
- * GET /users
- * @summary Get All Users
- * @tags users
- * @return {User} 200 - success response - application/json
- */
-
 users.route("/").get(controller.getUsers);
+
+users.put(
+  "/changePassword/:id",
+  RequestValidator.validate(changePasswordDto),
+  controller.changeUserPassword
+);
 
 users.post(
   "/forgot-password",
