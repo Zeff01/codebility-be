@@ -44,22 +44,42 @@ const controller = new Controller();
 /**
  * POST /users/login
  * @typedef {object} LoginAdminDto
+ * @property {string} email_address.required - The email_address
+ * @property {string} password.required - The password
  * @summary Login User
  * @tags users
  * @param {LoginAdminDto} request.body.required
  * @return {Users} 201 - User Logged In
  */
 /**
- * POST /users/add
+ * POST /users/create
+ * @typedef {object} CreateUserDto
+ * @property {string} name.required - The name
+ * @property {string} address.required - The address
+ * @property {string} email_address.required - The email_address
+ * @property {string} github_link.required - The github_link
+ * @property {string} portfolio_website.required - The portfolio_website
+ * @property {string} tech_stacks.required - The tech_stacks
+ * @property {string} password.required - The password
  * @summary Create user
  * @tags users
  * @param {CreateUserDto} request.body.required
  * @return {Users} 201 - user created
  */
 /**
- * User
+ * Users
  * @typedef {object} Users
- * @property {string} email - email of user
+ * @property {string} id - id of user
+ * @property {string} address - address of user
+ * @property {string} email_address - email_address of user
+ * @property {string} github_link - github_link of user
+ * @property {string} portfolio_website - portfolio_website of user
+ * @property {string} tech_stacks - tech_stacks of user
+ * @property {string} password - password of user
+ * @property {string} schedule - schedule of user
+ * @property {string} position - position of user
+ * @property {string} roleType - roleType of user
+ * @property {string} userType - userType of user
  */
 /**
  * PATCH /users/{id}
@@ -74,20 +94,23 @@ const controller = new Controller();
 /**
  * PUT /users/changePassword/{id}
  * @typedef {object} changePasswordDto
+ * @property {string} oldPassword.required - The oldPassword
+ * @property {string} newPassword.required - The newPassword
  * @summary Edit User Password
  * @tags users
  * @param {string} id.path - id param description
  * @param {changePasswordDto} request.body.required
- * @return {Users} 201 - user data updated
+ * @return {Users} 201 - user password updated
  * @security BearerAuth
  */
 /**
  * POST /users/forgot-password
  * @typedef {object} EmailDto
+ * @property {string} email_address.required - The email_address
  * @summary Reset User Password
  * @tags users
  * @param {EmailDto} request.body.required
- * @return {Users} 201 - user data updated
+ * @return {Users} 201 - user password updated
  */
 
 users.route("/interns").get(controller.getUserInterns);
@@ -95,7 +118,7 @@ users.route("/interns").get(controller.getUserInterns);
 users.route("/mentors").get(controller.getUserMentors);
 
 users
-  .route("/add")
+  .route("/create")
   .post(RequestValidator.validate(CreateUserDto), controller.createUser);
 // .get(verifyAuthToken, controller.getAdminInfo);
 

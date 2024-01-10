@@ -36,22 +36,28 @@ export default class UserService {
 
   @LogMessage<[Users]>({ message: "User Created" })
   public async createUser(data: CreateUserDto) {
-    console.log(data);
-    return await prisma.users.create({
-      data: {
-        name: data.name,
-        address: data.address,
-        email_address: data.email_address,
-        github_link: data.github_link,
-        portfolio_website: data.portfolio_website,
-        tech_stacks: [],
-        password: GeneratorProvider.generateHash(data.password),
-        schedule: [],
-        position: [],
-        roleType: RoleTypeEnum.MENTOR,
-        userType: UserTypeEnum.ADMIN,
-      },
-    });
+    try {
+      return await prisma.users.create({
+        data: {
+          name: data.name,
+          address: data.address,
+          email_address: data.email_address,
+          github_link: data.github_link,
+          portfolio_website: data.portfolio_website,
+          tech_stacks: [],
+          password: GeneratorProvider.generateHash(data.password),
+          schedule: [],
+          position: [],
+          roleType: RoleTypeEnum.MENTOR,
+          userType: UserTypeEnum.ADMIN,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while creating the user"
+      );
+    }
   }
 
   public async getAdminInfo(data: Users) {
@@ -130,13 +136,19 @@ export default class UserService {
 
   @LogMessage<[Users]>({ message: "User Updated" })
   public async updateUser(id: string, data: UpdateUserDto) {
-    console.log(id, data);
-    return await prisma.users.update({
-      where: {
-        id: id,
-      },
-      data: data,
-    });
+    try {
+      return await prisma.users.update({
+        where: {
+          id: id,
+        },
+        data: data,
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while updating the user"
+      );
+    }
   }
 
   public async getUserInterns() {
@@ -160,41 +172,55 @@ export default class UserService {
   }
 
   public async getUserById(id: string) {
-    return await prisma.users.findFirst({
-      where: { id: id },
-    });
+    try {
+      return await prisma.users.findFirst({
+        where: { id: id },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while retrieving the user by ID"
+      );
+    }
   }
 
   public async forgotPassword(email_address: string) {
-    const user = await prisma.users.findFirst({
-      where: {
-        email_address: email_address,
-      },
-    });
+    try {
+      const user = await prisma.users.findFirst({
+        where: {
+          email_address: email_address,
+        },
+      });
 
-    if (!user) {
-      throw new HttpNotFoundError("User not found");
+      if (!user) {
+        throw new HttpNotFoundError("User not found");
+      }
+
+      const tempPassword = GeneratorProvider.generateRandomString();
+      const hashedPassword = GeneratorProvider.generateHash(tempPassword);
+
+      await prisma.users.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          password: hashedPassword,
+        },
+      });
+
+      await sendEmail(
+        user.email_address,
+        "Your temporary password",
+        `Here is your temporary password: ${tempPassword}`
+      );
+
+      return { message: "Temporary password has been sent to your email." };
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while processing the forgot password request"
+      );
     }
-
-    const tempPassword = GeneratorProvider.generateRandomString();
-    const hashedPassword = GeneratorProvider.generateHash(tempPassword);
-
-    await prisma.users.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        password: hashedPassword,
-      },
-    });
-
-    await sendEmail(
-      user.email_address,
-      "Your temporary password",
-      `Here is your temporary password: ${tempPassword}`
-    );
-
-    return { message: "Temporary password has been sent to your email." };
   }
 
   public async changeUserPassword(
