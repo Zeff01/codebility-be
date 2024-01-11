@@ -124,23 +124,54 @@ export class ICreateMemberDto {
 
 export class UpdateUserDto {
   @IsString()
-  @IsNotEmpty()
-  name: string;
+  @IsOptional()
+  name?: string;
 
   @IsString()
-  @IsNotEmpty()
-  address: string;
+  @IsOptional()
+  address?: string;
 
   @IsEmail()
-  email_address: string;
+  @IsOptional()
+  email_address?: string;
 
   @IsString()
   @IsOptional()
   github_link?: string;
+
+  @IsString()
+  @IsOptional()
+  portfolio_website?: string;
+
+  @IsString()
+  @IsOptional()
+  tech_stacks?: string;
+
+  @IsString()
+  @IsOptional()
+  password?: string;
+
+  @IsString()
+  @IsOptional()
+  schedule?: string;
+
+  @IsString()
+  @IsOptional()
+  position?: string;
 }
 
 export class EmailDto {
   @IsEmail()
   @IsNotEmpty()
   email_address: string;
+}
+
+export class changePasswordDto {
+  @IsString()
+  @IsNotEmpty()
+  oldPassword: string;
+
+  @IsString()
+  @IsNotEmpty()
+  newPassword: string;
 }

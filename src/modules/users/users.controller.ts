@@ -1,9 +1,14 @@
 import { type NextFunction, type Request } from "express";
-import { type Users } from "@prisma/client";
+import { Prisma, type Users } from "@prisma/client";
 import { HttpStatusCode } from "axios";
 import UserService from "./users.service";
 import { type CustomResponse } from "@/types/common.type";
 import Api from "@/lib/api";
+import {
+  HttpBadRequestError,
+  HttpInternalServerError,
+  HttpNotFoundError,
+} from "@/lib/errors";
 
 export default class UserController extends Api {
   private readonly userService = new UserService();
@@ -30,7 +35,17 @@ export default class UserController extends Api {
       const user = await this.userService.createUser(req.body);
       this.send(res, user, HttpStatusCode.Created, "createUser");
     } catch (e) {
-      next(e);
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        // Handle known request errors from Prisma
+        next(new HttpBadRequestError("Bad request", [e.message]));
+      } else {
+        // Handle other errors
+        next(
+          new HttpInternalServerError(
+            "An error occurred while creating the user"
+          )
+        );
+      }
     }
   };
 
@@ -66,27 +81,27 @@ export default class UserController extends Api {
     next: NextFunction
   ) => {
     try {
-      const user = await this.userService.updateUser(
-        (req.params?.id as string) && req.body
-      );
-      this.send(res, user, HttpStatusCode.Created, "updateUser");
+      const id = req.params.id as string;
+      const updateData = req.body;
+      const user = await this.userService.updateUser(id, updateData);
+      this.send(res, user, HttpStatusCode.Ok, "updateUser");
     } catch (e) {
-      next(e);
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        // Handle known request errors from Prisma
+        next(new HttpBadRequestError("Bad request", [e.message]));
+      } else if (e instanceof HttpNotFoundError) {
+        // Handle not found errors (e.g., user not found)
+        next(e);
+      } else {
+        // Handle other errors
+        next(
+          new HttpInternalServerError(
+            "An error occurred while updating the user"
+          )
+        );
+      }
     }
   };
-
-  // public createMember = async (
-  //   req: Request,
-  //   res: CustomResponse<users>,
-  //   next: NextFunction
-  // ) => {
-  //   try {
-  //     const user = await this.userService.createMember(req.body);
-  //     this.send(res, user, HttpStatusCode.Created, 'createMember');
-  //   } catch (e) {
-  //     next(e);
-  //   }
-  // };
 
   public getUserInterns = async (
     req: Request,
@@ -121,7 +136,29 @@ export default class UserController extends Api {
   ) => {
     try {
       const user = await this.userService.getUserById(req.params.id as string);
+      if (!user) {
+        throw new HttpNotFoundError("User not found");
+      }
       this.send(res, user, HttpStatusCode.Ok, "getUserById");
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  public changeUserPassword = async (
+    req: Request,
+    res: CustomResponse<Users>,
+    next: NextFunction
+  ) => {
+    try {
+      const id = req.params.id as string;
+      const { oldPassword, newPassword } = req.body;
+      const user = await this.userService.changeUserPassword(
+        id,
+        oldPassword,
+        newPassword
+      );
+      this.send(res, user, HttpStatusCode.Ok, "Password updated successfully");
     } catch (e) {
       next(e);
     }
@@ -151,7 +188,7 @@ export default class UserController extends Api {
       const user = await this.userService.forgotPassword(
         req.body.email_address
       );
-      console.log(user);
+
       this.send(res, user, HttpStatusCode.Ok, "forgotPassword");
     } catch (e) {
       next(e);
