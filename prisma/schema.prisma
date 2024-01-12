@@ -31,7 +31,8 @@ model Users {
   created_at        DateTime          @default(now())
   updated_at        DateTime          @default(now())
   schedule          String[]
-  roleType          String[]
+  roleType          RoleTypeEnum
+  userType          UserTypeEnum      @default(USER)
   work_experience   Work_Experience[]
   org_chart         org_chart[]
   time_logs         time_logs?
@@ -44,7 +45,7 @@ model Users {
 }
 
 model Work_Experience {
-  word_id    String   @id @default(uuid()) @map("_id")
+  id         String   @id @default(uuid()) @map("_id")
   user_id    String   @unique
   users      Users    @relation(fields: [user_id], references: [id])
   position   String
@@ -90,19 +91,19 @@ model time_logs {
 }
 
 model todo_list {
-  id               String     @id @default(uuid()) @map("_id")
+  id               String            @id @default(uuid()) @map("_id")
   title            String
   subheader        String
   full_description String
   tags             TodoTags[]
-  users_id         String     @unique
-  users            Users      @relation(fields: [users_id], references: [id])
-  project_id       String?    @unique
-  projects         Projects?  @relation(fields: [project_id], references: [id])
-  prio_level       Int
+  users_id         String            @unique
+  users            Users             @relation(fields: [users_id], references: [id])
+  project_id       String?           @unique
+  projects         Projects?         @relation(fields: [project_id], references: [id])
+  prio_level       PriorityLevelEnum
   github_link      String
-  created_at       DateTime   @default(now())
-  updated_at       DateTime   @default(now())
+  created_at       DateTime          @default(now())
+  updated_at       DateTime          @default(now())
 }
 
 model Tags {
@@ -188,4 +189,10 @@ enum RoleTypeEnum {
 enum UserTypeEnum {
   ADMIN
   USER
+}
+
+enum PriorityLevelEnum {
+  LOW
+  MEDIUM
+  HIGH
 }
