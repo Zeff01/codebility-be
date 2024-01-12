@@ -8,6 +8,7 @@ import {
   IsString,
   IsUUID,
   IsUrl,
+  IsArray,
 } from "class-validator";
 
 export class CreateUserDto {
@@ -30,9 +31,9 @@ export class CreateUserDto {
   @IsOptional()
   portfolio_website: string;
 
-  @IsString()
+  @IsArray()
   @IsOptional()
-  tech_stacks: string;
+  tech_stacks: string[];
 
   @IsString()
   @IsNotEmpty()
@@ -143,7 +144,7 @@ export class UpdateUserDto {
   @IsOptional()
   portfolio_website?: string;
 
-  @IsString()
+  @IsArray()
   @IsOptional()
   tech_stacks?: string;
 
