@@ -6,12 +6,13 @@ import {
   ICreateMemberDto,
   LoginAdminDto,
   UpdateUserDto,
+  WorkExpDto,
   changePasswordDto,
 } from "@/dto/user.dto";
 import RequestValidator from "@/middlewares/request-validator";
 import { verifyAuthToken } from "@/middlewares/auth";
 import { CustomResponse } from "@/types/common.type";
-import { Users } from "@prisma/client";
+import { Users, Work_Experience } from "@prisma/client";
 
 const users: Router = Router();
 const controller = new Controller();
@@ -112,6 +113,29 @@ const controller = new Controller();
  * @param {EmailDto} request.body.required
  * @return {Users} 201 - user password updated
  */
+/**
+ * POST /workexp/{id}
+ * @typedef {object}  WorkExpDto
+ * @property {string} user_id.required -- User ID
+ * @property {string} position.required -- Position
+ * @property {string} company.required -- Company Name
+ * @property {string} date.required -- Date
+ * @property {string} short_desc -- Short Description
+ * @summary Add Work Experience
+ * @tags users
+ * @param {WorkExpDto} request.body.required
+ * @return {Work_Experience} 201 - work experience added
+ */
+/**
+ * Work_Experience
+ * @typedef {object} Work_Experience
+ * @property {string} id - Work Experience ID
+ * @property {string} user_id - User ID
+ * @property {string} position - Position
+ * @property {string} company - Company
+ * @property {string} date - Date
+ * @property {string} short_desc - Short Description
+ */
 
 users.route("/interns").get(controller.getUserInterns);
 
@@ -151,6 +175,13 @@ users.post(
   "/forgot-password",
   RequestValidator.validate(EmailDto),
   controller.forgotPassword
+);
+
+users.post(
+  "/workexp",
+  verifyAuthToken,
+  RequestValidator.validate(WorkExpDto),
+  controller.addWorkExp
 );
 
 export default users;

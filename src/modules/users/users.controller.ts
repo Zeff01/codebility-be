@@ -1,5 +1,5 @@
 import { type NextFunction, type Request } from "express";
-import { Prisma, type Users } from "@prisma/client";
+import { Prisma, Work_Experience, type Users } from "@prisma/client";
 import { HttpStatusCode } from "axios";
 import UserService from "./users.service";
 import { type CustomResponse } from "@/types/common.type";
@@ -190,6 +190,19 @@ export default class UserController extends Api {
       );
 
       this.send(res, user, HttpStatusCode.Ok, "forgotPassword");
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  public addWorkExp = async (
+    req: Request,
+    res: CustomResponse<Work_Experience>,
+    next: NextFunction
+  ) => {
+    try {
+      const workexp = await this.userService.addWorkExp(req.body);
+      this.send(res, workexp, HttpStatusCode.Ok, "addWorkExp");
     } catch (e) {
       next(e);
     }

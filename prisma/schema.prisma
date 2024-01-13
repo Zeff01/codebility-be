@@ -51,7 +51,7 @@ model Work_Experience {
   users      Users    @relation(fields: [user_id], references: [id])
   position   String
   company    String
-  date       DateTime
+  date       String
   short_desc String
   created_at DateTime @default(now())
   updated_at DateTime @default(now())

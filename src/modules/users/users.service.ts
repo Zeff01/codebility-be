@@ -12,6 +12,7 @@ import {
   EmailDto,
   LoginAdminDto,
   UpdateUserDto,
+  WorkExpDto,
 } from "@/dto/user.dto";
 import {
   HttpBadRequestError,
@@ -56,6 +57,25 @@ export default class UserService {
       console.error(error);
       throw new HttpInternalServerError(
         "An error occurred while creating the user"
+      );
+    }
+  }
+  // @LogMessage<[Users]>({ message: "Work Experience added" })
+  public async addWorkExp(data: WorkExpDto) {
+    try {
+      return await prisma.work_Experience.create({
+        data: {
+          user_id: data.user_id,
+          position: data.position,
+          company: data.company,
+          date: data.date,
+          short_desc: data.short_desc,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occured while adding work experience"
       );
     }
   }
