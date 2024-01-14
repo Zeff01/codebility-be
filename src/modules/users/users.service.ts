@@ -104,7 +104,36 @@ export default class UserService {
       },
     });
   }
+  public async updateWorkExp(id: string, data: WorkExpDto) {
+    try {
+      return await prisma.work_Experience.update({
+        where: {
+          id: id,
+        },
+        data: data,
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occured whilte updating user work experince"
+      );
+    }
+  }
 
+  public async deleteWorkExp(id: string) {
+    try {
+      return await prisma.work_Experience.delete({
+        where: {
+          id: id,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occured while deleting user work experince"
+      );
+    }
+  }
   public async login(data: LoginAdminDto) {
     console.log(data);
     try {

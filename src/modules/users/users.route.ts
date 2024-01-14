@@ -193,4 +193,12 @@ users.post(
 
 users.route("/workexp/:userid").get(controller.getWorkExpPerUser);
 
+users.patch(
+  "/workexp/:id",
+  verifyAuthToken,
+  RequestValidator.validate(WorkExpDto),
+  controller.updateWorkExp
+);
+
+users.delete("/workexp/:id", verifyAuthToken, controller.deleteWorkExp);
 export default users;

@@ -226,7 +226,7 @@ export class WorkExpDto {
 
   @IsString()
   @IsNotEmpty()
-  date: Date;
+  date: string;
 
   @IsString()
   @IsOptional()
