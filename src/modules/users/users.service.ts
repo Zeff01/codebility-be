@@ -88,6 +88,13 @@ export default class UserService {
     });
   }
 
+  public async getWorkExpPerUser(userid: string) {
+    return await prisma.work_Experience.findMany({
+      where: {
+        user_id: userid,
+      },
+    });
+  }
   public async getUsers(data: Users) {
     return await prisma.users.findMany({
       where: {
@@ -195,6 +202,7 @@ export default class UserService {
     try {
       return await prisma.users.findFirst({
         where: { id: id },
+        include: { work_experience: true },
       });
     } catch (error) {
       console.error(error);

@@ -207,4 +207,19 @@ export default class UserController extends Api {
       next(e);
     }
   };
+
+  public getWorkExpPerUser = async (
+    req: Request,
+    res: CustomResponse<Work_Experience>,
+    next: NextFunction
+  ) => {
+    try {
+      const workexp = await this.userService.getWorkExpPerUser(
+        req.params.userid
+      );
+      this.send(res, workexp, HttpStatusCode.Ok, "getWorkExpPerUser");
+    } catch (e) {
+      next(e);
+    }
+  };
 }

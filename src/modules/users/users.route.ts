@@ -114,7 +114,7 @@ const controller = new Controller();
  * @return {Users} 201 - user password updated
  */
 /**
- * POST /workexp/{id}
+ * POST users/workexp/{id}
  * @typedef {object}  WorkExpDto
  * @property {string} user_id.required -- User ID
  * @property {string} position.required -- Position
@@ -135,6 +135,13 @@ const controller = new Controller();
  * @property {string} company - Company
  * @property {string} date - Date
  * @property {string} short_desc - Short Description
+ */
+/**
+ *  GET /users/workexp/{userid}
+ *  @summary Get Users Work Experiences
+ *  @tags users
+ *  @param {string} userid.path - user id
+ *  @return {Work_Experience} 200 - success response - application/json
  */
 
 users.route("/interns").get(controller.getUserInterns);
@@ -183,5 +190,7 @@ users.post(
   RequestValidator.validate(WorkExpDto),
   controller.addWorkExp
 );
+
+users.route("/workexp/:userid").get(controller.getWorkExpPerUser);
 
 export default users;
