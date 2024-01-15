@@ -12,6 +12,7 @@ import {
   EmailDto,
   LoginAdminDto,
   UpdateUserDto,
+  WorkExpDto,
 } from "@/dto/user.dto";
 import {
   HttpBadRequestError,
@@ -44,10 +45,10 @@ export default class UserService {
           email_address: data.email_address,
           github_link: data.github_link,
           portfolio_website: data.portfolio_website,
-          tech_stacks: [],
+          tech_stacks: data.tech_stacks,
           password: GeneratorProvider.generateHash(data.password),
-          schedule: [],
-          position: [],
+          schedule: data.schedule,
+          position: data.position,
           roleType: RoleTypeEnum.MENTOR,
           userType: UserTypeEnum.ADMIN,
         },
@@ -56,6 +57,25 @@ export default class UserService {
       console.error(error);
       throw new HttpInternalServerError(
         "An error occurred while creating the user"
+      );
+    }
+  }
+  // @LogMessage<[Users]>({ message: "Work Experience added" })
+  public async addWorkExp(data: WorkExpDto) {
+    try {
+      return await prisma.work_Experience.create({
+        data: {
+          user_id: data.user_id,
+          position: data.position,
+          company: data.company,
+          date: data.date,
+          short_desc: data.short_desc,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occured while adding work experience"
       );
     }
   }
@@ -68,6 +88,13 @@ export default class UserService {
     });
   }
 
+  public async getWorkExpPerUser(userid: string) {
+    return await prisma.work_Experience.findMany({
+      where: {
+        user_id: userid,
+      },
+    });
+  }
   public async getUsers(data: Users) {
     return await prisma.users.findMany({
       where: {
@@ -77,7 +104,36 @@ export default class UserService {
       },
     });
   }
+  public async updateWorkExp(id: string, data: WorkExpDto) {
+    try {
+      return await prisma.work_Experience.update({
+        where: {
+          id: id,
+        },
+        data: data,
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occured whilte updating user work experince"
+      );
+    }
+  }
 
+  public async deleteWorkExp(id: string) {
+    try {
+      return await prisma.work_Experience.delete({
+        where: {
+          id: id,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occured while deleting user work experince"
+      );
+    }
+  }
   public async login(data: LoginAdminDto) {
     console.log(data);
     try {
@@ -175,6 +231,7 @@ export default class UserService {
     try {
       return await prisma.users.findFirst({
         where: { id: id },
+        include: { work_experience: true },
       });
     } catch (error) {
       console.error(error);
@@ -182,6 +239,17 @@ export default class UserService {
         "An error occurred while retrieving the user by ID"
       );
     }
+  }
+
+  public async getUserByTeam(position: string) {
+    const positionArr = position.split(",");
+    return await prisma.users.findMany({
+      where: {
+        position: {
+          hasEvery: positionArr,
+        },
+      },
+    });
   }
 
   public async forgotPassword(email_address: string) {

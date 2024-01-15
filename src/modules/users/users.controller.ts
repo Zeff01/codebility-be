@@ -1,5 +1,5 @@
 import { type NextFunction, type Request } from "express";
-import { Prisma, type Users } from "@prisma/client";
+import { Prisma, Work_Experience, type Users } from "@prisma/client";
 import { HttpStatusCode } from "axios";
 import UserService from "./users.service";
 import { type CustomResponse } from "@/types/common.type";
@@ -164,6 +164,21 @@ export default class UserController extends Api {
     }
   };
 
+  public getUserByTeam = async (
+    req: Request,
+    res: CustomResponse<Users>,
+    next: NextFunction
+  ) => {
+    try {
+      const user = await this.userService.getUserByTeam(
+        req.query.position as string
+      );
+      this.send(res, user, HttpStatusCode.Ok, "getUserByTeam");
+    } catch (e) {
+      next(e);
+    }
+  };
+
   public forgotPassword = async (
     req: Request,
     res: CustomResponse<Users>,
@@ -175,6 +190,75 @@ export default class UserController extends Api {
       );
 
       this.send(res, user, HttpStatusCode.Ok, "forgotPassword");
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  public addWorkExp = async (
+    req: Request,
+    res: CustomResponse<Work_Experience>,
+    next: NextFunction
+  ) => {
+    try {
+      const workexp = await this.userService.addWorkExp(req.body);
+      this.send(res, workexp, HttpStatusCode.Ok, "addWorkExp");
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  public getWorkExpPerUser = async (
+    req: Request,
+    res: CustomResponse<Work_Experience>,
+    next: NextFunction
+  ) => {
+    try {
+      const workexp = await this.userService.getWorkExpPerUser(
+        req.params.userid
+      );
+      this.send(res, workexp, HttpStatusCode.Ok, "getWorkExpPerUser");
+    } catch (e) {
+      next(e);
+    }
+  };
+  public updateWorkExp = async (
+    req: Request,
+    res: CustomResponse<Work_Experience>,
+    next: NextFunction
+  ) => {
+    try {
+      const id = req.params.id as string;
+      const updateData = req.body;
+      const workExp = await this.userService.updateWorkExp(id, updateData);
+      this.send(res, workExp, HttpStatusCode.Ok, "updateWorkExp");
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        // Handle known request errors from Prisma
+        next(new HttpBadRequestError("Bad request", [e.message]));
+      } else if (e instanceof HttpNotFoundError) {
+        // Handle not found errors (e.g., work exp not found)
+        next(e);
+      } else {
+        // Handle other errors
+        next(
+          new HttpInternalServerError(
+            "An error occurred while updating user work experience."
+          )
+        );
+      }
+    }
+  };
+
+  public deleteWorkExp = async (
+    req: Request,
+    res: CustomResponse<Work_Experience>,
+    next: NextFunction
+  ) => {
+    try {
+      const id = req.params.id as string;
+      const workExp = await this.userService.deleteWorkExp(id);
+      this.send(res, workExp, HttpStatusCode.Ok, "deleteWorkExp");
     } catch (e) {
       next(e);
     }

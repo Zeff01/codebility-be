@@ -8,6 +8,10 @@ import {
   IsString,
   IsUUID,
   IsUrl,
+  IsArray,
+  isString,
+  IsDate,
+  IsDateString,
 } from "class-validator";
 
 export class CreateUserDto {
@@ -30,9 +34,9 @@ export class CreateUserDto {
   @IsOptional()
   portfolio_website: string;
 
-  @IsString()
+  @IsArray()
   @IsOptional()
-  tech_stacks: string;
+  tech_stacks: string[];
 
   @IsString()
   @IsNotEmpty()
@@ -137,13 +141,37 @@ export class UpdateUserDto {
 
   @IsString()
   @IsOptional()
+  phone_no?: string;
+
+  @IsUrl()
+  @IsOptional()
   github_link?: string;
+
+  @IsUrl()
+  @IsOptional()
+  fb_link?: string;
+
+  @IsUrl()
+  @IsOptional()
+  linkedin_link?: string;
+
+  @IsString()
+  @IsOptional()
+  whatsapp_link?: string;
+
+  @IsString()
+  @IsOptional()
+  skype_link: string;
+
+  @IsString()
+  @IsOptional()
+  telegram_link: string;
 
   @IsString()
   @IsOptional()
   portfolio_website?: string;
 
-  @IsString()
+  @IsArray()
   @IsOptional()
   tech_stacks?: string;
 
@@ -158,6 +186,14 @@ export class UpdateUserDto {
   @IsString()
   @IsOptional()
   position?: string;
+
+  @IsString()
+  @IsOptional()
+  short_bio?: string;
+
+  @IsUrl()
+  @IsOptional()
+  image_icon?: string;
 }
 
 export class EmailDto {
@@ -174,4 +210,25 @@ export class changePasswordDto {
   @IsString()
   @IsNotEmpty()
   newPassword: string;
+}
+export class WorkExpDto {
+  @IsString()
+  @IsNotEmpty()
+  user_id: string;
+
+  @IsString()
+  @IsNotEmpty()
+  position: string;
+
+  @IsString()
+  @IsNotEmpty()
+  company: string;
+
+  @IsString()
+  @IsNotEmpty()
+  date: string;
+
+  @IsString()
+  @IsOptional()
+  short_desc: string;
 }

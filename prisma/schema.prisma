@@ -11,43 +11,75 @@ datasource db {
 }
 
 model Users {
-  id                String         @id @default(uuid()) @map("_id")
+  id                String            @id @default(uuid()) @map("_id")
   name              String
+  short_bio         String?
+  image_icon        String?
   address           String
   email_address     String
-  github_link       String
+  phone_no          String?
+  github_link       String?
+  fb_link           String?
+  linkedin_link     String?
+  whatsapp_link     String?
+  skype_link        String?
+  telegram_link     String?
   portfolio_website String
   tech_stacks       String[]
+  addtl_skills      String[]
   password          String
-  createdAt         DateTime       @default(now()) @map("created_at")
-  updatedAt         DateTime       @default(now()) @map("updated_at")
-  schedule          String[]
-  position          String[]
-  orgChart          org_chart?
-  timeLogs          time_logs[]
-  userprojects      UserProjects[]
-  userclients       UserClients[]
-  todoList          todo_list[]
-  note              Notes[]
-  roleType          RoleTypeEnum
-  userType          UserTypeEnum   @default(USER)
+  created_at        DateTime          @default(now())
+  updated_at        DateTime          @default(now())
+  schedule          String
+  position          String
+  roleType          RoleTypeEnum      @default(INTERN)
+  userType          UserTypeEnum      @default(USER)
+  work_experience   Work_Experience[]
+  org_chart         org_chart[]
+  time_logs         time_logs?
+  todo_list         todo_list?
+  UserProjects      UserProjects[]
+  clients           UserClients[]
+  Notes             Notes[]
 
   @@unique([email_address])
 }
 
+model Work_Experience {
+  id         String   @id @default(uuid()) @map("_id")
+  user_id    String
+  users      Users    @relation(fields: [user_id], references: [id])
+  position   String
+  company    String
+  date       String
+  short_desc String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
+
 model org_chart {
-  id        String   @id @default(uuid()) @map("_id")
-  userId    String   @unique
-  user      Users    @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
+  id            String        @id @default(uuid()) @map("_id")
+  userId        String        @unique
+  user          Users         @relation(fields: [userId], references: [id])
+  level         Int           @unique
+  org_hierarchy Org_Hierarchy @relation(fields: [level], references: [level])
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @default(now()) @map("updated_at")
+}
+
+model Org_Hierarchy {
+  id        String      @id @default(uuid()) @map("_id")
+  level     Int         @unique
+  position  String
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @default(now()) @map("updated_at")
+  org_chart org_chart[]
 }
 
 model time_logs {
   id                 String    @id @default(uuid()) @map("_id")
-  userId             String
-  user               Users     @relation(fields: [userId], references: [id])
-  email_address      String?
+  user_id            String    @unique
+  users              Users     @relation(fields: [user_id], references: [id])
   time_in            DateTime?
   time_out           DateTime?
   total_worked_hours Int?
@@ -59,52 +91,49 @@ model time_logs {
   updatedAt          DateTime  @default(now()) @map("updated_at")
 }
 
-model Projects {
-  id          String         @id @default(uuid()) @map("_id")
-  project     UserProjects[]
-  clientId    String         @unique
-  client      Clients        @relation(fields: [clientId], references: [id])
-  todoList    todo_list[]
-  note        Notes[]
-  name        String
-  github_link String
-  createdAt   DateTime       @default(now()) @map("created_at")
-  updatedAt   DateTime       @default(now()) @map("updated_at")
-}
-
-model Clients {
-  id             String        @id @default(uuid()) @map("_id")
-  client         UserClients[]
-  project        Projects[]
-  company_name   String
-  email          String
-  contact_number String
-  linkedin_link  String
-  location       String
-}
-
 model todo_list {
-  id          String   @id @default(uuid()) @map("_id")
-  userId      String   @unique
-  user        Users    @relation(fields: [userId], references: [id])
-  projectId   String   @unique
-  project     Projects @relation(fields: [userId], references: [id])
-  title       String
-  github_link String
-  description String
-  createdAt   DateTime @default(now()) @map("created_at")
+  id               String            @id @default(uuid()) @map("_id")
+  title            String
+  subheader        String
+  full_description String
+  tags             TodoTags[]
+  users_id         String            @unique
+  users            Users             @relation(fields: [users_id], references: [id])
+  project_id       String?           @unique
+  projects         Projects?         @relation(fields: [project_id], references: [id])
+  prio_level       PriorityLevelEnum
+  github_link      String
+  created_at       DateTime          @default(now())
+  updated_at       DateTime          @default(now())
 }
 
-model Notes {
-  id          String   @id @default(uuid()) @map("_id")
-  userId      String   @unique
-  user        Users    @relation(fields: [userId], references: [id])
-  projectId   String   @unique
-  project     Projects @relation(fields: [userId], references: [id])
-  title       String
-  github_link String
-  description String
-  createdAt   DateTime @default(now()) @map("created_at")
+model Tags {
+  id         String     @id @default(uuid()) @map("_id")
+  tag        String     @unique
+  created_at DateTime   @default(now())
+  updated_at DateTime   @default(now())
+  todo_list  TodoTags[]
+}
+
+model TodoTags {
+  id        String    @id @default(uuid()) @map("_id")
+  todo_id   String
+  todo_list todo_list @relation(fields: [todo_id], references: [id])
+  tag_id    String
+  tags      Tags      @relation(fields: [tag_id], references: [id])
+}
+
+model Projects {
+  id           String        @id @default(uuid()) @map("_id")
+  project_name String
+  github_link  String
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @default(now()) @map("updated_at")
+  todo_list    todo_list[]
+  UserProjects UserProjects?
+  Clients      Clients       @relation(fields: [clientsId], references: [id])
+  clientsId    String
+  Notes        Notes?
 }
 
 model UserProjects {
@@ -112,13 +141,43 @@ model UserProjects {
   userId    String   @unique
   user      Users    @relation(fields: [userId], references: [id])
   projectId String   @unique
-  project   Projects @relation(fields: [userId], references: [id])
+  project   Projects @relation(fields: [projectId], references: [id])
+}
+
+model Clients {
+  id             String        @id @default(uuid()) @map("_id")
+  company_name   String
+  company_logo   String
+  working_hours  String[]
+  email          String
+  contact_number String
+  linkedin_link  String
+  location       String
+  company_hist   String[]
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @default(now())
+  project_list   String[]
+  projects       Projects[]
+  user           UserClients[]
+}
+
+model Notes {
+  id          String   @id @default(uuid()) @map("_id")
+  user_id     String   @unique
+  user        Users    @relation(fields: [user_id], references: [id])
+  project_id  String   @unique
+  project     Projects @relation(fields: [project_id], references: [id])
+  title       String
+  description String?
+  github_link String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
 }
 
 model UserClients {
   id       String  @id @default(uuid()) @map("_id")
   userId   String  @unique
-  user     Users   @relation(fields: [userId], references: [id])
+  users    Users   @relation(fields: [userId], references: [id])
   clientId String  @unique
   client   Clients @relation(fields: [clientId], references: [id])
 }
@@ -131,4 +190,10 @@ enum RoleTypeEnum {
 enum UserTypeEnum {
   ADMIN
   USER
+}
+
+enum PriorityLevelEnum {
+  LOW
+  MEDIUM
+  HIGH
 }
