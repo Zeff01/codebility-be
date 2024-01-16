@@ -211,7 +211,7 @@ export default class UserService {
     return await prisma.users.findMany({
       where: {
         roleType: {
-          equals: "INTERN",
+          equals: RoleTypeEnum.INTERN,
         },
       },
     });
@@ -221,7 +221,7 @@ export default class UserService {
     return await prisma.users.findMany({
       where: {
         roleType: {
-          equals: "MENTOR",
+          equals: RoleTypeEnum.MENTOR,
         },
       },
     });
@@ -242,14 +242,20 @@ export default class UserService {
   }
 
   public async getUserByTeam(position: string) {
-    const positionArr = position.split(",");
-    return await prisma.users.findMany({
-      where: {
-        position: {
-          hasEvery: positionArr,
+    try {
+      return await prisma.users.findMany({
+        where: {
+          position: {
+            equals: position,
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while retrieving the Users by Team"
+      );
+    }
   }
 
   public async forgotPassword(email_address: string) {
