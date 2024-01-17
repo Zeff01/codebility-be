@@ -19,22 +19,22 @@ const expressJSDocSwaggerConfig = {
   },
   servers: [
     {
-      url: `https://codebility-be.onrender.com`,
+      url: `https://codebility-be.onrender.com/{basePath}/{version}/{env}`,
       description: "Express Server",
-      // variables: {
-      //   port: {
-      //     default: port,
-      //   },
-      //   basePath: {
-      //     default: basePath,
-      //   },
-      //   version: {
-      //     default: version,
-      //   },
-      //   env: {
-      //     default: env,
-      //   },
-      // },
+      variables: {
+        port: {
+          default: port,
+        },
+        basePath: {
+          default: basePath,
+        },
+        version: {
+          default: version,
+        },
+        env: {
+          default: env,
+        },
+      },
     },
   ],
   security: {
