@@ -110,7 +110,7 @@ export default class UserController extends Api {
   ) => {
     try {
       const user = await this.userService.getUserInterns();
-      this.send(res, user, HttpStatusCode.Ok, "getUserInterns");
+      this.send(res, user, HttpStatusCode.Ok, "Intern List");
     } catch (e) {
       next(e);
     }
@@ -123,7 +123,7 @@ export default class UserController extends Api {
   ) => {
     try {
       const user = await this.userService.getUserMentors();
-      this.send(res, user, HttpStatusCode.Ok, "getUserMentors");
+      this.send(res, user, HttpStatusCode.Ok, "Mentor List");
     } catch (e) {
       next(e);
     }
@@ -171,7 +171,7 @@ export default class UserController extends Api {
   ) => {
     try {
       const user = await this.userService.getUserByTeam(
-        req.query.position as string
+        req.params.position as string
       );
       this.send(res, user, HttpStatusCode.Ok, "getUserByTeam");
     } catch (e) {
@@ -202,7 +202,12 @@ export default class UserController extends Api {
   ) => {
     try {
       const workexp = await this.userService.addWorkExp(req.body);
-      this.send(res, workexp, HttpStatusCode.Ok, "addWorkExp");
+      this.send(
+        res,
+        workexp,
+        HttpStatusCode.Ok,
+        "Work experience added successfully"
+      );
     } catch (e) {
       next(e);
     }
@@ -231,7 +236,12 @@ export default class UserController extends Api {
       const id = req.params.id as string;
       const updateData = req.body;
       const workExp = await this.userService.updateWorkExp(id, updateData);
-      this.send(res, workExp, HttpStatusCode.Ok, "updateWorkExp");
+      this.send(
+        res,
+        workExp,
+        HttpStatusCode.Ok,
+        "Work experience updated successfully"
+      );
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         // Handle known request errors from Prisma
@@ -258,7 +268,12 @@ export default class UserController extends Api {
     try {
       const id = req.params.id as string;
       const workExp = await this.userService.deleteWorkExp(id);
-      this.send(res, workExp, HttpStatusCode.Ok, "deleteWorkExp");
+      this.send(
+        res,
+        workExp,
+        HttpStatusCode.Ok,
+        "Work experience deleted successfully"
+      );
     } catch (e) {
       next(e);
     }

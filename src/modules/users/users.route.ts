@@ -18,11 +18,48 @@ const users: Router = Router();
 const controller = new Controller();
 
 /**
+ * Users
+ * @typedef {object} Users
+ * @property {string} id - id of user
+ * @property {string} name - Name of user
+ * @property {string} short_bio - short bio of user
+ * @property {string} short_bio - short bio of user
+ * @property {string} image_icon - profile picture of user
+ * @property {string} email_address - email address of user
+ * @property {string} phone_no - phone no of user
+ * @property {string} github_link - github link of user
+ * @property {string} fb_link - fb ink of user
+ * @property {string} linkedin_link - linkedin link of user
+ * @property {string} whatsapp_link - whatsapp link of user
+ * @property {string} skype_link - skype link of user
+ * @property {string} telegram_link - telegram link of user
+ * @property {string} portfolio_website - portfolio website of user
+ * @property {string} tech_stacks - techstacks of user
+ * @property {string} addtl_skills - additional skills
+ * @property {string} work_experience - user work experience
+ * @property {string} password - password of user
+ * @property {string} schedule - schedule of user
+ * @property {string} position - position of user
+ * @property {string} roleType - roleType of user
+ * @property {string} userType - userType of user
+ */
+/**
+ * Work_Experience
+ * @typedef {object} Work_Experience
+ * @property {string} id - Work Experience ID
+ * @property {string} user_id - User ID
+ * @property {string} position - Position
+ * @property {string} company - Company
+ * @property {string} date - Date
+ * @property {string} short_desc - Short Description
+ */
+/**
  * GET /users
  * @summary Get All Users
  * @tags users
  * @return {Users} 200 - success response - application/json
  */
+users.route("/").get(controller.getUsers);
 /**
  * GET /users/{id}
  * @summary Get Users by ID
@@ -30,18 +67,28 @@ const controller = new Controller();
  * @param {string} id.path - id param description
  * @return {Users} 200 - success response - application/json
  */
+users.route("/:id").get(controller.getUserById);
 /**
  * GET /users/interns
  * @summary Get Users by Interns
  * @tags users
  * @return {Users} 200 - success response - application/json
  */
+users.route("/interns").get(controller.getUserInterns);
 /**
  * GET /users/mentors
  * @summary Get Users by Mentors
  * @tags users
  * @return {Users} 200 - success response - application/json
  */
+users.route("/mentors").get(controller.getUserMentors);
+/**
+ * GET /users/team
+ * @summary Get Users by Mentors
+ * @tags users
+ * @return {Users} 200 - success response - application/json
+ */
+users.route("/team/:position").get(controller.getUserByTeam);
 /**
  * POST /users/login
  * @typedef {object} LoginAdminDto
@@ -52,6 +99,11 @@ const controller = new Controller();
  * @param {LoginAdminDto} request.body.required
  * @return {Users} 201 - User Logged In
  */
+users.post(
+  "/login",
+  RequestValidator.validate(LoginAdminDto),
+  controller.login
+);
 /**
  * POST /users/create
  * @typedef {object} CreateUserDto
@@ -67,21 +119,10 @@ const controller = new Controller();
  * @param {CreateUserDto} request.body.required
  * @return {Users} 201 - user created
  */
-/**
- * Users
- * @typedef {object} Users
- * @property {string} id - id of user
- * @property {string} address - address of user
- * @property {string} email_address - email_address of user
- * @property {string} github_link - github_link of user
- * @property {string} portfolio_website - portfolio_website of user
- * @property {string} tech_stacks - tech_stacks of user
- * @property {string} password - password of user
- * @property {string} schedule - schedule of user
- * @property {string} position - position of user
- * @property {string} roleType - roleType of user
- * @property {string} userType - userType of user
- */
+users
+  .route("/create")
+  .post(RequestValidator.validate(CreateUserDto), controller.createUser);
+
 /**
  * PATCH /users/{id}
  * @typedef {object} UpdateUserDto
@@ -92,6 +133,13 @@ const controller = new Controller();
  * @return {Users} 201 - user data updated
  * @security BearerAuth
  */
+users.patch(
+  "/:id",
+  verifyAuthToken,
+  RequestValidator.validate(UpdateUserDto),
+  controller.updateUser
+);
+
 /**
  * PUT /users/changePassword/{id}
  * @typedef {object} changePasswordDto
@@ -104,6 +152,11 @@ const controller = new Controller();
  * @return {Users} 201 - user password updated
  * @security BearerAuth
  */
+users.put(
+  "/changePassword/:id",
+  RequestValidator.validate(changePasswordDto),
+  controller.changeUserPassword
+);
 /**
  * POST /users/forgot-password
  * @typedef {object} EmailDto
@@ -113,8 +166,13 @@ const controller = new Controller();
  * @param {EmailDto} request.body.required
  * @return {Users} 201 - user password updated
  */
+users.post(
+  "/forgot-password",
+  RequestValidator.validate(EmailDto),
+  controller.forgotPassword
+);
 /**
- * POST users/workexp/{id}
+ * POST users/workexp
  * @typedef {object}  WorkExpDto
  * @property {string} user_id.required -- User ID
  * @property {string} position.required -- Position
@@ -124,75 +182,35 @@ const controller = new Controller();
  * @summary Add Work Experience
  * @tags users
  * @param {WorkExpDto} request.body.required
+ * @security BearerAuth
  * @return {Work_Experience} 201 - work experience added
  */
-/**
- * Work_Experience
- * @typedef {object} Work_Experience
- * @property {string} id - Work Experience ID
- * @property {string} user_id - User ID
- * @property {string} position - Position
- * @property {string} company - Company
- * @property {string} date - Date
- * @property {string} short_desc - Short Description
- */
-/**
- *  GET /users/workexp/{userid}
- *  @summary Get Users Work Experiences
- *  @tags users
- *  @param {string} userid.path - user id
- *  @return {Work_Experience} 200 - success response - application/json
- */
-
-users.route("/interns").get(controller.getUserInterns);
-
-users.route("/mentors").get(controller.getUserMentors);
-
-users.route("/team?:position").get(controller.getUserByTeam);
-
-users
-  .route("/create")
-  .post(RequestValidator.validate(CreateUserDto), controller.createUser);
-// .get(verifyAuthToken, controller.getAdminInfo);
-
-users.patch(
-  "/:id",
-  verifyAuthToken,
-  RequestValidator.validate(UpdateUserDto),
-  controller.updateUser
-);
-
-users.post(
-  "/login",
-  RequestValidator.validate(LoginAdminDto),
-  controller.login
-);
-
-users.route("/:id").get(controller.getUserById);
-
-users.route("/").get(controller.getUsers);
-
-users.put(
-  "/changePassword/:id",
-  RequestValidator.validate(changePasswordDto),
-  controller.changeUserPassword
-);
-
-users.post(
-  "/forgot-password",
-  RequestValidator.validate(EmailDto),
-  controller.forgotPassword
-);
-
 users.post(
   "/workexp",
   verifyAuthToken,
   RequestValidator.validate(WorkExpDto),
   controller.addWorkExp
 );
-
-users.route("/workexp/:userid").get(controller.getWorkExpPerUser);
-
+/**
+ *  GET /users/workexp/{userid}
+ *  @summary Get Work Experiences per User
+ *  @tags users
+ *  @param {string} userid.path - user id
+ *  @security BearerAuth
+ *  @return {Work_Experience} 200 - success response - application/json
+ */
+users
+  .route("/workexp/:userid")
+  .get(verifyAuthToken, controller.getWorkExpPerUser);
+/**
+ *  PATCH /users/workexp/{id}
+ *  @summary Update Work Experience per User
+ *  @tags users
+ *  @param {string} id.path - Work Experience ID
+ *  @param {WorkExpDto} request.body.required
+ *  @security BearerAuth
+ *  @return {Work_Experience} 200 - success response - application/json
+ */
 users.patch(
   "/workexp/:id",
   verifyAuthToken,
@@ -200,5 +218,14 @@ users.patch(
   controller.updateWorkExp
 );
 
+/**
+ *  DELETE /users/workexp/{id}
+ *  @summary Delete Work Experience per User
+ *  @tags users
+ *  @param {string} id.path - Work Experience ID
+ *  @security BearerAuth
+ *  @return {Work_Experience} 200 - success response - application/json
+ */
 users.delete("/workexp/:id", verifyAuthToken, controller.deleteWorkExp);
+
 export default users;
