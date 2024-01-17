@@ -1,46 +1,46 @@
-import * as path from 'path';
-import appConfig from './app.config';
-import environment from '@/lib/environment';
+import * as path from "path";
+import appConfig from "./app.config";
+import environment from "@/lib/environment";
 
 const { env, port } = environment;
 const {
   api: { basePath, version },
   docs: { swaggerUIPath, apiDocsPath },
 } = appConfig;
-const baseDir = path.join(__dirname, '../../');
+const baseDir = path.join(__dirname, "../../");
 const expressJSDocSwaggerConfig = {
   info: {
-    version: '1.0.0',
-    title: 'Rest Api',
-    description: 'Api specs for',
+    version: "1.0.0",
+    title: "Rest Api",
+    description: "Api specs for",
     license: {
-      name: 'MIT',
+      name: "MIT",
     },
   },
   servers: [
     {
-      url: `${environment.appUrl}:${port}/{basePath}/{version}/{env}`,
-      description: 'Express Server',
-      variables: {
-        port: {
-          default: port,
-        },
-        basePath: {
-          default: basePath,
-        },
-        version: {
-          default: version,
-        },
-        env: {
-          default: env,
-        },
-      },
+      url: `https://codebility-be.onrender.com`,
+      description: "Express Server",
+      // variables: {
+      //   port: {
+      //     default: port,
+      //   },
+      //   basePath: {
+      //     default: basePath,
+      //   },
+      //   version: {
+      //     default: version,
+      //   },
+      //   env: {
+      //     default: env,
+      //   },
+      // },
     },
   ],
   security: {
     BearerAuth: {
-      type: 'http',
-      scheme: 'bearer',
+      type: "http",
+      scheme: "bearer",
     },
   },
   baseDir,
