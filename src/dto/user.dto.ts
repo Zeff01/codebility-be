@@ -271,3 +271,25 @@ export class UpdateWorkExpDto {
   @IsOptional()
   short_desc?: string;
 }
+
+export class UserDto {
+  @IsUUID()
+  @IsNotEmpty()
+  id: string;
+
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  emailVerified: string;
+
+  @IsString()
+  @IsNotEmpty()
+  image: string;
+}
