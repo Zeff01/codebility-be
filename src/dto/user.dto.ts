@@ -211,7 +211,7 @@ export class changePasswordDto {
   @IsNotEmpty()
   newPassword: string;
 }
-export class WorkExpDto {
+export class AddWorkExpDto {
   @IsString()
   @IsNotEmpty()
   user_id: string;
@@ -231,4 +231,43 @@ export class WorkExpDto {
   @IsString()
   @IsOptional()
   short_desc: string;
+}
+export class WorkExpDto {
+  @IsString()
+  @IsNotEmpty()
+  id?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  position?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  company?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  date?: string;
+
+  @IsString()
+  @IsOptional()
+  short_desc?: string;
+}
+
+export class UpdateWorkExpDto {
+  @IsString()
+  @IsOptional()
+  position?: string;
+
+  @IsString()
+  @IsOptional()
+  company?: string;
+
+  @IsString()
+  @IsOptional()
+  date?: string;
+
+  @IsString()
+  @IsOptional()
+  short_desc?: string;
 }

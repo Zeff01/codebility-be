@@ -4,14 +4,17 @@ import {
   RoleTypeEnum,
   type Users,
   $Enums,
+  Work_Experience,
 } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import LogMessage from "@/decorators/log-message.decorator";
 import {
+  AddWorkExpDto,
   CreateUserDto,
   EmailDto,
   LoginAdminDto,
   UpdateUserDto,
+  UpdateWorkExpDto,
   WorkExpDto,
 } from "@/dto/user.dto";
 import {
@@ -61,15 +64,19 @@ export default class UserService {
     }
   }
   // @LogMessage<[Users]>({ message: "Work Experience added" })
-  public async addWorkExp(data: WorkExpDto) {
+  public async addWorkExp({ user_id, position, company, date, short_desc }) {
     try {
       return await prisma.work_Experience.create({
         data: {
-          user_id: data.user_id,
-          position: data.position,
-          company: data.company,
-          date: data.date,
-          short_desc: data.short_desc,
+          position,
+          company,
+          date,
+          short_desc,
+          users: {
+            connect: {
+              id: user_id,
+            },
+          },
         },
       });
     } catch (error) {
@@ -95,16 +102,27 @@ export default class UserService {
       },
     });
   }
-  public async getUsers(data: Users) {
+  public async getUsers(id: string) {
     return await prisma.users.findMany({
       where: {
+        id: id,
         userType: {
-          in: ["USER", "ADMIN"],
+          in: [UserTypeEnum.USER, UserTypeEnum.ADMIN],
         },
+      },
+      include: {
+        work_experience: true,
+        org_chart: true,
+        time_logs: true,
+        todo_list: true,
+        UserProjects: true,
+        clients: true,
+        Notes: true,
       },
     });
   }
-  public async updateWorkExp(id: string, data: WorkExpDto) {
+
+  public async updateWorkExp(id: string, data: UpdateWorkExpDto) {
     try {
       return await prisma.work_Experience.update({
         where: {
@@ -120,12 +138,13 @@ export default class UserService {
     }
   }
 
-  public async deleteWorkExp(id: string) {
+  public async deleteWorkExp(id: string, data: Work_Experience) {
     try {
       return await prisma.work_Experience.delete({
         where: {
-          id: id,
+          id,
         },
+        select: { id: true },
       });
     } catch (error) {
       console.error(error);
@@ -146,6 +165,7 @@ export default class UserService {
             in: [UserTypeEnum.ADMIN, UserTypeEnum.USER],
           },
         },
+        include: { work_experience: true },
       });
 
       if (!isExist) {

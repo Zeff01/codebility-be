@@ -36,8 +36,9 @@ model Users {
   userType          UserTypeEnum      @default(USER)
   work_experience   Work_Experience[]
   org_chart         org_chart[]
-  time_logs         time_logs?
-  todo_list         todo_list?
+  //test time_logs, todo_list
+  time_logs         time_logs[]
+  todo_list         todo_list[]
   UserProjects      UserProjects[]
   clients           UserClients[]
   Notes             Notes[]

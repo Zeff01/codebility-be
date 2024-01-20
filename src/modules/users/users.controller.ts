@@ -234,8 +234,8 @@ export default class UserController extends Api {
   ) => {
     try {
       const id = req.params.id as string;
-      const updateData = req.body;
-      const workExp = await this.userService.updateWorkExp(id, updateData);
+      const data = req.body;
+      const workExp = await this.userService.updateWorkExp(id, data);
       this.send(
         res,
         workExp,
@@ -267,7 +267,7 @@ export default class UserController extends Api {
   ) => {
     try {
       const id = req.params.id as string;
-      const workExp = await this.userService.deleteWorkExp(id);
+      const workExp = await this.userService.deleteWorkExp(id, req.body);
       this.send(
         res,
         workExp,
