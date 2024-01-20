@@ -197,3 +197,16 @@ enum PriorityLevelEnum {
   MEDIUM
   HIGH
 }
+
+
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+
+  @@unique([email])
+  @@map("users")
+}
