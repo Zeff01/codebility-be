@@ -176,7 +176,7 @@ users.post(
 /**
  * POST /users/workexp
  * @typedef {object}  WorkExpDto
- * @property {string} user_id.required -- User ID
+ * @param {string} userid.path - id param description
  * @property {string} position.required -- Position
  * @property {string} company.required -- Company Name
  * @property {string} date.required -- Date
@@ -208,7 +208,7 @@ users
  *  PATCH /users/workexp/{id}
  *  @summary Update Work Experience per User
  *  @tags users
- *  @param {string} id.path - Work Experience ID
+ *  @param {string} userid.path - Work Experience ID
  *  @param {WorkExpDto} request.body.required
  *  @security BearerAuth
  *  @return {Work_Experience} 200 - success response - application/json
@@ -224,7 +224,7 @@ users.patch(
  *  DELETE /users/workexp/{id}
  *  @summary Delete Work Experience per User
  *  @tags users
- *  @param {string} id.path - Work Experience ID
+ *  @param {string} userid.path - Work Experience ID
  *  @security BearerAuth
  *  @return {Work_Experience} 200 - success response - application/json
  */
