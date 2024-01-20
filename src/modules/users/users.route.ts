@@ -113,6 +113,8 @@ users.post(
  * @property {string} github_link.required - The github_link
  * @property {string} portfolio_website.required - The portfolio_website
  * @property {string} tech_stacks.required - The tech_stacks
+ * @property {string} schedule.required - The schedule
+ * @property {string} position.required - The position
  * @property {string} password.required - The password
  * @summary Create user
  * @tags users
@@ -172,7 +174,7 @@ users.post(
   controller.forgotPassword
 );
 /**
- * POST users/workexp
+ * POST /users/workexp
  * @typedef {object}  WorkExpDto
  * @property {string} user_id.required -- User ID
  * @property {string} position.required -- Position
