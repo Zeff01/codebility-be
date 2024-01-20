@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { HttpNotFoundError } from "@/lib/errors";
 
 export default class PrismaUserService {
   /*  public async getUserById(id: string) {
@@ -20,9 +21,8 @@ export default class PrismaUserService {
   public async updateUserById(email: string, updateBody: any) {
     const userEmail = await this.getUserByEmail(email);
 
-    console.log("userEmail", userEmail);
     if (!userEmail) {
-      throw new Error("User not found");
+      throw new HttpNotFoundError("User not found");
     }
     Object.assign(userEmail, updateBody);
     return prisma.user.update({
