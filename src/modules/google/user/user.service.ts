@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
 import { HttpNotFoundError } from "@/lib/errors";
 
+import { UserDto } from "@/dto/user.dto";
+
 export default class PrismaUserService {
   /*  public async getUserById(id: string) {
     return prisma.user.findUnique({
@@ -18,7 +20,7 @@ export default class PrismaUserService {
     });
   }
 
-  public async updateUserById(email: string, updateBody: any) {
+  public async updateUserById(email: string, updateBody: UserDto) {
     const userEmail = await this.getUserByEmail(email);
 
     if (!userEmail) {
