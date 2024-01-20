@@ -42,6 +42,7 @@ export default class TimeLogsController extends Api {
   ) => {
     try {
       const logs = await this.timeLogsService.createTimeOut(req.body);
+
       this.send(res, logs, HttpStatusCode.Created, "createTimeOut");
     } catch (e) {
       next(e);
@@ -55,6 +56,7 @@ export default class TimeLogsController extends Api {
   ) => {
     try {
       const logs = await this.timeLogsService.createTimeIn(req.body);
+      console.log(logs);
       this.send(res, logs, HttpStatusCode.Created, "createTimeIn");
     } catch (e) {
       next(e);

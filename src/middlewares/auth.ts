@@ -1,8 +1,8 @@
-import { type NextFunction, type Request, type Response } from 'express';
-import { HttpUnAuthorizedError } from '@/lib/errors';
-import JwtUtil from '@/lib/jwt';
-import UserService from '@/modules/users/users.service';
-import { UserTypeEnum } from '@prisma/client';
+import { type NextFunction, type Request, type Response } from "express";
+import { HttpUnAuthorizedError } from "@/lib/errors";
+import JwtUtil from "@/lib/jwt";
+import UserService from "@/modules/users/users.service";
+import { UserTypeEnum } from "@prisma/client";
 
 const userService = new UserService();
 
@@ -13,9 +13,9 @@ export const verifyAuthToken = async (
 ) => {
   const authorizationHeader = req.headers?.authorization;
 
-  if (!authorizationHeader?.startsWith('Bearer ')) {
+  if (!authorizationHeader?.startsWith("Bearer ")) {
     // If no Authorization header or it doesn't start with 'Bearer'
-    next(new HttpUnAuthorizedError('Unauthorized - Missing or invalid token'));
+    next(new HttpUnAuthorizedError("Unauthorized - Missing or invalid token"));
     return;
   }
 
@@ -26,7 +26,7 @@ export const verifyAuthToken = async (
   const decodedPayload = JwtUtil.verifyToken(token, secretKey);
 
   if (!decodedPayload) {
-    next(new HttpUnAuthorizedError('Unauthorized - Invalid token'));
+    next(new HttpUnAuthorizedError("Unauthorized - Invalid token"));
     return;
   }
 
