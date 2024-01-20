@@ -207,6 +207,8 @@ model User {
   email         String
   emailVerified DateTime? @map("email_verified")
   image         String?
+  gender        String?
+  address       String?
 
   @@unique([email])
   @@map("users")
