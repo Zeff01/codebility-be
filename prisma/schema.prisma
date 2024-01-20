@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Users {
-  id                String            @id @default(uuid()) @map("_id")
+  id                String            @id @default(uuid()) @map("_id") 
   name              String
   short_bio         String?
   image_icon        String?
@@ -48,7 +48,7 @@ model Users {
 
 model Work_Experience {
   id         String   @id @default(uuid()) @map("_id")
-  user_id    String
+  user_id    String 
   users      Users    @relation(fields: [user_id], references: [id])
   position   String
   company    String
@@ -60,7 +60,7 @@ model Work_Experience {
 
 model org_chart {
   id            String        @id @default(uuid()) @map("_id")
-  userId        String        @unique
+  userId        String        @unique 
   user          Users         @relation(fields: [userId], references: [id])
   level         Int           @unique
   org_hierarchy Org_Hierarchy @relation(fields: [level], references: [level])
@@ -79,8 +79,8 @@ model Org_Hierarchy {
 
 model time_logs {
   id                 String    @id @default(uuid()) @map("_id")
-  user_id            String    @unique
-  users              Users     @relation(fields: [user_id], references: [id])
+  usersId            String     
+  user              Users     @relation(fields: [usersId], references: [id])
   time_in            DateTime?
   time_out           DateTime?
   total_worked_hours Int?

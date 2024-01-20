@@ -2,7 +2,7 @@ import { type Prisma, type time_logs } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import LogMessage from "@/decorators/log-message.decorator";
 
-import { HttpNotFoundError } from "@/lib/errors";
+import { HttpInternalServerError, HttpNotFoundError } from "@/lib/errors";
 import { GeneratorProvider } from "@/lib/bcrypt";
 import { CreateTimeDto } from "@/dto/timeLogs.dto";
 import { isUUID } from "class-validator";
@@ -29,40 +29,42 @@ export default class TimeLogsService {
   }
 
   public async createTimeIn(data: time_logs) {
-    console.log(data);
-    return await prisma.time_logs.create({
-      data: {
-        user: {
-          connect: {
-            id: data.userId, // connect this time log with the user whose ID is data.userId
-          },
+    try {
+      return await prisma.time_logs.create({
+        data: {
+          usersId: data.usersId,
+
+          time_in: new Date(),
         },
-        time_in: new Date(), // set the time_in to the current date and time
-        email_address: data.email_address,
-      },
-      select: { time_in: true },
-    });
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occured while adding work experience"
+      );
+    }
   }
 
   public async createTimeOut(data: time_logs) {
-    console.log(data);
-    return await prisma.time_logs.create({
-      data: {
-        user: {
-          connect: {
-            id: data.userId, // connect this time log with the user whose ID is data.userId
-          },
+    try {
+      return await prisma.time_logs.create({
+        data: {
+          usersId: data.usersId,
+
+          time_out: new Date(),
         },
-        time_out: new Date(), // set the time_in to the current date and time
-        email_address: data.email_address,
-      },
-      select: { time_in: true },
-    });
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occured while adding work experience"
+      );
+    }
   }
 
-  public async getLogsByUserId(userId: string) {
+  public async getLogsByUserId(usersId: string) {
     const logs = await prisma.time_logs.findMany({
-      where: { userId: userId },
+      where: { usersId },
     });
     return logs;
   }

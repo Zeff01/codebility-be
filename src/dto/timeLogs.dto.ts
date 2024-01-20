@@ -13,9 +13,8 @@ import {
 export class CreateTimeDto {
   @IsString()
   @IsNotEmpty()
-  email_address: string;
+  usersId: string;
 }
- 
 
 // export class UpdateUserDto {
 //   @IsString()
