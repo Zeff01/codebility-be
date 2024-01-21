@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Users {
-  id                String            @id @default(uuid()) @map("_id") 
+  id                String            @id @default(uuid()) @map("_id")
   name              String
   short_bio         String?
   image_icon        String?
@@ -48,7 +48,7 @@ model Users {
 
 model Work_Experience {
   id         String   @id @default(uuid()) @map("_id")
-  user_id    String 
+  user_id    String
   users      Users    @relation(fields: [user_id], references: [id])
   position   String
   company    String
@@ -56,16 +56,20 @@ model Work_Experience {
   short_desc String
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
+  Profile    Profile? @relation(fields: [profileId], references: [id])
+  profileId  String?  @db.ObjectId
 }
 
 model org_chart {
   id            String        @id @default(uuid()) @map("_id")
-  userId        String        @unique 
+  userId        String        @unique
   user          Users         @relation(fields: [userId], references: [id])
   level         Int           @unique
   org_hierarchy Org_Hierarchy @relation(fields: [level], references: [level])
   createdAt     DateTime      @default(now()) @map("created_at")
   updatedAt     DateTime      @default(now()) @map("updated_at")
+  Profile       Profile?      @relation(fields: [profileId], references: [id])
+  profileId     String?       @db.ObjectId
 }
 
 model Org_Hierarchy {
@@ -79,8 +83,8 @@ model Org_Hierarchy {
 
 model time_logs {
   id                 String    @id @default(uuid()) @map("_id")
-  usersId            String     
-  user              Users     @relation(fields: [usersId], references: [id])
+  usersId            String
+  user               Users     @relation(fields: [usersId], references: [id])
   time_in            DateTime?
   time_out           DateTime?
   total_worked_hours Int?
@@ -90,6 +94,8 @@ model time_logs {
   scheduled_time_out DateTime?
   createdAt          DateTime  @default(now()) @map("created_at")
   updatedAt          DateTime  @default(now()) @map("updated_at")
+  Profile            Profile?  @relation(fields: [profileId], references: [id])
+  profileId          String?   @db.ObjectId
 }
 
 model todo_list {
@@ -106,6 +112,8 @@ model todo_list {
   github_link      String
   created_at       DateTime          @default(now())
   updated_at       DateTime          @default(now())
+  Profile          Profile?          @relation(fields: [profileId], references: [id])
+  profileId        String?           @db.ObjectId
 }
 
 model Tags {
@@ -143,6 +151,8 @@ model UserProjects {
   user      Users    @relation(fields: [userId], references: [id])
   projectId String   @unique
   project   Projects @relation(fields: [projectId], references: [id])
+  Profile   Profile? @relation(fields: [profileId], references: [id])
+  profileId String?  @db.ObjectId
 }
 
 model Clients {
@@ -176,11 +186,13 @@ model Notes {
 }
 
 model UserClients {
-  id       String  @id @default(uuid()) @map("_id")
-  userId   String  @unique
-  users    Users   @relation(fields: [userId], references: [id])
-  clientId String  @unique
-  client   Clients @relation(fields: [clientId], references: [id])
+  id        String   @id @default(uuid()) @map("_id")
+  userId    String   @unique
+  users     Users    @relation(fields: [userId], references: [id])
+  clientId  String   @unique
+  client    Clients  @relation(fields: [clientId], references: [id])
+  Profile   Profile? @relation(fields: [profileId], references: [id])
+  profileId String?  @db.ObjectId
 }
 
 enum RoleTypeEnum {
@@ -199,17 +211,51 @@ enum PriorityLevelEnum {
   HIGH
 }
 
-
-
 model User {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
   name          String?
   email         String
   emailVerified DateTime? @map("email_verified")
   image         String?
-  gender        String?
-  address       String?
+  Profile       Profile[]
 
   @@unique([email])
   @@map("users")
+}
+
+model Profile {
+  id                String            @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String            @map("user_id") @db.ObjectId
+  short_bio         String?
+  image_icon        String?
+  address           String
+  email_address     String
+  phone_no          String?
+  github_link       String?
+  fb_link           String?
+  linkedin_link     String?
+  whatsapp_link     String?
+  skype_link        String?
+  telegram_link     String?
+  portfolio_website String
+  tech_stacks       String[]
+  addtl_skills      String[]
+  schedule          String
+  position          String
+  roleType          RoleTypeEnum      @default(INTERN)
+  userType          UserTypeEnum      @default(USER)
+  work_experience   Work_Experience[]
+  org_chart         org_chart[]
+  //test time_logs, todo_list
+  time_logs         time_logs[]
+  todo_list         todo_list[]
+  UserProjects      UserProjects[]
+  clients           UserClients[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profile")
 }
