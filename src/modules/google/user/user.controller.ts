@@ -1,6 +1,7 @@
 import catchAsync from "@/utils/catchAsync";
 
 import PrismaUserService from "./user.service";
+import { HttpNotFoundError } from "@/lib/errors";
 
 export default class GoogleUserController {
   private readonly prismaUserService = new PrismaUserService();
@@ -12,9 +13,18 @@ export default class GoogleUserController {
     );
     res.send(result);
   });
+
   public getUsers = catchAsync(async (req, res) => {
     const result = await this.prismaUserService.queryUsers();
     res.send(result);
+  });
+
+  public getUser = catchAsync(async (req, res) => {
+    const user = await this.prismaUserService.getUserById(req.params.id);
+    if (!user) {
+      throw new HttpNotFoundError("User not found");
+    }
+    res.send(user);
   });
 
   public updateGoogleUser = catchAsync(async (req, res) => {

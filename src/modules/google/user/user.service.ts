@@ -4,13 +4,16 @@ import { HttpBadRequestError, HttpNotFoundError } from "@/lib/errors";
 import { UserDto } from "@/dto/user.dto";
 
 export default class PrismaUserService {
-  /*  public async getUserById(id: string) {
+  public async getUserById(id: string) {
     return prisma.user.findUnique({
       where: {
         id: id,
       },
+      include: {
+        profile: true,
+      },
     });
-  }*/
+  }
 
   public async updateProfile(id: string, profileBody: any) {
     try {
