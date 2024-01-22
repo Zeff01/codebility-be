@@ -4,8 +4,15 @@ import Controller from "@/modules/google/user/user.controller";
 const user: Router = Router();
 const controller = new Controller();
 
-user.get("/", controller.getUsers);
-user.get("/:email", controller.getUser);
-user.post("/:id", controller.updateProfile);
+/**
+ * GET /users
+ * @summary Get All Users
+ * @tags users
+ * @return {User} 200 - success response - application/json
+ */
+
+user.route("/").get(controller.getUsers);
+user.route("/:email").get(controller.getUser);
+user.route("/:id").post(controller.updateProfile);
 
 export default user;
