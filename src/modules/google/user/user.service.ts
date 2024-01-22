@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { HttpNotFoundError } from "@/lib/errors";
+import { HttpBadRequestError, HttpNotFoundError } from "@/lib/errors";
 
 import { UserDto } from "@/dto/user.dto";
 
@@ -12,10 +12,34 @@ export default class PrismaUserService {
     });
   }*/
 
+  public async updateProfile(id: string, profileBody: any) {
+    try {
+      return prisma.profile.upsert({
+        where: { userId: id },
+        update: {
+          ...profileBody,
+        },
+        create: {
+          userId: id,
+          ...profileBody,
+        },
+      });
+    } catch (err) {
+      throw new HttpBadRequestError("Error updating profile", [err.message]);
+    }
+  }
+
   public async getUserByEmail(email: string) {
     return prisma.user.findUnique({
       where: {
         email: email,
+      },
+    });
+  }
+  public async queryUsers() {
+    return prisma.user.findMany({
+      include: {
+        profile: true,
       },
     });
   }

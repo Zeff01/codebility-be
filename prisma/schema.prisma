@@ -56,7 +56,7 @@ model Work_Experience {
   short_desc String
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
-  Profile    Profile? @relation(fields: [profileId], references: [id])
+  profile    Profile? @relation(fields: [profileId], references: [id])
   profileId  String?  @db.ObjectId
 }
 
@@ -68,7 +68,7 @@ model org_chart {
   org_hierarchy Org_Hierarchy @relation(fields: [level], references: [level])
   createdAt     DateTime      @default(now()) @map("created_at")
   updatedAt     DateTime      @default(now()) @map("updated_at")
-  Profile       Profile?      @relation(fields: [profileId], references: [id])
+  profile       Profile?      @relation(fields: [profileId], references: [id])
   profileId     String?       @db.ObjectId
 }
 
@@ -94,7 +94,7 @@ model time_logs {
   scheduled_time_out DateTime?
   createdAt          DateTime  @default(now()) @map("created_at")
   updatedAt          DateTime  @default(now()) @map("updated_at")
-  Profile            Profile?  @relation(fields: [profileId], references: [id])
+  profile            Profile?  @relation(fields: [profileId], references: [id])
   profileId          String?   @db.ObjectId
 }
 
@@ -112,7 +112,7 @@ model todo_list {
   github_link      String
   created_at       DateTime          @default(now())
   updated_at       DateTime          @default(now())
-  Profile          Profile?          @relation(fields: [profileId], references: [id])
+  profile          Profile?          @relation(fields: [profileId], references: [id])
   profileId        String?           @db.ObjectId
 }
 
@@ -151,7 +151,7 @@ model UserProjects {
   user      Users    @relation(fields: [userId], references: [id])
   projectId String   @unique
   project   Projects @relation(fields: [projectId], references: [id])
-  Profile   Profile? @relation(fields: [profileId], references: [id])
+  profile   Profile? @relation(fields: [profileId], references: [id])
   profileId String?  @db.ObjectId
 }
 
@@ -191,7 +191,7 @@ model UserClients {
   users     Users    @relation(fields: [userId], references: [id])
   clientId  String   @unique
   client    Clients  @relation(fields: [clientId], references: [id])
-  Profile   Profile? @relation(fields: [profileId], references: [id])
+  profile   Profile? @relation(fields: [profileId], references: [id])
   profileId String?  @db.ObjectId
 }
 
@@ -217,7 +217,7 @@ model User {
   email         String
   emailVerified DateTime? @map("email_verified")
   image         String?
-  Profile       Profile[]
+  profile       Profile[]
 
   @@unique([email])
   @@map("users")
@@ -226,10 +226,10 @@ model User {
 model Profile {
   id                String            @id @default(auto()) @map("_id") @db.ObjectId
   userId            String            @map("user_id") @db.ObjectId
+  email             String?
   short_bio         String?
   image_icon        String?
-  address           String
-  email_address     String
+  address           String?
   phone_no          String?
   github_link       String?
   fb_link           String?
@@ -237,11 +237,11 @@ model Profile {
   whatsapp_link     String?
   skype_link        String?
   telegram_link     String?
-  portfolio_website String
+  portfolio_website String?
   tech_stacks       String[]
   addtl_skills      String[]
-  schedule          String
-  position          String
+  schedule          String?
+  position          String?
   roleType          RoleTypeEnum      @default(INTERN)
   userType          UserTypeEnum      @default(USER)
   work_experience   Work_Experience[]
@@ -257,5 +257,7 @@ model Profile {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId])
+  @@unique([email])
   @@map("profile")
 }
