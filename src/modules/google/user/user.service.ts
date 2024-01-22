@@ -15,6 +15,17 @@ export default class PrismaUserService {
     });
   }
 
+  public async getUserByEmail(email: string) {
+    return prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+      include: {
+        profile: true,
+      },
+    });
+  }
+
   public async updateProfile(id: string, profileBody: any) {
     try {
       return prisma.profile.upsert({
@@ -32,13 +43,6 @@ export default class PrismaUserService {
     }
   }
 
-  public async getUserByEmail(email: string) {
-    return prisma.user.findUnique({
-      where: {
-        email: email,
-      },
-    });
-  }
   public async queryUsers() {
     return prisma.user.findMany({
       include: {

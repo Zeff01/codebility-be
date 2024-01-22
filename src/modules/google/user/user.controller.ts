@@ -20,7 +20,7 @@ export default class GoogleUserController {
   });
 
   public getUser = catchAsync(async (req, res) => {
-    const user = await this.prismaUserService.getUserById(req.params.id);
+    const user = await this.prismaUserService.getUserByEmail(req.params.email);
     if (!user) {
       throw new HttpNotFoundError("User not found");
     }

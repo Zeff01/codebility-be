@@ -5,7 +5,7 @@ const user: Router = Router();
 const controller = new Controller();
 
 user.get("/", controller.getUsers);
-user.get("/:id", controller.getUser);
+user.get("/:email", controller.getUser);
 user.post("/:id", controller.updateProfile);
 
 export default user;
