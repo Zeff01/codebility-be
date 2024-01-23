@@ -27,8 +27,10 @@ user.route("/:email").get(controller.getUser);
  * @summary Update Users by ID
  * @tags users
  * @param {string} id.path - id param description
- * @return {Users} 200 - success response - application/json
+ * @return {User} 200 - success response - application/json
  */
 user.route("/:id").post(controller.updateProfile);
+
+user.route("/:email").patch(controller.updateGoogleUser);
 
 export default user;
