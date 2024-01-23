@@ -1,5 +1,5 @@
 import { Router } from "express";
-import Controller from "@/modules/google/user/user.controller";
+import Controller from "./user.controller";
 
 const user: Router = Router();
 const controller = new Controller();
@@ -10,7 +10,6 @@ const controller = new Controller();
  * @tags users
  * @return {User} 200 - success response - application/json
  */
-
 user.route("/").get(controller.getUsers);
 user.route("/:email").get(controller.getUser);
 user.route("/:id").post(controller.updateProfile);
