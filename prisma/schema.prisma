@@ -227,6 +227,7 @@ model Profile {
   id                String            @id @default(auto()) @map("_id") @db.ObjectId
   userId            String            @map("user_id") @db.ObjectId
   email             String?
+  gender            String?
   short_bio         String?
   image_icon        String?
   address           String?
