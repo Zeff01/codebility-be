@@ -26,6 +26,7 @@ passport.use(
       profile: GoogleProfile,
       callback: (err: any, user?: any) => void,
     ) => {
+      console.log("profile", profile);
       const newUser: any = {
         googleId: profile?.id,
         name: profile?._json.name,
