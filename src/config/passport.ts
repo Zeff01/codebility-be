@@ -1,19 +1,31 @@
 import prisma from "@/lib/prisma";
-
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import passport from "passport";
+
+interface GoogleProfile {
+  id: string;
+  _json: {
+    name: string;
+    picture: string;
+  };
+  emails: Array<{ value: string; verified: boolean }>;
+}
 
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientID: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
       callbackURL: `${process.env.APP_BASE_API}/auth/google/callback`,
       scope: ["profile", "email"],
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
-    async function (accessToken, refreshToken, profile, callback) {
-      console.log(profile);
+    async (
+      _: string,
+      __: string,
+      profile: GoogleProfile,
+      callback: (err: any, user?: any) => void,
+    ) => {
       const newUser: any = {
         googleId: profile?.id,
         name: profile?._json.name,
@@ -43,10 +55,10 @@ passport.use(
   ),
 );
 
-passport.serializeUser((user, done) => {
+passport.serializeUser((user: any, done) => {
   done(null, user);
 });
 
-passport.deserializeUser((user: string, done) => {
+passport.deserializeUser((user: any, done) => {
   done(null, user);
 });
