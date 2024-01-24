@@ -36,7 +36,7 @@ model Users {
   userType          UserTypeEnum      @default(USER)
   work_experience   Work_Experience[]
   org_chart         org_chart[]
-  //test time_logs, todo_list
+  // test time_logs, todo_list
   time_logs         time_logs[]
   todo_list         todo_list[]
   UserProjects      UserProjects[]
@@ -212,14 +212,18 @@ enum PriorityLevelEnum {
 }
 
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  googleId      String
   name          String?
-  email         String
-  emailVerified DateTime? @map("email_verified")
+  email         String?
+  emailVerified Boolean? @map("email_verified")
   image         String?
-  profile       Profile[]
+  provider      String?
+  google        Json?
+  profile       Profile?
 
-  @@unique([email])
+  // @@unique([email])
+  @@unique([googleId])
   @@map("users")
 }
 
@@ -247,7 +251,7 @@ model Profile {
   userType          UserTypeEnum      @default(USER)
   work_experience   Work_Experience[]
   org_chart         org_chart[]
-  //test time_logs, todo_list
+  // test time_logs, todo_list
   time_logs         time_logs[]
   todo_list         todo_list[]
   UserProjects      UserProjects[]
