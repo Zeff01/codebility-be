@@ -26,7 +26,6 @@ passport.use(
       profile: GoogleProfile,
       callback: (err: any, user?: any) => void,
     ) => {
-      console.log("profile", profile);
       const newUser: any = {
         googleId: profile?.id,
         name: profile?._json.name,
@@ -57,9 +56,16 @@ passport.use(
 );
 
 passport.serializeUser((user: any, done) => {
-  done(null, user);
+  done(null, user.id);
 });
 
-passport.deserializeUser((user: any, done) => {
-  done(null, user);
+passport.deserializeUser(async (id: any, done) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id },
+    });
+    done(null, user);
+  } catch (err) {
+    done(err, null);
+  }
 });

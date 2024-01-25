@@ -1,22 +1,24 @@
-import PrismaUserService from "@/modules/google/user/user.service";
 import passport from "passport";
+import { HttpStatusCode } from "axios";
+
 import catchAsync from "@/utils/catchAsync";
+import JwtUtil from "@/lib/jwt";
 
 export default class Auth {
-  private readonly prismaUserService = new PrismaUserService();
-
   public googleLogin = passport.authenticate("google");
 
-  public googleCallback = catchAsync(async (req, res) => {
-    res.redirect(`${process.env.APP_BASE_API}/dashboard`);
+  public googleCallback = catchAsync(async (req: any, res) => {
+    const token = JwtUtil.generateToken(req.user);
+    res.cookie("x-auth-cookie", token);
+    res.redirect(`${process.env.CLIENT_URL}/dashboard`);
   });
 
   public googleLoginSuccess = catchAsync(async (req, res) => {
-    if (req.user) {
-      res.status(200).json({
-        error: false,
+    if (req.cookies) {
+      res.status(HttpStatusCode.Ok).json({
+        success: true,
         message: "Successfully Logged In",
-        user: req.user,
+        data: req.user,
       });
     } else {
       res.status(403).json({ error: true, message: "Not Authorized" });
