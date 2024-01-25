@@ -2,6 +2,7 @@ import cors from "cors";
 import nocache from "nocache";
 import express from "express";
 import cookieSession from "cookie-session";
+import cookieParser from "cookie-parser";
 import passport from "passport";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -22,6 +23,7 @@ class App {
   constructor() {
     this.express = express();
     this.cookieSession();
+    this.cookieParser();
     this.passport();
     this.setMiddlewares();
     this.disableSettings();
@@ -39,6 +41,9 @@ class App {
       }),
     );
   }
+  private cookieParser(): void {
+    this.express.use(cookieParser());
+  }
 
   private passport() {
     this.express.use(passport.initialize());
@@ -46,15 +51,25 @@ class App {
   }
 
   private setMiddlewares(): void {
-    this.express.use(cors());
-    /*    this.express.use(
+    this.express.use(
+      "*",
+      cors({
+        origin: "http://localhost:3000",
+        methods: "GET,POST,PUT,DELETE,PATCH",
+        credentials: true,
+        allowedHeaders: "your-custom-headers",
+      }),
+    );
+    this.express.use(
       cookieSession({
         name: "session",
         keys: ["codebility"],
         maxAge: 24 * 60 * 60 * 100,
       }),
-    );*/
-
+    );
+    this.express.use(cookieParser());
+    this.express.use(passport.initialize());
+    this.express.use(passport.session());
     this.express.use(morgan("dev"));
     this.express.use(nocache());
     this.express.use(express.json());
