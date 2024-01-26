@@ -147,7 +147,7 @@ model Projects {
 
 model UserProjects {
   id        String   @id @default(uuid()) @map("_id")
-  userId    String[]  @unique
+  userId    String[]  
   user      Users    @relation(fields: [userId], references: [id])
   projectId String   @unique
   project   Projects @relation(fields: [projectId], references: [id])
