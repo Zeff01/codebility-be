@@ -15,8 +15,8 @@ model Users {
   name              String
   short_bio         String?
   image_icon        String?
-  address           String
-  email_address     String
+  address           String?
+  email_address     String?
   phone_no          String?
   github_link       String?
   fb_link           String?
@@ -24,23 +24,24 @@ model Users {
   whatsapp_link     String?
   skype_link        String?
   telegram_link     String?
-  portfolio_website String
+  portfolio_website String?
   tech_stacks       String[]
   addtl_skills      String[]
   password          String
   created_at        DateTime          @default(now())
   updated_at        DateTime          @default(now())
-  schedule          String
+  schedule          String?
   position          String[]
   roleType          RoleTypeEnum      @default(INTERN)
   userType          UserTypeEnum      @default(USER)
   work_experience   Work_Experience[]
   org_chart         org_chart[]
+  client  Clients[]
   // test time_logs, todo_list
   time_logs         time_logs[]
   todo_list         todo_list[]
   UserProjects      UserProjects[]
-  clients           UserClients[]
+  UserClients       UserClients[]
   Notes             Notes[]
 
   @@unique([email_address])
@@ -148,7 +149,7 @@ model Projects {
 model UserProjects {
   id        String   @id @default(uuid()) @map("_id")
   userId    String[]  @unique
-  user      Users    @relation(fields: [userId], references: [id])
+  Users      Users    @relation(fields: [userId], references: [id])
   projectId String   @unique
   project   Projects @relation(fields: [projectId], references: [id])
   profile   Profile? @relation(fields: [profileId], references: [id])
@@ -157,6 +158,8 @@ model UserProjects {
 
 model Clients {
   id             String        @id @default(uuid()) @map("_id")
+  users_Id    String 
+  users      Users    @relation(fields: [users_Id], references: [id])
   company_name   String
   company_logo   String?
   working_hours  String[]
@@ -169,7 +172,7 @@ model Clients {
   updated_at     DateTime      @default(now())
   project_list   String[]
   projects       Projects[]
-  user           UserClients[]
+  UserClients UserClients?
 }
 
 model Notes {
@@ -187,8 +190,8 @@ model Notes {
 
 model UserClients {
   id        String   @id @default(uuid()) @map("_id")
-  userId    String   @unique
-  users     Users    @relation(fields: [userId], references: [id])
+  users_Id    String[]   @unique
+  user     Users    @relation(fields: [users_Id], references: [id])
   clientId  String   @unique
   client    Clients  @relation(fields: [clientId], references: [id])
   profile   Profile? @relation(fields: [profileId], references: [id])

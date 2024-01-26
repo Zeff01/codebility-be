@@ -1,4 +1,4 @@
-import { time_logs, type Prisma, type Clients, Projects } from "@prisma/client";
+import { Clients, time_logs, type Prisma, type Projects } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import LogMessage from "@/decorators/log-message.decorator";
 import {
@@ -21,8 +21,9 @@ import { JwtPayload } from "@/types/common.type";
 import { sendEmail } from "@/utils/mailer";
 import { CreateProjectDto, UpdateProjectDto } from "@/dto/project.dto";
 import { isDataURI } from "class-validator";
+import { CreateClientDto, UpdateClientDto } from "@/dto/client.dto";
 
-export default class ProjectsService {
+export default class ClientsService {
   //   public async getUser(
   //     data: Prisma.UsersWhereInput,
   //     select?: Prisma.UsersSelect
@@ -33,46 +34,31 @@ export default class ProjectsService {
   //     });
   //   }
 
-  public async getProjects(data: Projects) {
-    const { id, ...otherFields } = data;
-    return await prisma.projects.findMany({
+  public async getClients(id: string) {
+    return await prisma.clients.findMany({
       where: {
-        id,
-        ...otherFields,
+        id: id,
       },
-      include: { UserProjects: true },
+      include: { UserClients: true },
     });
   }
 
-  public async createProject({
-    project_name,
-    github_link,
-    clientsId,
-    company_name,
-    userId,
-  }) {
+  public async createClient({ company_name, users_Id, clientId }) {
     try {
-      return await prisma.projects.create({
+      return await prisma.clients.create({
         data: {
-          project_name,
-          github_link,
-          Clients: {
-            connectOrCreate: {
-              where: { id: clientsId },
-              create: { company_name: company_name },
+          company_name: company_name,
+          users: {
+            connect: {
+              id: users_Id,
             },
           },
-          UserProjects: {
-            create: {
-              id: userId,
-            },
+          UserClients: {
+            create: { id: clientId },
           },
-          // UserProjects: {
-          //   connectOrCreate: { id: userId },
-          // },
         },
 
-        include: { Clients: true, UserProjects: true },
+        include: { UserClients: true },
       });
     } catch (error) {
       console.error(error);
@@ -228,23 +214,22 @@ export default class ProjectsService {
   //   }
   // }
 
-  public async updateProject(
+  public async updateClient(
     id: string,
-    userId: string,
-    data: UpdateProjectDto
+    users_Id: string,
+    data: UpdateClientDto
   ) {
     try {
-      return await prisma.projects.update({
+      return await prisma.clients.update({
         where: {
-          id: id,
+          id,
         },
         data: {
-          UserProjects: { update: { userId: userId } },
-          project_name: data.project_name,
-          github_link: data.github_link,
+          UserClients: { update: { users_Id: users_Id } },
+          company_name: data.company_name,
         },
 
-        include: { UserProjects: true },
+        include: { UserClients: true },
       });
     } catch (error) {
       console.error(error);
