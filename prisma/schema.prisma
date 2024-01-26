@@ -31,7 +31,7 @@ model Users {
   created_at        DateTime          @default(now())
   updated_at        DateTime          @default(now())
   schedule          String
-  position          String
+  position          String[]
   roleType          RoleTypeEnum      @default(INTERN)
   userType          UserTypeEnum      @default(USER)
   work_experience   Work_Experience[]
@@ -147,7 +147,7 @@ model Projects {
 
 model UserProjects {
   id        String   @id @default(uuid()) @map("_id")
-  userId    String   @unique
+  userId    String[]  @unique
   user      Users    @relation(fields: [userId], references: [id])
   projectId String   @unique
   project   Projects @relation(fields: [projectId], references: [id])
@@ -158,12 +158,12 @@ model UserProjects {
 model Clients {
   id             String        @id @default(uuid()) @map("_id")
   company_name   String
-  company_logo   String
+  company_logo   String?
   working_hours  String[]
-  email          String
-  contact_number String
-  linkedin_link  String
-  location       String
+  email          String?
+  contact_number String?
+  linkedin_link  String?
+  location       String?
   company_hist   String[]
   created_at     DateTime      @default(now())
   updated_at     DateTime      @default(now())

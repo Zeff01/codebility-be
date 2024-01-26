@@ -24,35 +24,35 @@ export class CreateProjectDto {
   github_link: string;
 }
 
-// export class IUpdateUserDto {
-//   @IsString()
-//   @IsNotEmpty()
-//   oldPassword: string;
+export class UpdateProjectDto {
+  @IsString()
+  @IsOptional()
+  project_name: string;
 
-//   @IsString()
-//   @IsNotEmpty()
-//   newPassword: string;
+  @IsString()
+  @IsOptional()
+  github_link: string;
 
-//   // @IsString()
-//   // @IsOptional()
-//   // portfolio_website?: string;
+  // @IsString()
+  // @IsOptional()
+  // portfolio_website?: string;
 
-//   // @IsString()
-//   // @IsOptional()
-//   // tech_stacks?: string;
+  // @IsString()
+  // @IsOptional()
+  // tech_stacks?: string;
 
-//   // @IsString()
-//   // @IsOptional()
-//   // password?: string;
+  // @IsString()
+  // @IsOptional()
+  // password?: string;
 
-//   // @IsString()
-//   // @IsOptional()
-//   // schedule?: string;
+  // @IsString()
+  // @IsOptional()
+  // schedule?: string;
 
-//   // @IsString()
-//   // @IsOptional()
-//   // position?: string;
-// }
+  // @IsString()
+  // @IsOptional()
+  // position?: string;
+}
 
 // export class LoginAdminDto {
 //   @IsEmail()

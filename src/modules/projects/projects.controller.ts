@@ -77,33 +77,38 @@ export default class ProjectController extends Api {
   //     }
   //   };
 
-  //   public updateUser = async (
-  //     req: Request,
-  //     res: CustomResponse<Users>,
-  //     next: NextFunction
-  //   ) => {
-  //     try {
-  //       const id = req.params.id as string;
-  //       const updateData = req.body;
-  //       const user = await this.userService.updateUser(id, updateData);
-  //       this.send(res, user, HttpStatusCode.Ok, "updateUser");
-  //     } catch (e) {
-  //       if (e instanceof Prisma.PrismaClientKnownRequestError) {
-  //         // Handle known request errors from Prisma
-  //         next(new HttpBadRequestError("Bad request", [e.message]));
-  //       } else if (e instanceof HttpNotFoundError) {
-  //         // Handle not found errors (e.g., user not found)
-  //         next(e);
-  //       } else {
-  //         // Handle other errors
-  //         next(
-  //           new HttpInternalServerError(
-  //             "An error occurred while updating the user"
-  //           )
-  //         );
-  //       }
-  //     }
-  //   };
+  public updateProject = async (
+    req: Request,
+    res: CustomResponse<Projects>,
+    next: NextFunction
+  ) => {
+    try {
+      const id = req.params.id as string;
+      const userId = req.body.userId;
+      const updateData = req.body;
+      const project = await this.projectsService.updateProject(
+        id,
+        userId,
+        updateData
+      );
+      this.send(res, project, HttpStatusCode.Ok, "updateUser");
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        // Handle known request errors from Prisma
+        next(new HttpBadRequestError("Bad request", [e.message]));
+      } else if (e instanceof HttpNotFoundError) {
+        // Handle not found errors (e.g., user not found)
+        next(e);
+      } else {
+        // Handle other errors
+        next(
+          new HttpInternalServerError(
+            "An error occurred while updating the user"
+          )
+        );
+      }
+    }
+  };
 
   //   public getUserInterns = async (
   //     req: Request,

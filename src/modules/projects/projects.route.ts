@@ -15,7 +15,7 @@ import RequestValidator from "@/middlewares/request-validator";
 import { verifyAuthToken } from "@/middlewares/auth";
 import { CustomResponse } from "@/types/common.type";
 import { Users, Work_Experience } from "@prisma/client";
-import { CreateProjectDto } from "@/dto/project.dto";
+import { CreateProjectDto, UpdateProjectDto } from "@/dto/project.dto";
 
 const projects: Router = Router();
 const controller = new Controller();
@@ -124,9 +124,11 @@ projects.get("/", controller.getProjects);
 //  * @param {CreateUserDto} request.body.required
 //  * @return {Users} 201 - user created
 //  */
-projects
-  .route("/create")
-  .post(RequestValidator.validate(CreateProjectDto), controller.createProject);
+projects.route("/create").post(
+  // verifyAuthToken,
+  RequestValidator.validate(CreateProjectDto),
+  controller.createProject
+);
 
 // /**
 //  * PATCH /users/{id}
@@ -138,12 +140,12 @@ projects
 //  * @return {Users} 201 - user data updated
 //  * @security BearerAuth
 //  */
-// users.patch(
-//   "/:id",
-//   verifyAuthToken,
-//   RequestValidator.validate(UpdateUserDto),
-//   controller.updateUser
-// );
+projects.patch(
+  "/:id",
+  // verifyAuthToken,
+  RequestValidator.validate(UpdateProjectDto),
+  controller.updateProject
+);
 
 // /**
 //  * PUT /users/changePassword/{id}

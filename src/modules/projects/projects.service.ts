@@ -19,7 +19,8 @@ import { GeneratorProvider } from "@/lib/bcrypt";
 import JwtUtil from "@/lib/jwt";
 import { JwtPayload } from "@/types/common.type";
 import { sendEmail } from "@/utils/mailer";
-import { CreateProjectDto } from "@/dto/project.dto";
+import { CreateProjectDto, UpdateProjectDto } from "@/dto/project.dto";
+import { isDataURI } from "class-validator";
 
 export default class ProjectsService {
   //   public async getUser(
@@ -39,22 +40,39 @@ export default class ProjectsService {
         id,
         ...otherFields,
       },
+      include: { UserProjects: true },
     });
   }
 
-  @LogMessage<[Projects]>({ message: "Project Created" })
-  public async createProject({ project_name, github_link, clientsId }) {
+  public async createProject({
+    project_name,
+    github_link,
+    clientsId,
+    company_name,
+    userId,
+  }) {
     try {
       return await prisma.projects.create({
         data: {
           project_name,
           github_link,
           Clients: {
-            connect: {
-              id: clientsId,
+            connectOrCreate: {
+              where: { id: clientsId },
+              create: { company_name: company_name },
             },
           },
+          UserProjects: {
+            create: {
+              id: userId,
+            },
+          },
+          // UserProjects: {
+          //   connectOrCreate: { id: userId },
+          // },
         },
+
+        include: { Clients: true, UserProjects: true },
       });
     } catch (error) {
       console.error(error);
@@ -210,22 +228,31 @@ export default class ProjectsService {
   //   }
   // }
 
-  // @LogMessage<[Users]>({ message: "User Updated" })
-  // public async updateUser(id: string, data: UpdateUserDto) {
-  //   try {
-  //     return await prisma.users.update({
-  //       where: {
-  //         id: id,
-  //       },
-  //       data: data,
-  //     });
-  //   } catch (error) {
-  //     console.error(error);
-  //     throw new HttpInternalServerError(
-  //       "An error occurred while updating the user"
-  //     );
-  //   }
-  // }
+  public async updateProject(
+    id: string,
+    userId: string,
+    data: UpdateProjectDto
+  ) {
+    try {
+      return await prisma.projects.update({
+        where: {
+          id: id,
+        },
+        data: {
+          UserProjects: { update: { userId: userId } },
+          project_name: data.project_name,
+          github_link: data.github_link,
+        },
+
+        include: { UserProjects: true },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while updating the user"
+      );
+    }
+  }
 
   // public async getUserInterns() {
   //   return await prisma.users.findMany({
