@@ -1,22 +1,10 @@
-import { NextFunction, Request, Router } from "express";
+import { Router } from "express";
 import Controller from "./clients.controller";
-import {
-  AddWorkExpDto,
-  CreateUserDto,
-  EmailDto,
-  ICreateMemberDto,
-  LoginAdminDto,
-  UpdateUserDto,
-  UpdateWorkExpDto,
-  WorkExpDto,
-  changePasswordDto,
-} from "@/dto/user.dto";
+
 import RequestValidator from "@/middlewares/request-validator";
-import { verifyAuthToken } from "@/middlewares/auth";
-import { CustomResponse } from "@/types/common.type";
-import { Users, Work_Experience } from "@prisma/client";
-import { CreateProjectDto, UpdateProjectDto } from "@/dto/project.dto";
+
 import { CreateClientDto, UpdateClientDto } from "@/dto/client.dto";
+import { verifyAuthAdminToken } from "@/middlewares/auth";
 
 const clients: Router = Router();
 const controller = new Controller();
@@ -125,11 +113,13 @@ clients.get("/", controller.getClients);
 //  * @param {CreateUserDto} request.body.required
 //  * @return {Users} 201 - user created
 //  */
-clients.route("/create").post(
-  // verifyAuthToken,
-  RequestValidator.validate(CreateClientDto),
-  controller.createClient
-);
+clients
+  .route("/create")
+  .post(
+    verifyAuthAdminToken,
+    RequestValidator.validate(CreateClientDto),
+    controller.createClient
+  );
 
 // /**
 //  * PATCH /users/{id}
@@ -143,7 +133,7 @@ clients.route("/create").post(
 //  */
 clients.patch(
   "/:id",
-  // verifyAuthToken,
+  verifyAuthAdminToken,
   RequestValidator.validate(UpdateClientDto),
   controller.updateClient
 );

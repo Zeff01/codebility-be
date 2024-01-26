@@ -190,7 +190,7 @@ model Notes {
 
 model UserClients {
   id        String   @id @default(uuid()) @map("_id")
-  users_Id    String[]   @unique
+  users_Id    String[]   
   user     Users    @relation(fields: [users_Id], references: [id])
   clientId  String   @unique
   client    Clients  @relation(fields: [clientId], references: [id])
