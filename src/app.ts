@@ -1,22 +1,28 @@
-import cors from 'cors';
-import nocache from 'nocache';
-import express from 'express';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import expressJSDocSwagger from 'express-jsdoc-swagger';
-import home from './home';
-import environment from './lib/environment';
-import expressJSDocSwaggerConfig from './config/express-jsdoc-swagger.config';
-import appConfig from './config/app.config';
-import errorHandler from '@/middlewares/error-handler';
-import routes from '@/modules/index';
-import prismaClient from '@/lib/prisma';
+import cors from "cors";
+import nocache from "nocache";
+import express from "express";
+import cookieSession from "cookie-session";
+import passport from "passport";
+import helmet from "helmet";
+import morgan from "morgan";
+import expressJSDocSwagger from "express-jsdoc-swagger";
+import home from "./home";
+import environment from "./lib/environment";
+import expressJSDocSwaggerConfig from "./config/express-jsdoc-swagger.config";
+import appConfig from "./config/app.config";
+import errorHandler from "@/middlewares/error-handler";
+import routes from "@/modules/index";
+import prismaClient from "@/lib/prisma";
+
+require("@/config/passport.ts");
 
 class App {
   public express: express.Application;
 
   constructor() {
     this.express = express();
+    this.cookieSession();
+    this.passport();
     this.setMiddlewares();
     this.disableSettings();
     this.setRoutes();
@@ -24,18 +30,41 @@ class App {
     this.initializeDocs();
   }
 
+  private cookieSession(): void {
+    this.express.use(
+      cookieSession({
+        name: "session",
+        keys: ["codebility"],
+        maxAge: 24 * 60 * 60 * 100,
+      }),
+    );
+  }
+
+  private passport() {
+    this.express.use(passport.initialize());
+    this.express.use(passport.session());
+  }
+
   private setMiddlewares(): void {
     this.express.use(cors());
-    this.express.use(morgan('dev'));
+    /*    this.express.use(
+      cookieSession({
+        name: "session",
+        keys: ["codebility"],
+        maxAge: 24 * 60 * 60 * 100,
+      }),
+    );*/
+
+    this.express.use(morgan("dev"));
     this.express.use(nocache());
     this.express.use(express.json());
     this.express.use(express.urlencoded({ extended: true }));
     this.express.use(helmet());
-    this.express.use(express.static('public'));
+    this.express.use(express.static("public"));
   }
 
   private disableSettings(): void {
-    this.express.disable('x-powered-by');
+    this.express.disable("x-powered-by");
   }
 
   private setRoutes(): void {
@@ -43,7 +72,7 @@ class App {
       api: { version },
     } = appConfig;
     const { env } = environment;
-    this.express.use('/', home);
+    this.express.use("/", home);
     this.express.use(`/api/${version}/${env}`, routes);
   }
 
