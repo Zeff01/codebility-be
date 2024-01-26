@@ -1,237 +1,79 @@
-import { NextFunction, Request, Router } from "express";
+import { Router } from "express";
 import Controller from "./projects.controller";
-import {
-  AddWorkExpDto,
-  CreateUserDto,
-  EmailDto,
-  ICreateMemberDto,
-  LoginAdminDto,
-  UpdateUserDto,
-  UpdateWorkExpDto,
-  WorkExpDto,
-  changePasswordDto,
-} from "@/dto/user.dto";
+
 import RequestValidator from "@/middlewares/request-validator";
-import { verifyAuthToken } from "@/middlewares/auth";
-import { CustomResponse } from "@/types/common.type";
-import { Users, Work_Experience } from "@prisma/client";
+import { verifyAuthAdminToken } from "@/middlewares/auth";
+
 import { CreateProjectDto, UpdateProjectDto } from "@/dto/project.dto";
 
 const projects: Router = Router();
 const controller = new Controller();
 
 /**
- * Users
- * @typedef {object} Users
- * @property {string} id - id of user
- * @property {string} name - Name of user
- * @property {string} short_bio - short bio of user
- * @property {string} short_bio - short bio of user
- * @property {string} image_icon - profile picture of user
- * @property {string} email_address - email address of user
- * @property {string} phone_no - phone no of user
- * @property {string} github_link - github link of user
- * @property {string} fb_link - fb ink of user
- * @property {string} linkedin_link - linkedin link of user
- * @property {string} whatsapp_link - whatsapp link of user
- * @property {string} skype_link - skype link of user
- * @property {string} telegram_link - telegram link of user
- * @property {string} portfolio_website - portfolio website of user
- * @property {string} tech_stacks - techstacks of user
- * @property {string} addtl_skills - additional skills
- * @property {string} work_experience - user work experience
- * @property {string} password - password of user
- * @property {string} schedule - schedule of user
- * @property {string} position - position of user
- * @property {string} roleType - roleType of user
- * @property {string} userType - userType of user
+ * Projects
+ * @typedef {object} Projects
+ * @property {string} id - id of Project
+ * @property {string} clientsId - id of Client
+ * @property {string} project_name - name of Client
+ * @property {string} github_link - github_link of Client
  */
 /**
- * Work_Experience
- * @typedef {object} Work_Experience
- * @property {string} id - Work Experience ID
- * @property {string} user_id - User ID
- * @property {string} position - Position
- * @property {string} company - Company
- * @property {string} date - Date
- * @property {string} short_desc - Short Description
+ * UserProjects
+ * @typedef {object} UserProjects
+ * @property {string} id - id of UserProjects
+ * @property {array} userId - User ID of UserProjects
+ * @property {string} projectId - projectId of UserProjects
  */
 /**
- * GET /users
- * @summary Get All Users
- * @tags users
- * @return {Users} 200 - success response - application/json
+ * GET /projects
+ * @summary Get Projects
+ * @tags projects
+ * @return {Projects} 200 - success response - application/json
+ * @return {UserProjects} 200 - success response - application/json
  */
 projects.get("/", controller.getProjects);
-// /**
-//  * GET /users/{id}
-//  * @summary Get Users by ID
-//  * @tags users
-//  * @param {string} id.path - id param description
-//  * @return {Users} 200 - success response - application/json
-//  */
-// users.route("/:id").get(controller.getUserById);
-// /**
-//  * GET /users/interns
-//  * @summary Get Users by Interns
-//  * @tags users
-//  * @return {Users} 200 - success response - application/json
-//  */
-// users.route("/interns").get(controller.getUserInterns);
-// /**
-//  * GET /users/mentors
-//  * @summary Get Users by Mentors
-//  * @tags users
-//  * @return {Users} 200 - success response - application/json
-//  */
-// users.route("/mentors").get(controller.getUserMentors);
-// /**
-//  * GET /users/team
-//  * @summary Get Users by Mentors
-//  * @tags users
-//  * @return {Users} 200 - success response - application/json
-//  */
-// users.route("/team/:position").get(controller.getUserByTeam);
-// /**
-//  * POST /users/login
-//  * @typedef {object} LoginAdminDto
-//  * @property {string} email_address.required - The email_address
-//  * @property {string} password.required - The password
-//  * @summary Login User
-//  * @tags users
-//  * @param {LoginAdminDto} request.body.required
-//  * @return {Users} 201 - User Logged In
-//  */
-// users.post(
-//   "/login",
-//   RequestValidator.validate(LoginAdminDto),
-//   controller.login
-// );
-// /**
-//  * POST /users/create
-//  * @typedef {object} CreateUserDto
-//  * @property {string} name.required - The name
-//  * @property {string} address.required - The address
-//  * @property {string} email_address.required - The email_address
-//  * @property {string} github_link.required - The github_link
-//  * @property {string} portfolio_website.required - The portfolio_website
-//  * @property {string} tech_stacks.required - The tech_stacks
-//  * @property {string} schedule.required - The schedule
-//  * @property {string} position.required - The position
-//  * @property {string} password.required - The password
-//  * @summary Create user
-//  * @tags users
-//  * @param {CreateUserDto} request.body.required
-//  * @return {Users} 201 - user created
-//  */
-projects.route("/create").post(
-  // verifyAuthToken,
-  RequestValidator.validate(CreateProjectDto),
-  controller.createProject
-);
+/**
+ * POST /projects/create
+ * @typedef {object} CreateProjectDto
+ * @property {string} project_name.required - The project name
+ * @property {string} github_link.required - The project name
+ * @property {string} userId.required - Should be empty
+ * @property {string} clientsId.required - Should be empty
+ * @property {string} company_name.required - company_name of Client
+ * @summary Create Project
+ * @tags projects
+ * @param {CreateUserDto} request.body.required
+ * @return {Projects} 201 - project created
+ * @return {UserProjects} 200 - success response - application/json
+ * @security BearerAuth
+ */
+projects
+  .route("/create")
+  .post(
+    verifyAuthAdminToken,
+    RequestValidator.validate(CreateProjectDto),
+    controller.createProject
+  );
 
-// /**
-//  * PATCH /users/{id}
-//  * @typedef {object} UpdateUserDto
-//  * @summary Edit User Info
-//  * @tags users
-//  * @param {string} id.path - id param description
-//  * @param {UpdateUserDto} request.body.required
-//  * @return {Users} 201 - user data updated
-//  * @security BearerAuth
-//  */
+/**
+ * PATCH /projects/{id}
+ * @typedef {object} UpdateProjectDto
+ * @summary Edit Project Info
+ * @tags projects
+ * @param {string} id.path - id param description
+ * @property {string} project_name.required - project_name Optional
+ * @property {string} github_link.required - github_link Optional
+ * @property {array} userId.required - userId Optional
+ * @param {UpdateUserDto} request.body.required
+ * @return {Projects} 201 - project updated
+ * @return {UserProjects} 200 - success response - application/json
+ * @security BearerAuth
+ */
 projects.patch(
   "/:id",
-  // verifyAuthToken,
+  verifyAuthAdminToken,
   RequestValidator.validate(UpdateProjectDto),
   controller.updateProject
 );
-
-// /**
-//  * PUT /users/changePassword/{id}
-//  * @typedef {object} changePasswordDto
-//  * @property {string} oldPassword.required - The oldPassword
-//  * @property {string} newPassword.required - The newPassword
-//  * @summary Edit User Password
-//  * @tags users
-//  * @param {string} id.path - id param description
-//  * @param {changePasswordDto} request.body.required
-//  * @return {Users} 201 - user password updated
-//  * @security BearerAuth
-//  */
-// users.put(
-//   "/changePassword/:id",
-//   RequestValidator.validate(changePasswordDto),
-//   controller.changeUserPassword
-// );
-// /**
-//  * POST /users/forgot-password
-//  * @typedef {object} EmailDto
-//  * @property {string} email_address.required - The email_address
-//  * @summary Reset User Password
-//  * @tags users
-//  * @param {EmailDto} request.body.required
-//  * @return {Users} 201 - user password updated
-//  */
-// users.post(
-//   "/forgot-password",
-//   RequestValidator.validate(EmailDto),
-//   controller.forgotPassword
-// );
-// /**
-//  * POST /users/workexp
-//  * @typedef {object}  AddWorkExpDto
-//  * @property {string} position.required -- Position
-//  * @property {string} company.required -- Company Name
-//  * @property {string} date.required -- Date
-//  * @property {string} short_desc -- Short Description
-//  * @summary Add Work Experience
-//  * @tags users
-//  * @param {AddWorkExpDto} request.body.required
-//  * @security BearerAuth
-//  * @return {Work_Experience} 201 - work experience added
-//  */
-// users.post(
-//   "/workexp",
-//   verifyAuthToken,
-//   RequestValidator.validate(AddWorkExpDto),
-//   controller.addWorkExp
-// );
-// /**
-//  *  GET /users/workexp/{userid}
-//  *  @summary Get Work Experiences per User
-//  *  @tags users
-//  *  @param {string} userid.path - user id
-//  *  @security BearerAuth
-//  *  @return {Work_Experience} 200 - success response - application/json
-//  */
-// users
-//   .route("/workexp/:userid")
-//   .get(verifyAuthToken, controller.getWorkExpPerUser);
-// /**
-//  *  PATCH /users/workexp/{id}
-//  *  @summary Update Work Experience per User
-//  *  @tags users
-//  *  @param {string} id.path - Work Experience ID
-//  *  @param {UpdateWorkExpDto} request.body.required
-//  *  @security BearerAuth
-//  *  @return {Work_Experience} 200 - success response - application/json
-//  */
-// users.patch(
-//   "/workexp/:id",
-//   verifyAuthToken,
-//   RequestValidator.validate(UpdateWorkExpDto),
-//   controller.updateWorkExp
-// );
-
-// /**
-//  *  DELETE /users/workexp/{id}
-//  *  @summary Delete Work Experience per User
-//  *  @tags users
-//  *  @param {string} id.path - Work Experience ID
-//  *  @security BearerAuth
-//  *  @return {Work_Experience} 200 - success response - application/json
-//  */
-// users.delete("/workexp/:id", verifyAuthToken, controller.deleteWorkExp);
 
 export default projects;
