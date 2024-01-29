@@ -20,17 +20,50 @@ export class CreateUserDto {
   name: string;
 
   @IsString()
+  @IsOptional()
+  short_bio: string;
+
+  @IsUrl()
+  @IsOptional()
+  image_icon: string;
+
+  @IsString()
   @IsNotEmpty()
   address: string;
 
   @IsEmail()
+  @IsNotEmpty()
   email_address: string;
 
-  @IsString()
+  @IsMobilePhone()
+  @IsOptional()
+  phone_no: string;
+
+  @IsUrl()
   @IsOptional()
   github_link: string;
 
-  @IsString()
+  @IsUrl()
+  @IsOptional()
+  fb_link: string;
+
+  @IsUrl()
+  @IsOptional()
+  linkedin_link: string;
+
+  @IsUrl()
+  @IsOptional()
+  whatsapp_link: string;
+
+  @IsUrl()
+  @IsOptional()
+  skype_link: string;
+
+  @IsUrl()
+  @IsOptional()
+  telegram_link: string;
+
+  @IsUrl()
   @IsOptional()
   portfolio_website: string;
 
@@ -46,7 +79,7 @@ export class CreateUserDto {
   @IsOptional()
   schedule: string;
 
-  @IsString()
+  @IsArray()
   @IsOptional()
   position: string;
 }
@@ -155,19 +188,19 @@ export class UpdateUserDto {
   @IsOptional()
   linkedin_link?: string;
 
-  @IsString()
+  @IsUrl()
   @IsOptional()
   whatsapp_link?: string;
 
-  @IsString()
+  @IsUrl()
   @IsOptional()
   skype_link: string;
 
-  @IsString()
+  @IsUrl()
   @IsOptional()
   telegram_link: string;
 
-  @IsString()
+  @IsUrl()
   @IsOptional()
   portfolio_website?: string;
 
@@ -178,10 +211,6 @@ export class UpdateUserDto {
   @IsArray()
   @IsOptional()
   addtl_skills?: string;
-
-  @IsString()
-  @IsOptional()
-  password?: string;
 
   @IsString()
   @IsOptional()
