@@ -102,41 +102,44 @@ model time_logs {
 model todo_list {
   id               String            @id @default(uuid()) @map("_id")
   title            String
-  subheader        String
-  full_description String
-  tags             TodoTags[]
-  users_id         String            @unique
-  users            Users             @relation(fields: [users_id], references: [id])
-  project_id       String?           @unique
+  subheader        String?
+  full_description String?
+  users_id         String?            
+  users            Users?             @relation(fields: [users_id], references: [id])
+  project_id       String?           
   projects         Projects?         @relation(fields: [project_id], references: [id])
   prio_level       PriorityLevelEnum
-  github_link      String
+  github_link      String?
   created_at       DateTime          @default(now())
   updated_at       DateTime          @default(now())
+  Tags Tags[]
   profile          Profile?          @relation(fields: [profileId], references: [id])
   profileId        String?           @db.ObjectId
+  TodoTags TodoTags?
 }
 
 model Tags {
   id         String     @id @default(uuid()) @map("_id")
-  tag        String     @unique
+  tag        String     
   created_at DateTime   @default(now())
   updated_at DateTime   @default(now())
-  todo_list  TodoTags[]
+  Todos    String  
+  todo_list      todo_list     @relation(fields: [Todos], references: [id])
+  TodoTags  TodoTags[]
 }
 
 model TodoTags {
   id        String    @id @default(uuid()) @map("_id")
-  todo_id   String
+  todo_id   String  @unique
   todo_list todo_list @relation(fields: [todo_id], references: [id])
-  tag_id    String
-  tags      Tags      @relation(fields: [tag_id], references: [id])
+  tagId    String[]  
+  tags      Tags?     @relation(fields: [tagId], references: [id])
 }
 
 model Projects {
   id           String        @id @default(uuid()) @map("_id")
   clientsId    String
-   Clients      Clients       @relation(fields: [clientsId], references: [id])
+   Clients      Clients?       @relation(fields: [clientsId], references: [id])
   project_name String
   github_link  String
   createdAt    DateTime      @default(now()) @map("created_at")
