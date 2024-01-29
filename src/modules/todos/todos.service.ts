@@ -83,8 +83,8 @@ export default class TodosService {
 
   public async updateTodo(
     id: string,
-    tag_name: string,
-    todo_id: string,
+    tag: string,
+    tagId: string,
     data: UpdateTodoDto
   ) {
     try {
@@ -100,8 +100,8 @@ export default class TodosService {
           github_link: data.github_link,
           Tags: {
             update: {
-              where: { id },
-              data: { todo_id: todo_id, tag_name: tag_name },
+              where: { id: tagId },
+              data: { tag: tag },
             },
           },
         },
@@ -111,6 +111,30 @@ export default class TodosService {
       console.error(error);
       throw new HttpInternalServerError(
         "An error occurred while updating the user"
+      );
+    }
+  }
+
+  public async deleteTodo(id: string) {
+    try {
+      await prisma.todo_list.update({
+        where: {
+          id,
+        },
+        data: {
+          Tags: {
+            deleteMany: {},
+          },
+        },
+        include: { Tags: true },
+      });
+      await prisma.todo_list.delete({
+        where: { id },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occured while deleting user work experince"
       );
     }
   }

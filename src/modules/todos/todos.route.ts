@@ -147,6 +147,12 @@ todos.patch(
   controller.updateTodo
 );
 
+todos.delete(
+  "/remove/:id",
+  //verifyAuthToken,
+  controller.deleteTodo
+);
+
 // /**
 //  * PUT /users/changePassword/{id}
 //  * @typedef {object} changePasswordDto

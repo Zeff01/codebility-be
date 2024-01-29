@@ -20,7 +20,7 @@ const expressJSDocSwaggerConfig = {
   servers: [
     {
       url: `https://codebility-be.onrender.com/{basePath}/{version}/{env}`,
-      // url: `${environment.appUrl}:${port}/{basePath}/{version}/{env}`,
+      //url: `${environment.appUrl}:${port}/{basePath}/{version}/{env}`,
       description: "Express Server",
       variables: {
         port: {

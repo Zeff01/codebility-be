@@ -86,13 +86,13 @@ export default class TodoController extends Api {
   ) => {
     try {
       const id = req.params.id as string;
-      const todo_id = req.body.todo_id;
-      const tag_name = req.body.tag_name;
+      const tagId = req.body.tagId;
+      const tag = req.body.tag;
       const updateData = req.body;
       const todo = await this.todosService.updateTodo(
         id,
-        todo_id,
-        tag_name,
+        tag,
+        tagId,
         updateData
       );
       this.send(res, todo, HttpStatusCode.Ok, "updateTodos");
@@ -111,6 +111,20 @@ export default class TodoController extends Api {
           )
         );
       }
+    }
+  };
+
+  public deleteTodo = async (
+    req: Request,
+    res: CustomResponse<todo_list>,
+    next: NextFunction
+  ) => {
+    try {
+      const id = req.params.id as string;
+      const todo = await this.todosService.deleteTodo(id);
+      this.send(res, todo, HttpStatusCode.Ok, "Todo deleted successfully");
+    } catch (e) {
+      next(e);
     }
   };
 }
