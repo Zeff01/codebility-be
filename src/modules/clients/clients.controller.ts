@@ -1,0 +1,84 @@
+import { type NextFunction, type Request } from "express";
+import { Clients, Prisma, Projects, type Users } from "@prisma/client";
+import { HttpStatusCode } from "axios";
+import { type CustomResponse } from "@/types/common.type";
+import Api from "@/lib/api";
+import {
+  HttpBadRequestError,
+  HttpInternalServerError,
+  HttpNotFoundError,
+} from "@/lib/errors";
+import ClientsService from "./clients.service";
+
+export default class ClientController extends Api {
+  private readonly clientsService = new ClientsService();
+
+  public getClients = async (
+    req: Request,
+    res: CustomResponse<Clients>,
+    next: NextFunction
+  ) => {
+    try {
+      const client = await this.clientsService.getClients(req.body);
+      this.send(res, client, HttpStatusCode.Ok, "Clients");
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  public createClient = async (
+    req: Request,
+    res: CustomResponse<Clients>,
+    next: NextFunction
+  ) => {
+    try {
+      const client = await this.clientsService.createClient(req.body);
+      this.send(res, client, HttpStatusCode.Created, "createClient");
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        // Handle known request errors from Prisma
+        next(new HttpBadRequestError("Bad request", [e.message]));
+      } else {
+        // Handle other errors
+        next(
+          new HttpInternalServerError(
+            "An error occurred while creating the user"
+          )
+        );
+      }
+    }
+  };
+
+  public updateClient = async (
+    req: Request,
+    res: CustomResponse<Projects>,
+    next: NextFunction
+  ) => {
+    try {
+      const id = req.params.id as string;
+      const users_Id = req.body.users_Id;
+      const updateData = req.body;
+      const project = await this.clientsService.updateClient(
+        id,
+        users_Id,
+        updateData
+      );
+      this.send(res, project, HttpStatusCode.Ok, "updateUser");
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        // Handle known request errors from Prisma
+        next(new HttpBadRequestError("Bad request", [e.message]));
+      } else if (e instanceof HttpNotFoundError) {
+        // Handle not found errors (e.g., user not found)
+        next(e);
+      } else {
+        // Handle other errors
+        next(
+          new HttpInternalServerError(
+            "An error occurred while updating the user"
+          )
+        );
+      }
+    }
+  };
+}

@@ -115,8 +115,6 @@ export default class UserService {
         org_chart: true,
         time_logs: true,
         todo_list: true,
-        UserProjects: true,
-        clients: true,
         Notes: true,
       },
     });

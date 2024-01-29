@@ -15,8 +15,8 @@ model Users {
   name              String
   short_bio         String?
   image_icon        String?
-  address           String
-  email_address     String
+  address           String?
+  email_address     String?
   phone_no          String?
   github_link       String?
   fb_link           String?
@@ -24,23 +24,24 @@ model Users {
   whatsapp_link     String?
   skype_link        String?
   telegram_link     String?
-  portfolio_website String
+  portfolio_website String?
   tech_stacks       String[]
   addtl_skills      String[]
   password          String
   created_at        DateTime          @default(now())
   updated_at        DateTime          @default(now())
-  schedule          String
+  schedule          String?
   position          String[]
   roleType          RoleTypeEnum      @default(INTERN)
   userType          UserTypeEnum      @default(USER)
   work_experience   Work_Experience[]
   org_chart         org_chart[]
+  client  Clients[]
   // test time_logs, todo_list
   time_logs         time_logs[]
   todo_list         todo_list[]
   UserProjects      UserProjects[]
-  clients           UserClients[]
+  UserClients       UserClients[]
   Notes             Notes[]
 
   @@unique([email_address])
@@ -101,41 +102,44 @@ model time_logs {
 model todo_list {
   id               String            @id @default(uuid()) @map("_id")
   title            String
-  subheader        String
-  full_description String
-  tags             TodoTags[]
-  users_id         String            @unique
-  users            Users             @relation(fields: [users_id], references: [id])
-  project_id       String?           @unique
+  subheader        String?
+  full_description String?
+  users_id         String?            
+  users            Users?             @relation(fields: [users_id], references: [id])
+  project_id       String?           
   projects         Projects?         @relation(fields: [project_id], references: [id])
   prio_level       PriorityLevelEnum
-  github_link      String
+  github_link      String?
   created_at       DateTime          @default(now())
   updated_at       DateTime          @default(now())
+  Tags Tags[]
   profile          Profile?          @relation(fields: [profileId], references: [id])
   profileId        String?           @db.ObjectId
+  TodoTags TodoTags?
 }
 
 model Tags {
   id         String     @id @default(uuid()) @map("_id")
-  tag        String     @unique
+  tag        String     
   created_at DateTime   @default(now())
   updated_at DateTime   @default(now())
-  todo_list  TodoTags[]
+  Todos    String  
+  todo_list      todo_list     @relation(fields: [Todos], references: [id])
+  TodoTags  TodoTags[]
 }
 
 model TodoTags {
   id        String    @id @default(uuid()) @map("_id")
-  todo_id   String
+  todo_id   String  @unique
   todo_list todo_list @relation(fields: [todo_id], references: [id])
-  tag_id    String
-  tags      Tags      @relation(fields: [tag_id], references: [id])
+  tagId    String[]  
+  tags      Tags?     @relation(fields: [tagId], references: [id])
 }
 
 model Projects {
   id           String        @id @default(uuid()) @map("_id")
   clientsId    String
-   Clients      Clients       @relation(fields: [clientsId], references: [id])
+   Clients      Clients?       @relation(fields: [clientsId], references: [id])
   project_name String
   github_link  String
   createdAt    DateTime      @default(now()) @map("created_at")
@@ -157,6 +161,8 @@ model UserProjects {
 
 model Clients {
   id             String        @id @default(uuid()) @map("_id")
+  users_Id    String 
+  users      Users    @relation(fields: [users_Id], references: [id])
   company_name   String
   company_logo   String?
   working_hours  String[]
@@ -169,7 +175,7 @@ model Clients {
   updated_at     DateTime      @default(now())
   project_list   String[]
   projects       Projects[]
-  user           UserClients[]
+  UserClients UserClients?
 }
 
 model Notes {
@@ -187,8 +193,8 @@ model Notes {
 
 model UserClients {
   id        String   @id @default(uuid()) @map("_id")
-  userId    String   @unique
-  users     Users    @relation(fields: [userId], references: [id])
+  users_Id    String[]   
+  user     Users    @relation(fields: [users_Id], references: [id])
   clientId  String   @unique
   client    Clients  @relation(fields: [clientId], references: [id])
   profile   Profile? @relation(fields: [profileId], references: [id])

@@ -1,4 +1,4 @@
-import { time_logs, type Prisma, type Projects } from "@prisma/client";
+import { time_logs, type Prisma, type Clients, Projects } from "@prisma/client";
 import prisma from "@/lib/prisma";
 
 import { HttpInternalServerError } from "@/lib/errors";
