@@ -175,6 +175,10 @@ export class UpdateUserDto {
   @IsOptional()
   tech_stacks?: string;
 
+  @IsArray()
+  @IsOptional()
+  addtl_skills?: string;
+
   @IsString()
   @IsOptional()
   password?: string;
@@ -183,7 +187,7 @@ export class UpdateUserDto {
   @IsOptional()
   schedule?: string;
 
-  @IsString()
+  @IsArray()
   @IsOptional()
   position?: string;
 
