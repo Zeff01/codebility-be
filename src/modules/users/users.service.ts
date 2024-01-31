@@ -5,6 +5,7 @@ import {
   type Users,
   $Enums,
   Work_Experience,
+  UserProjects,
 } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import LogMessage from "@/decorators/log-message.decorator";
@@ -51,7 +52,7 @@ export default class UserService {
           tech_stacks: data.tech_stacks,
           password: GeneratorProvider.generateHash(data.password),
           schedule: data.schedule,
-          position: data.position,
+          position: [data.position],
           roleType: RoleTypeEnum.MENTOR,
           userType: UserTypeEnum.ADMIN,
         },
@@ -95,28 +96,22 @@ export default class UserService {
     });
   }
 
-  public async getWorkExpPerUser(userid: string) {
+  public async getWorkExpPerUser(id: string) {
     return await prisma.work_Experience.findMany({
       where: {
-        user_id: userid,
+        userWorkExpId: id,
       },
     });
   }
-  public async getUsers(id: string) {
+  public async getAllUsers(id: string) {
     return await prisma.users.findMany({
       where: {
-        id: id,
-        userType: {
-          in: [UserTypeEnum.USER, UserTypeEnum.ADMIN],
-        },
+        id,
       },
-      include: {
-        work_experience: true,
-        org_chart: true,
-        time_logs: true,
-        todo_list: true,
-        Notes: true,
-      },
+      // include: {
+      //   time_logs: {
+      //     select: { time_in: true, time_out:true },
+      //   },
     });
   }
 
@@ -152,7 +147,6 @@ export default class UserService {
     }
   }
   public async login(data: LoginAdminDto) {
-    console.log(data);
     try {
       const isExist = await prisma.users.findFirst({
         where: {
@@ -163,7 +157,6 @@ export default class UserService {
             in: [UserTypeEnum.ADMIN, UserTypeEnum.USER],
           },
         },
-        include: { work_experience: true },
       });
 
       if (!isExist) {
@@ -208,14 +201,14 @@ export default class UserService {
     }
   }
 
-  @LogMessage<[Users]>({ message: "User Updated" })
   public async updateUser(id: string, data: UpdateUserDto) {
+    const { ...updateData } = data;
     try {
       return await prisma.users.update({
         where: {
           id: id,
         },
-        data: data,
+        data: { ...updateData },
       });
     } catch (error) {
       console.error(error);
@@ -249,7 +242,15 @@ export default class UserService {
     try {
       return await prisma.users.findFirst({
         where: { id: id },
-        include: { work_experience: true },
+        include: {
+          work_experience: true,
+          org_chart: true,
+          time_logs: true,
+          todo_list: true,
+          projects: true,
+          clients: true,
+          notes: true,
+        },
       });
     } catch (error) {
       console.error(error);
@@ -259,7 +260,7 @@ export default class UserService {
     }
   }
 
-  public async getUserByTeam(position: string) {
+  public async getUserByTeam(position: []) {
     try {
       return await prisma.users.findMany({
         where: {

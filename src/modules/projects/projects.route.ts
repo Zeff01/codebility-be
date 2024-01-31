@@ -33,6 +33,15 @@ const controller = new Controller();
  */
 projects.get("/", controller.getProjects);
 /**
+ * GET /projects/:userId
+ * @summary Get Projects
+ * @tags projects
+ * @param {string} userId.path - id param description
+ * @return {Projects} 200 - success response - application/json
+ * @return {UserProjects} 200 - success response - application/json
+ */
+projects.get("/:id", controller.getProjectsByUserId);
+/**
  * POST /projects/create
  * @typedef {object} CreateProjectDto
  * @property {string} project_name.required - The project name
@@ -71,7 +80,7 @@ projects
  */
 projects.patch(
   "/:id",
-  verifyAuthAdminToken,
+  // verifyAuthAdminToken,
   RequestValidator.validate(UpdateProjectDto),
   controller.updateProject
 );

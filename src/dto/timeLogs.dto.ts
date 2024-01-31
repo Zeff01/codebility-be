@@ -13,7 +13,7 @@ import {
 export class CreateTimeDto {
   @IsString()
   @IsNotEmpty()
-  usersId: string;
+  userTimeLogId: string;
 }
 
 // export class UpdateUserDto {

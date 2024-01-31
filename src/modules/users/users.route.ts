@@ -61,7 +61,7 @@ const controller = new Controller();
  * @tags users
  * @return {Users} 200 - success response - application/json
  */
-users.route("/").get(controller.getUsers);
+users.route("/").get(controller.getAllUsers);
 /**
  * GET /users/{id}
  * @summary Get Users by ID

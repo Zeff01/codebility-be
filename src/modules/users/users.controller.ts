@@ -13,14 +13,14 @@ import {
 export default class UserController extends Api {
   private readonly userService = new UserService();
 
-  public getUsers = async (
+  public getAllUsers = async (
     req: Request,
     res: CustomResponse<Users>,
     next: NextFunction
   ) => {
     try {
-      const user = await this.userService.getUsers(req.body);
-      this.send(res, user, HttpStatusCode.Ok, "getUsers");
+      const user = await this.userService.getAllUsers(req.body);
+      this.send(res, user, HttpStatusCode.Ok, "getAllUsers");
     } catch (e) {
       next(e);
     }
@@ -170,9 +170,7 @@ export default class UserController extends Api {
     next: NextFunction
   ) => {
     try {
-      const user = await this.userService.getUserByTeam(
-        req.params.position as string
-      );
+      const user = await this.userService.getUserByTeam(req.params.position);
       this.send(res, user, HttpStatusCode.Ok, "getUserByTeam");
     } catch (e) {
       next(e);
@@ -219,9 +217,7 @@ export default class UserController extends Api {
     next: NextFunction
   ) => {
     try {
-      const workexp = await this.userService.getWorkExpPerUser(
-        req.params.userid
-      );
+      const workexp = await this.userService.getWorkExpPerUser(req.params.id);
       this.send(res, workexp, HttpStatusCode.Ok, "getWorkExpPerUser");
     } catch (e) {
       next(e);

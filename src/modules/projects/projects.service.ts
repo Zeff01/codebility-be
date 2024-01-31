@@ -1,4 +1,10 @@
-import { time_logs, type Prisma, type Clients, Projects } from "@prisma/client";
+import {
+  time_logs,
+  type Prisma,
+  type Clients,
+  Projects,
+  UserProjects,
+} from "@prisma/client";
 import prisma from "@/lib/prisma";
 
 import { HttpInternalServerError } from "@/lib/errors";
@@ -6,14 +12,24 @@ import { HttpInternalServerError } from "@/lib/errors";
 import { UpdateProjectDto } from "@/dto/project.dto";
 
 export default class ProjectsService {
-  public async getProjects(data: Projects) {
-    const { id, ...otherFields } = data;
+  public async getProjects({ id }) {
     return await prisma.projects.findMany({
       where: {
         id,
-        ...otherFields,
       },
-      include: { UserProjects: true },
+      include: { users: true },
+    });
+  }
+
+  public async getProjectsByUserId(id: string) {
+    return await prisma.userProjects.findMany({
+      where: {
+        id,
+      },
+      // select: { usersproj_Id: true },
+      include: {
+        project: true,
+      },
     });
   }
 
@@ -34,7 +50,7 @@ export default class ProjectsService {
               create: { company_name: company_name },
             },
           },
-          UserProjects: {
+          users: {
             create: {
               // id: userId,
             },
@@ -44,7 +60,7 @@ export default class ProjectsService {
           // },
         },
 
-        include: { Clients: true, UserProjects: true },
+        include: { Clients: true, users: true },
       });
     } catch (error) {
       console.error(error);
@@ -65,7 +81,7 @@ export default class ProjectsService {
           id: id,
         },
         data: {
-          UserProjects: { update: { userId: userId } },
+          UserProjects: { connect: { id: id } },
           project_name: data.project_name,
           github_link: data.github_link,
         },

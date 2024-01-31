@@ -1,5 +1,5 @@
 import { type NextFunction, type Request } from "express";
-import { Prisma, Projects, type Users } from "@prisma/client";
+import { Prisma, Projects, UserProjects, type Users } from "@prisma/client";
 import { HttpStatusCode } from "axios";
 
 import { type CustomResponse } from "@/types/common.type";
@@ -22,6 +22,21 @@ export default class ProjectController extends Api {
     try {
       const project = await this.projectsService.getProjects(req.body);
       this.send(res, project, HttpStatusCode.Ok, "Projects");
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  public getProjectsByUserId = async (
+    req: Request,
+    res: CustomResponse<UserProjects>,
+    next: NextFunction
+  ) => {
+    try {
+      const id = req.params.id;
+      const project = await this.projectsService.getProjectsByUserId(id);
+
+      this.send(res, project, HttpStatusCode.Ok, "getProjectsByUserId");
     } catch (e) {
       next(e);
     }
@@ -57,7 +72,7 @@ export default class ProjectController extends Api {
   ) => {
     try {
       const id = req.params.id as string;
-      const userId = req.body.userId;
+      const usersproj_Id = req.body.userId;
       const updateData = req.body;
       const project = await this.projectsService.updateProject(
         id,

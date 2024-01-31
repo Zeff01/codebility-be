@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Users {
-  id                String            @id @default(uuid()) @map("_id")
+  id                String            @id @default(auto()) @map("_id") @db.ObjectId
   name              String
   short_bio         String?
   image_icon        String?
@@ -36,21 +36,21 @@ model Users {
   userType          UserTypeEnum      @default(USER)
   work_experience   Work_Experience[]
   org_chart         org_chart[]
-  client  Clients[]
+  
   // test time_logs, todo_list
   time_logs         time_logs[]
   todo_list         todo_list[]
-  UserProjects      UserProjects[]
-  UserClients       UserClients[]
-  Notes             Notes[]
+  projects      UserProjects[]
+  clients       UserClients[]
+  notes             Notes[]
 
   @@unique([email_address])
 }
 
 model Work_Experience {
-  id         String   @id @default(uuid()) @map("_id")
-  user_id    String
-  users      Users    @relation(fields: [user_id], references: [id])
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userWorkExp    Users  @relation(fields: [userWorkExpId], references: [id])
+  userWorkExpId String @db.ObjectId          
   position   String
   company    String
   date       String
@@ -62,9 +62,9 @@ model Work_Experience {
 }
 
 model org_chart {
-  id            String        @id @default(uuid()) @map("_id")
-  userId        String        @unique
-  user          Users         @relation(fields: [userId], references: [id])
+  id            String        @id @default(auto()) @map("_id")  @db.ObjectId
+  userOrgChart        Users        @relation(fields: [userOrgChartId], references: [id])
+  userOrgChartId  String @db.ObjectId                  
   level         Int           @unique
   org_hierarchy Org_Hierarchy @relation(fields: [level], references: [level])
   createdAt     DateTime      @default(now()) @map("created_at")
@@ -74,7 +74,7 @@ model org_chart {
 }
 
 model Org_Hierarchy {
-  id        String      @id @default(uuid()) @map("_id")
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
   level     Int         @unique
   position  String
   createdAt DateTime    @default(now()) @map("created_at")
@@ -83,9 +83,9 @@ model Org_Hierarchy {
 }
 
 model time_logs {
-  id                 String    @id @default(uuid()) @map("_id")
-  usersId            String
-  user               Users     @relation(fields: [usersId], references: [id])
+  id                 String    @id @default(auto()) @map("_id") @db.ObjectId
+  userTimeLog            Users  @relation(fields: [userTimeLogId], references: [id])
+  userTimeLogId String @db.ObjectId                   
   time_in            DateTime?
   time_out           DateTime?
   total_worked_hours Int?
@@ -100,13 +100,13 @@ model time_logs {
 }
 
 model todo_list {
-  id               String            @id @default(uuid()) @map("_id")
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
   title            String
   subheader        String?
   full_description String?
-  users_id         String?            
-  users            Users?             @relation(fields: [users_id], references: [id])
-  project_id       String?           
+  userTodo         Users @relation(fields: [userTodoId], references: [id])            
+  userTodoId  String @db.ObjectId                        
+  project_id       String @db.ObjectId           
   projects         Projects?         @relation(fields: [project_id], references: [id])
   prio_level       PriorityLevelEnum
   github_link      String?
@@ -115,54 +115,58 @@ model todo_list {
   Tags Tags[]
   profile          Profile?          @relation(fields: [profileId], references: [id])
   profileId        String?           @db.ObjectId
-  TodoTags TodoTags?
+  todoTags TodoTags[]
 }
 
 model Tags {
-  id         String     @id @default(uuid()) @map("_id")
+  id         String     @id @default(auto()) @map("_id")  @db.ObjectId
   tag        String     
   created_at DateTime   @default(now())
   updated_at DateTime   @default(now())
-  Todos    String  
-  todo_list      todo_list     @relation(fields: [Todos], references: [id])
-  TodoTags  TodoTags[]
+  todos    todo_list  @relation(fields: [todoTagId], references: [id])  
+  todoTagId String @db.ObjectId          
+  todoLists  TodoTags[]
 }
 
 model TodoTags {
-  id        String    @id @default(uuid()) @map("_id")
-  todo_id   String  @unique
-  todo_list todo_list @relation(fields: [todo_id], references: [id])
-  tagId    String[]  
-  tags      Tags?     @relation(fields: [tagId], references: [id])
+ id        String    @id @default(auto()) @map("_id") @db.ObjectId
+ todoList todo_list @relation(fields: [todoListId], references: [id])
+ todoListId String @db.ObjectId
+ tags      Tags      @relation(fields: [tagId], references: [id])
+ tagId     String @db.ObjectId
+ assignedAt DateTime @default(now())
+ assignedBy String
+ @@unique([todoListId, tagId])
 }
 
 model Projects {
-  id           String        @id @default(uuid()) @map("_id")
-  clientsId    String
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  clientsId    String @db.ObjectId
    Clients      Clients?       @relation(fields: [clientsId], references: [id])
   project_name String
   github_link  String
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @default(now()) @map("updated_at")
   todo_list    todo_list[]
-  UserProjects UserProjects?
+  users UserProjects[]
    Notes        Notes?
 }
 
 model UserProjects {
-  id        String   @id @default(uuid()) @map("_id")
-  userId    String[]  
-  user      Users    @relation(fields: [userId], references: [id])
-  projectId String   @unique
-  project   Projects @relation(fields: [projectId], references: [id])
-  profile   Profile? @relation(fields: [profileId], references: [id])
-  profileId String?  @db.ObjectId
+ id        String   @id @default(auto()) @map("_id") @db.ObjectId
+ user    Users @relation(fields: [userId], references: [id]) 
+ userId String @db.ObjectId          
+ project Projects @relation(fields: [projectId], references: [id])
+ projectId String @db.ObjectId   
+ profile   Profile @relation(fields: [profileId], references: [id])
+ profileId String @db.ObjectId
+ assignedAt DateTime @default(now())
+ assignedBy String
+ @@unique([userId, projectId,profileId])
 }
 
 model Clients {
-  id             String        @id @default(uuid()) @map("_id")
-  users_Id    String 
-  users      Users    @relation(fields: [users_Id], references: [id])
+ id             String        @id @default(auto()) @map("_id") @db.ObjectId
   company_name   String
   company_logo   String?
   working_hours  String[]
@@ -175,15 +179,15 @@ model Clients {
   updated_at     DateTime      @default(now())
   project_list   String[]
   projects       Projects[]
-  UserClients UserClients?
+  users UserClients[]
 }
 
 model Notes {
-  id          String   @id @default(uuid()) @map("_id")
-  user_id     String   @unique
-  user        Users    @relation(fields: [user_id], references: [id])
-  project_id  String   @unique
-  project     Projects @relation(fields: [project_id], references: [id])
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userNote     Users   @relation(fields: [userNoteId], references: [id])
+  userNoteId  String @db.ObjectId            
+   project Projects   @relation(fields: [projectId], references: [id])
+  projectId String @db.ObjectId      @unique
   title       String
   description String?
   github_link String?
@@ -192,13 +196,14 @@ model Notes {
 }
 
 model UserClients {
-  id        String   @id @default(uuid()) @map("_id")
-  users_Id    String[]   
-  user     Users    @relation(fields: [users_Id], references: [id])
-  clientId  String   @unique
-  client    Clients  @relation(fields: [clientId], references: [id])
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+ user    Users @relation(fields: [userId], references: [id]) 
+ userId String @db.ObjectId 
+  client  Clients   @relation(fields: [clientId], references: [id])
+  clientId String @db.ObjectId      
   profile   Profile? @relation(fields: [profileId], references: [id])
   profileId String?  @db.ObjectId
+  @@unique([userId, clientId,profileId])
 }
 
 enum RoleTypeEnum {
