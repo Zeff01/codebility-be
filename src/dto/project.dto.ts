@@ -27,11 +27,11 @@ export class CreateProjectDto {
 export class UpdateProjectDto {
   @IsString()
   @IsOptional()
-  project_name: string;
+  project_name?: string;
 
   @IsString()
   @IsOptional()
-  github_link: string;
+  github_link?: string;
 
   // @IsString()
   // @IsOptional()

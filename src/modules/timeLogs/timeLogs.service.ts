@@ -32,7 +32,7 @@ export default class TimeLogsService {
     try {
       return await prisma.time_logs.create({
         data: {
-          usersId: data.usersId,
+          userTimeLogId: data.userTimeLogId,
 
           time_in: new Date(),
         },
@@ -49,7 +49,7 @@ export default class TimeLogsService {
     try {
       return await prisma.time_logs.create({
         data: {
-          usersId: data.usersId,
+          userTimeLogId: data.userTimeLogId,
 
           time_out: new Date(),
         },
@@ -62,9 +62,9 @@ export default class TimeLogsService {
     }
   }
 
-  public async getLogsByUserId(usersId: string) {
+  public async getLogsByUserId(userTimeLogId: string) {
     const logs = await prisma.time_logs.findMany({
-      where: { usersId },
+      where: { userTimeLogId },
     });
     return logs;
   }
