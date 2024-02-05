@@ -36,41 +36,43 @@ model Users {
   userType          UserTypeEnum      @default(USER)
   work_experience   Work_Experience[]
   org_chart         org_chart[]
-  
+
   // test time_logs, todo_list
-  time_logs         time_logs[]
-  todo_list         todo_list[]
-  projects      UserProjects[]
-  clients       UserClients[]
-  notes             Notes[]
+  time_logs time_logs[]
+  todo_list todo_list[]
+  projects  UserProjects[]
+  clients   UserClients[]
+  notes     Notes[]
+  profileId String?        @db.ObjectId
+  Profile   Profile?       @relation(fields: [profileId], references: [id])
 
   @@unique([email_address])
 }
 
 model Work_Experience {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  userWorkExp    Users  @relation(fields: [userWorkExpId], references: [id])
-  userWorkExpId String @db.ObjectId          
-  position   String
-  company    String
-  date       String
-  short_desc String
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now())
-  profile    Profile? @relation(fields: [profileId], references: [id])
-  profileId  String?  @db.ObjectId
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  userWorkExp   Users    @relation(fields: [userWorkExpId], references: [id])
+  userWorkExpId String   @db.ObjectId
+  position      String
+  company       String
+  date          String
+  short_desc    String
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(now())
+  profile       Profile? @relation(fields: [profileId], references: [id])
+  profileId     String?  @db.ObjectId
 }
 
 model org_chart {
-  id            String        @id @default(auto()) @map("_id")  @db.ObjectId
-  userOrgChart        Users        @relation(fields: [userOrgChartId], references: [id])
-  userOrgChartId  String @db.ObjectId                  
-  level         Int           @unique
-  org_hierarchy Org_Hierarchy @relation(fields: [level], references: [level])
-  createdAt     DateTime      @default(now()) @map("created_at")
-  updatedAt     DateTime      @default(now()) @map("updated_at")
-  profile       Profile?      @relation(fields: [profileId], references: [id])
-  profileId     String?       @db.ObjectId
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  userOrgChart   Users         @relation(fields: [userOrgChartId], references: [id])
+  userOrgChartId String        @db.ObjectId
+  level          Int           @unique
+  org_hierarchy  Org_Hierarchy @relation(fields: [level], references: [level])
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @default(now()) @map("updated_at")
+  profile        Profile?      @relation(fields: [profileId], references: [id])
+  profileId      String?       @db.ObjectId
 }
 
 model Org_Hierarchy {
@@ -84,8 +86,8 @@ model Org_Hierarchy {
 
 model time_logs {
   id                 String    @id @default(auto()) @map("_id") @db.ObjectId
-  userTimeLog            Users  @relation(fields: [userTimeLogId], references: [id])
-  userTimeLogId String @db.ObjectId                   
+  userTimeLog        Users     @relation(fields: [userTimeLogId], references: [id])
+  userTimeLogId      String    @db.ObjectId
   time_in            DateTime?
   time_out           DateTime?
   total_worked_hours Int?
@@ -104,69 +106,71 @@ model todo_list {
   title            String
   subheader        String?
   full_description String?
-  userTodo         Users @relation(fields: [userTodoId], references: [id])            
-  userTodoId  String @db.ObjectId                        
-  project_id       String @db.ObjectId           
+  userTodo         Users             @relation(fields: [userTodoId], references: [id])
+  userTodoId       String            @db.ObjectId
+  project_id       String            @db.ObjectId
   projects         Projects?         @relation(fields: [project_id], references: [id])
   prio_level       PriorityLevelEnum
   github_link      String?
   created_at       DateTime          @default(now())
   updated_at       DateTime          @default(now())
-  Tags Tags[]
+  Tags             Tags[]
   profile          Profile?          @relation(fields: [profileId], references: [id])
   profileId        String?           @db.ObjectId
-  todoTags TodoTags[]
+  todoTags         TodoTags[]
 }
 
 model Tags {
-  id         String     @id @default(auto()) @map("_id")  @db.ObjectId
-  tag        String     
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  tag        String
   created_at DateTime   @default(now())
   updated_at DateTime   @default(now())
-  todos    todo_list  @relation(fields: [todoTagId], references: [id])  
-  todoTagId String @db.ObjectId          
+  todos      todo_list  @relation(fields: [todoTagId], references: [id])
+  todoTagId  String     @db.ObjectId
   todoLists  TodoTags[]
 }
 
 model TodoTags {
- id        String    @id @default(auto()) @map("_id") @db.ObjectId
- todoList todo_list @relation(fields: [todoListId], references: [id])
- todoListId String @db.ObjectId
- tags      Tags      @relation(fields: [tagId], references: [id])
- tagId     String @db.ObjectId
- assignedAt DateTime @default(now())
- assignedBy String
- @@unique([todoListId, tagId])
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  todoList   todo_list @relation(fields: [todoListId], references: [id])
+  todoListId String    @db.ObjectId
+  tags       Tags      @relation(fields: [tagId], references: [id])
+  tagId      String    @db.ObjectId
+  assignedAt DateTime  @default(now())
+  assignedBy String
+
+  @@unique([todoListId, tagId])
 }
 
 model Projects {
-  id           String        @id @default(auto()) @map("_id") @db.ObjectId
-  clientsId    String @db.ObjectId
-   Clients      Clients?       @relation(fields: [clientsId], references: [id])
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  clientsId    String         @db.ObjectId
+  Clients      Clients?       @relation(fields: [clientsId], references: [id])
   project_name String
   github_link  String
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @default(now()) @map("updated_at")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @default(now()) @map("updated_at")
   todo_list    todo_list[]
-  users UserProjects[]
-   Notes        Notes?
+  users        UserProjects[]
+  Notes        Notes?
 }
 
 model UserProjects {
- id        String   @id @default(auto()) @map("_id") @db.ObjectId
- user    Users @relation(fields: [userId], references: [id]) 
- userId String @db.ObjectId          
- project Projects @relation(fields: [projectId], references: [id])
- projectId String @db.ObjectId   
- profile   Profile @relation(fields: [profileId], references: [id])
- profileId String @db.ObjectId
- assignedAt DateTime @default(now())
- assignedBy String
- @@unique([userId, projectId,profileId])
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  user       Users    @relation(fields: [userId], references: [id])
+  userId     String   @db.ObjectId
+  project    Projects @relation(fields: [projectId], references: [id])
+  projectId  String   @db.ObjectId
+  profile    Profile  @relation(fields: [profileId], references: [id])
+  profileId  String   @db.ObjectId
+  assignedAt DateTime @default(now())
+  assignedBy String
+
+  @@unique([userId, projectId, profileId])
 }
 
 model Clients {
- id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
   company_name   String
   company_logo   String?
   working_hours  String[]
@@ -179,15 +183,15 @@ model Clients {
   updated_at     DateTime      @default(now())
   project_list   String[]
   projects       Projects[]
-  users UserClients[]
+  users          UserClients[]
 }
 
 model Notes {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userNote     Users   @relation(fields: [userNoteId], references: [id])
-  userNoteId  String @db.ObjectId            
-   project Projects   @relation(fields: [projectId], references: [id])
-  projectId String @db.ObjectId      @unique
+  userNote    Users    @relation(fields: [userNoteId], references: [id])
+  userNoteId  String   @db.ObjectId
+  project     Projects @relation(fields: [projectId], references: [id])
+  projectId   String   @unique @db.ObjectId
   title       String
   description String?
   github_link String?
@@ -197,13 +201,14 @@ model Notes {
 
 model UserClients {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
- user    Users @relation(fields: [userId], references: [id]) 
- userId String @db.ObjectId 
-  client  Clients   @relation(fields: [clientId], references: [id])
-  clientId String @db.ObjectId      
+  user      Users    @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  client    Clients  @relation(fields: [clientId], references: [id])
+  clientId  String   @db.ObjectId
   profile   Profile? @relation(fields: [profileId], references: [id])
   profileId String?  @db.ObjectId
-  @@unique([userId, clientId,profileId])
+
+  @@unique([userId, clientId, profileId])
 }
 
 enum RoleTypeEnum {
@@ -271,7 +276,8 @@ model Profile {
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Users Users[]
 
   @@unique([userId])
   @@unique([email])
