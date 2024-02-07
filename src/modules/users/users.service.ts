@@ -39,7 +39,7 @@ export default class UserService {
     });
   }
 
-  @LogMessage<[Users]>({ message: "User Created" })
+ 
   public async createUser(data: CreateUserDto) {
     try {
       return await prisma.users.create({
@@ -52,7 +52,7 @@ export default class UserService {
           tech_stacks: data.tech_stacks,
           password: GeneratorProvider.generateHash(data.password),
           schedule: data.schedule,
-          position: [data.position],
+          position: data.position,
           roleType: RoleTypeEnum.MENTOR,
           userType: UserTypeEnum.ADMIN,
         },
