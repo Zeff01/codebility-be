@@ -357,4 +357,68 @@ export default class UserService {
       );
     }
   }
+
+  public async getuserbyusertypeapplicant() {
+    try {
+      // Get the user
+      return await prisma.users.findMany({
+        where: {
+          userType: "APPLICANT",
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while changing the password"
+      );
+    }
+  }
+
+  public async getuserapplicantPerUser(id: string) {
+    try {
+      return await prisma.users.findUnique({
+        where: {
+          id: id,
+          userType: "APPLICANT",
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occured whilte updating user work experince"
+      );
+    }
+  }
+
+  public async updateuserapplicantPerUser(id, data) {
+    try {
+      // Get the user
+      const user = await prisma.users.findUnique({
+        where: {
+          id: id,
+          userType: "APPLICANT",
+        },
+      });
+
+      if (!user || !user.email_address) {
+        throw new HttpBadRequestError("user id not found", []);
+      }
+
+      // await prisma.users.update({
+      //   where: {
+      //     id: user.id,
+      //   },
+      //   data: {
+      //     : data,D
+      //   },
+      // });
+
+      this.forgotPassword(user.email_address);
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while update applicant status"
+      );
+    }
+  }
 }
