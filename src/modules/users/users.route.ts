@@ -232,30 +232,34 @@ users.patch(
 users.delete("/workexp/:id", verifyAuthToken, controller.deleteWorkExp);
 
 /**
- *  GET /users/applicant/get
+ *  GET /users/applicant/user
  *  @summary Get all Applicant
  *  @tags users
  *  @return {Users} 200 - success response - application/json
  */
-users.route("/applicant/get").get(controller.getuserbyusertypeapplicant);
+users.route("/applicant/user").get(controller.getuserbyusertypeapplicant);
 
 /**
- *  GET /users/applicant/{id}
+ *  GET /users/applicant/user/{userid}
  *  @summary Get Applicant per User
  *  @tags users
  *  @param {string} userid.path - id
  *  @return {Users} 200 - success response - application/json
  */
-users.route("/applicant/{id:}").get(controller.getuserapplicantPerUser);
+users.route("/applicant/user/:id").get(controller.getuserapplicantPerUser);
 
 /**
- *  PATCH /users/applicant/{id}
+ *  PATCH /users/applicant/user/{id}
  *  @summary Accept Applicant per User
  *  @tags users
  *  @param {string} userid.path - id
  *  @security BearerAuth
  *  @return {Users} 200 - success response - application/json
  */
-users.route("/applicant/{id:}").patch(controller.updateuserapplicantPerUser);
+users.patch(
+  "/applicant/user/:id",
+  verifyAuthToken,
+  controller.updateuserapplicantPerUser
+);
 
 export default users;

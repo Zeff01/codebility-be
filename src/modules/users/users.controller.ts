@@ -282,7 +282,7 @@ export default class UserController extends Api {
   ) => {
     try {
       const applicant = await this.userService.getuserbyusertypeapplicant();
-      this.send(res, applicant, HttpStatusCode.Ok, "Applicants List");
+      this.send(res, applicant, HttpStatusCode.Ok, "getApplicantList");
     } catch (e) {
       next(e);
     }
@@ -294,10 +294,12 @@ export default class UserController extends Api {
     next: NextFunction
   ) => {
     try {
-      const workexp = await this.userService.getuserapplicantPerUser(
-        req.params.id
-      );
-      this.send(res, workexp, HttpStatusCode.Ok, "getWorkExpPerUser");
+      const id = req.params.id as string;
+      if (id.length != 24) {
+        throw new HttpInternalServerError(`id is not correct format ${id}`);
+      }
+      const users = await this.userService.getuserapplicantPerUser(id);
+      this.send(res, users, HttpStatusCode.Ok, "getApplicantUser");
     } catch (e) {
       next(e);
     }
@@ -311,11 +313,11 @@ export default class UserController extends Api {
     try {
       const id = req.params.id as string;
       const data = req.body;
-      const workexp = await this.userService.updateuserapplicantPerUser(
+      const resData = await this.userService.updateuserapplicantPerUser(
         id,
         data
       );
-      this.send(res, workexp, HttpStatusCode.Ok, "getWorkExpPerUser");
+      this.send(res, resData, HttpStatusCode.Ok, "acceptApplicantUser");
     } catch (e) {
       next(e);
     }

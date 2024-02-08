@@ -369,7 +369,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while changing the password"
+        "An error occured getting applicant user list"
       );
     }
   }
@@ -385,7 +385,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured whilte updating user work experince"
+        "An error occured getting applicant user by id"
       );
     }
   }
@@ -417,7 +417,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while update applicant status"
+        "An error occured while accepting applicant user by id"
       );
     }
   }
