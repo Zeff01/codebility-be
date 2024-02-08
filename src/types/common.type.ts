@@ -1,4 +1,4 @@
-import { type Response } from 'express';
+import { type Response } from "express";
 
 type Send<ResBody = any, T = Response<ResBody>> = (body?: {
   message: string;

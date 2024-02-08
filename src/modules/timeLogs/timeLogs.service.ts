@@ -40,7 +40,7 @@ export default class TimeLogsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured while adding work experience"
+        "An error occured while adding work experience",
       );
     }
   }
@@ -57,7 +57,7 @@ export default class TimeLogsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured while adding work experience"
+        "An error occured while adding work experience",
       );
     }
   }

@@ -61,7 +61,7 @@ projects
   .post(
     verifyAuthAdminToken,
     RequestValidator.validate(CreateProjectDto),
-    controller.createProject
+    controller.createProject,
   );
 
 /**
@@ -82,7 +82,7 @@ projects.patch(
   "/:id",
   // verifyAuthAdminToken,
   RequestValidator.validate(UpdateProjectDto),
-  controller.updateProject
+  controller.updateProject,
 );
 
 export default projects;

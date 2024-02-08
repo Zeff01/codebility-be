@@ -1,9 +1,9 @@
-import { type users } from '@prisma/client';
-import request from 'supertest';
-import { type ApiResponse } from '../../types/util-types';
-import app from '../../../src/app';
-import prismaClient from '../../../src/lib/prisma';
-import { createUserBody } from '../../data/user';
+import { type users } from "@prisma/client";
+import request from "supertest";
+import { type ApiResponse } from "../../types/util-types";
+import app from "../../../src/app";
+import prismaClient from "../../../src/lib/prisma";
+import { createUserBody } from "../../data/user";
 
 /**
  * Integration testing is a type of software testing that focuses on testing
@@ -29,14 +29,14 @@ afterAll(async () => {
   await prismaClient.$disconnect();
 });
 
-test('[Integration] - POST: /users/create', async () => {
+test("[Integration] - POST: /users/create", async () => {
   jest.resetModules();
-  jest.mock('../../../src/app');
+  jest.mock("../../../src/app");
 
   const env = process.env.NODE_ENV;
   const response = await request(app)
     .post(`/api/v1/${env}/users/create`)
-    .set('Accept', 'application/json')
+    .set("Accept", "application/json")
     .send(createUserBody);
 
   const { data } = response.body as ApiResponse<users>;

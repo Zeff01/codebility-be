@@ -16,7 +16,7 @@ export default class ClientController extends Api {
   public getClients = async (
     req: Request,
     res: CustomResponse<Clients>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const client = await this.clientsService.getClients(req.body);
@@ -29,7 +29,7 @@ export default class ClientController extends Api {
   public createClient = async (
     req: Request,
     res: CustomResponse<Clients>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const client = await this.clientsService.createClient(req.body);
@@ -42,8 +42,8 @@ export default class ClientController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while creating the user"
-          )
+            "An error occurred while creating the user",
+          ),
         );
       }
     }
@@ -52,7 +52,7 @@ export default class ClientController extends Api {
   public updateClient = async (
     req: Request,
     res: CustomResponse<Projects>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const id = req.params.id as string;
@@ -61,7 +61,7 @@ export default class ClientController extends Api {
       const project = await this.clientsService.updateClient(
         id,
         users_Id,
-        updateData
+        updateData,
       );
       this.send(res, project, HttpStatusCode.Ok, "updateUser");
     } catch (e) {
@@ -75,8 +75,8 @@ export default class ClientController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while updating the user"
-          )
+            "An error occurred while updating the user",
+          ),
         );
       }
     }

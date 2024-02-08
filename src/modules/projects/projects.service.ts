@@ -65,7 +65,7 @@ export default class ProjectsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while creating the user"
+        "An error occurred while creating the user",
       );
     }
   }
@@ -73,7 +73,7 @@ export default class ProjectsService {
   public async updateProject(
     id: string,
     userId: string,
-    data: UpdateProjectDto
+    data: UpdateProjectDto,
   ) {
     try {
       return await prisma.projects.update({
@@ -91,7 +91,7 @@ export default class ProjectsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user"
+        "An error occurred while updating the user",
       );
     }
   }

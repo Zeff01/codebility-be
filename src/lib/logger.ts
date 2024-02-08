@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync } from "fs";
 import {
   createLogger,
   format,
@@ -6,10 +6,10 @@ import {
   type Logger,
   type LogEntry,
   transports,
-} from 'winston';
-import environment from './environment';
-import { LOG_DATE_FORMAT } from '@/utils/constants';
-import appConfig from '@/config/app.config';
+} from "winston";
+import environment from "./environment";
+import { LOG_DATE_FORMAT } from "@/utils/constants";
+import appConfig from "@/config/app.config";
 
 const {
   logs: { dir: logDir, logFile, errorLogFile },
@@ -23,7 +23,7 @@ const logTransports: transport[] = [new transports.Console()];
 const fileTransports: transport[] = [
   new transports.File({
     filename: `${logDir}/${errorLogFile}`,
-    level: 'error',
+    level: "error",
   }),
   new transports.File({ filename: `${logDir}/${logFile}` }),
 ];
@@ -42,17 +42,17 @@ const logger: Logger = createLogger({
     timestamp({ format: LOG_DATE_FORMAT }),
     json(),
     prettyPrint({ colorize: true }),
-    logFormattter
+    logFormattter,
   ),
   transports: logTransports,
 });
 
 export const logWithoutConsole = (logEntry: LogEntry) => {
   const consoleTransport = logger.transports.find(
-    (transport) => transport instanceof transports.Console
+    (transport) => transport instanceof transports.Console,
   );
   const fileTransport = logger.transports.find(
-    (transport) => transport instanceof transports.File
+    (transport) => transport instanceof transports.File,
   );
 
   if (!fileTransport) {

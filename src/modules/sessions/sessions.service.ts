@@ -1,15 +1,15 @@
-import LogMessage from '@/decorators/log-message.decorator';
-import { ICreateSessionDto, IPaySessionDto } from '@/dto/session.dto';
-import XenditService from './xendit.service';
+import LogMessage from "@/decorators/log-message.decorator";
+import { ICreateSessionDto, IPaySessionDto } from "@/dto/session.dto";
+import XenditService from "./xendit.service";
 import {
   HttpBadRequestError,
   HttpNotFoundError,
   HttpUnAuthorizedError,
-} from '@/lib/errors';
-import { IInvoiceTransactionOutput } from '@/dto/xendit.dto';
-import { JwtPayload } from '@/types/common.type';
-import { UserTypeEnum } from '.prisma/client';
-import prisma from '@/lib/prisma';
+} from "@/lib/errors";
+import { IInvoiceTransactionOutput } from "@/dto/xendit.dto";
+import { JwtPayload } from "@/types/common.type";
+import { UserTypeEnum } from ".prisma/client";
+import prisma from "@/lib/prisma";
 
 export default class SessionsService {
   private readonly xenditService = new XenditService();
@@ -34,7 +34,7 @@ export default class SessionsService {
 
   public async createSession(data: ICreateSessionDto, user: JwtPayload) {
     if (user?.type !== UserTypeEnum.FOUNDER) {
-      throw new HttpUnAuthorizedError('Forbidden');
+      throw new HttpUnAuthorizedError("Forbidden");
     }
 
     return prisma.sessions.create({
@@ -45,7 +45,7 @@ export default class SessionsService {
     });
   }
 
-  @LogMessage<[IPaySessionDto]>({ message: 'User Updated' })
+  @LogMessage<[IPaySessionDto]>({ message: "User Updated" })
   public async paySession(data: IPaySessionDto) {
     const isPaymentExist = await prisma.payments.findFirst({
       where: {
@@ -55,7 +55,7 @@ export default class SessionsService {
     });
 
     if (isPaymentExist) {
-      throw new HttpNotFoundError('Payment', ['Already paid.']);
+      throw new HttpNotFoundError("Payment", ["Already paid."]);
     }
 
     const session = await prisma.sessions.findFirstOrThrow({
@@ -66,7 +66,7 @@ export default class SessionsService {
 
     return this.xenditService.createInvoice({
       amount: session.price,
-      currency: 'PHP',
+      currency: "PHP",
       description: `Paying membership for ${session.name} with amount of ${session.price}`,
       external_id: `${data.sessionId}||${data.email}`,
       success_redirect_url: `${process.env.FE_BASE_URL}/sucess-payment`,
@@ -76,14 +76,14 @@ export default class SessionsService {
   }
 
   @LogMessage<[IInvoiceTransactionOutput]>({
-    message: 'New member paid.',
+    message: "New member paid.",
   })
   public async paymentCallback(data: IInvoiceTransactionOutput) {
     console.log(data);
     try {
-      if (data.status === 'PAID') {
-        const sessionId = data.external_id.split('||')[0];
-        const email = data.external_id.split('||')[1];
+      if (data.status === "PAID") {
+        const sessionId = data.external_id.split("||")[0];
+        const email = data.external_id.split("||")[1];
 
         const session = await prisma.sessions.findFirstOrThrow({
           where: {
@@ -110,21 +110,21 @@ export default class SessionsService {
           receipt_notification: {
             email_to: [session.founder.email!],
             email_cc: [
-              'marktomarse@gmail.com', // and other staff
+              "marktomarse@gmail.com", // and other staff
             ],
           },
         });
 
-        if (payoutRes.status !== 'ACCEPTED') {
-          throw new HttpBadRequestError('Xendit payout error', [
-            'Payout for founder error.',
+        if (payoutRes.status !== "ACCEPTED") {
+          throw new HttpBadRequestError("Xendit payout error", [
+            "Payout for founder error.",
           ]);
         }
 
         return prisma.payments.create({
           data: {
             amount: data.amount as number,
-            status: 'SUCCESS',
+            status: "SUCCESS",
             xenditReferenceId: data.id,
             sessionId: sessionId,
             email: email,
@@ -133,7 +133,7 @@ export default class SessionsService {
         });
       }
     } catch (error) {
-      throw new HttpUnAuthorizedError('Error');
+      throw new HttpUnAuthorizedError("Error");
     }
   }
 }

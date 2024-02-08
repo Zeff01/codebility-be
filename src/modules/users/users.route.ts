@@ -104,7 +104,7 @@ users.route("/team/:position").get(controller.getUserByTeam);
 users.post(
   "/login",
   RequestValidator.validate(LoginAdminDto),
-  controller.login
+  controller.login,
 );
 /**
  * POST /users/create
@@ -141,7 +141,7 @@ users.patch(
   "/:id",
   verifyAuthToken,
   RequestValidator.validate(UpdateUserDto),
-  controller.updateUser
+  controller.updateUser,
 );
 
 /**
@@ -159,7 +159,7 @@ users.patch(
 users.put(
   "/changePassword/:id",
   RequestValidator.validate(changePasswordDto),
-  controller.changeUserPassword
+  controller.changeUserPassword,
 );
 /**
  * POST /users/forgot-password
@@ -173,7 +173,7 @@ users.put(
 users.post(
   "/forgot-password",
   RequestValidator.validate(EmailDto),
-  controller.forgotPassword
+  controller.forgotPassword,
 );
 /**
  * POST /users/workexp
@@ -192,7 +192,7 @@ users.post(
   "/workexp",
   verifyAuthToken,
   RequestValidator.validate(AddWorkExpDto),
-  controller.addWorkExp
+  controller.addWorkExp,
 );
 /**
  *  GET /users/workexp/{userid}
@@ -218,7 +218,7 @@ users.patch(
   "/workexp/:id",
   verifyAuthToken,
   RequestValidator.validate(UpdateWorkExpDto),
-  controller.updateWorkExp
+  controller.updateWorkExp,
 );
 
 /**

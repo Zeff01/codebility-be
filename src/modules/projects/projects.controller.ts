@@ -17,7 +17,7 @@ export default class ProjectController extends Api {
   public getProjects = async (
     req: Request,
     res: CustomResponse<Projects>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const project = await this.projectsService.getProjects(req.body);
@@ -30,7 +30,7 @@ export default class ProjectController extends Api {
   public getProjectsByUserId = async (
     req: Request,
     res: CustomResponse<UserProjects>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const id = req.params.id;
@@ -45,7 +45,7 @@ export default class ProjectController extends Api {
   public createProject = async (
     req: Request,
     res: CustomResponse<Projects>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const project = await this.projectsService.createProject(req.body);
@@ -58,8 +58,8 @@ export default class ProjectController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while creating the user"
-          )
+            "An error occurred while creating the user",
+          ),
         );
       }
     }
@@ -68,7 +68,7 @@ export default class ProjectController extends Api {
   public updateProject = async (
     req: Request,
     res: CustomResponse<Projects>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const id = req.params.id as string;
@@ -77,7 +77,7 @@ export default class ProjectController extends Api {
       const project = await this.projectsService.updateProject(
         id,
         userId,
-        updateData
+        updateData,
       );
       this.send(res, project, HttpStatusCode.Ok, "updateUser");
     } catch (e) {
@@ -91,8 +91,8 @@ export default class ProjectController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while updating the user"
-          )
+            "An error occurred while updating the user",
+          ),
         );
       }
     }

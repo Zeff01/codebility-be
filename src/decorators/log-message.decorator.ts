@@ -1,8 +1,8 @@
 import {
   type DescriptorFn,
   type DefaultDecoratorArgs,
-} from '@/types/decorators.type';
-import { createDecorator } from '@/utils/decorators';
+} from "@/types/decorators.type";
+import { createDecorator } from "@/utils/decorators";
 
 interface LogMessageDecoratorArgs {
   message: string;
@@ -19,7 +19,7 @@ const descriptorFn: LogMessageDescriptor = ({ message }) => {
  * The same format can be used to create your own custom decorators.
  */
 const LogMessage = <TArgs extends DefaultDecoratorArgs = DefaultDecoratorArgs>(
-  args: LogMessageDecoratorArgs
+  args: LogMessageDecoratorArgs,
 ) => {
   return createDecorator<
     LogMessageDecoratorArgs,

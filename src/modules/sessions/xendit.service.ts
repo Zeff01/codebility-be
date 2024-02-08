@@ -1,14 +1,14 @@
-import axios from 'axios';
-import { IXenditInvoiceBodyData, IXenditPayoutDto } from '@/dto/xendit.dto';
+import axios from "axios";
+import { IXenditInvoiceBodyData, IXenditPayoutDto } from "@/dto/xendit.dto";
 
 export default class XenditService {
-  private readonly API_GATEWAY_URL = 'https://api.xendit.co';
-  private readonly CHANNEL_CODE = 'PH_GCASH';
-  private readonly CURRENCY = 'PHP';
+  private readonly API_GATEWAY_URL = "https://api.xendit.co";
+  private readonly CHANNEL_CODE = "PH_GCASH";
+  private readonly CURRENCY = "PHP";
   public async createInvoice(data: IXenditInvoiceBodyData) {
     try {
       const response = await axios.post(
-        this.API_GATEWAY_URL + '/v2/invoices',
+        this.API_GATEWAY_URL + "/v2/invoices",
         {
           external_id: data.external_id!,
           currency: data.currency!,
@@ -22,13 +22,13 @@ export default class XenditService {
           timeout: 10000,
           auth: {
             username: process.env.XENDIT_API_KEY,
-            password: '',
+            password: "",
           },
-        }
+        },
       );
       return response.data.invoice_url;
     } catch (error) {
-      console.error('HTTP Request Error:', error);
+      console.error("HTTP Request Error:", error);
       throw error;
     }
   }
@@ -36,7 +36,7 @@ export default class XenditService {
   public async createPayout(data: IXenditPayoutDto) {
     try {
       const response = await axios.post(
-        this.API_GATEWAY_URL + '/v2/payouts',
+        this.API_GATEWAY_URL + "/v2/payouts",
         {
           ...data,
           channel_code: this.CHANNEL_CODE,
@@ -45,18 +45,18 @@ export default class XenditService {
         {
           timeout: 10000,
           headers: {
-            'Idempotency-key': `payout-${data.reference_id}`,
+            "Idempotency-key": `payout-${data.reference_id}`,
           },
           auth: {
             username: process.env.XENDIT_API_KEY,
-            password: '',
+            password: "",
           },
-        }
+        },
       );
-      console.log('payout response', response.data);
+      console.log("payout response", response.data);
       return response.data;
     } catch (error) {
-      console.error('HTTP Request Error:', error);
+      console.error("HTTP Request Error:", error);
       throw error;
     }
   }

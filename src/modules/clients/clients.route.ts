@@ -118,7 +118,7 @@ clients
   .post(
     verifyAuthAdminToken,
     RequestValidator.validate(CreateClientDto),
-    controller.createClient
+    controller.createClient,
   );
 
 // /**
@@ -135,7 +135,7 @@ clients.patch(
   "/:id",
   verifyAuthAdminToken,
   RequestValidator.validate(UpdateClientDto),
-  controller.updateClient
+  controller.updateClient,
 );
 
 // /**

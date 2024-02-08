@@ -1,12 +1,12 @@
-import fs from 'fs';
-import path from 'path';
-import { config as configDotenv } from 'dotenv';
-import { cleanEnv } from 'envalid';
-import { EnvironmentFile, Environments } from '@/enums/environment.enum';
-import envValidationConfig from '@/config/env-validation.config';
-import { envFileNotFoundError } from '@/utils/helper';
-import { type CommonEnvKeys } from '@/types/environment.type';
-import appConfig from '@/config/app.config';
+import fs from "fs";
+import path from "path";
+import { config as configDotenv } from "dotenv";
+import { cleanEnv } from "envalid";
+import { EnvironmentFile, Environments } from "@/enums/environment.enum";
+import envValidationConfig from "@/config/env-validation.config";
+import { envFileNotFoundError } from "@/utils/helper";
+import { type CommonEnvKeys } from "@/types/environment.type";
+import appConfig from "@/config/app.config";
 
 export interface IEnvironment {
   getCurrentEnvironment: () => string;
@@ -54,7 +54,7 @@ class Environment implements IEnvironment {
   private resolveEnvPath(key: CommonEnvKeys): string {
     // On priority bar, .env.[NODE_ENV] has higher priority than default env file (.env)
     // If both are not resolved, error is thrown.
-    const rootDir: string = path.resolve(__dirname, '../../');
+    const rootDir: string = path.resolve(__dirname, "../../");
 
     const envPath =
       key && EnvironmentFile[key]
@@ -77,7 +77,7 @@ class Environment implements IEnvironment {
     this.env = env;
 
     const envKey = Object.keys(Environments).find(
-      (key) => Environments[key] === this.env
+      (key) => Environments[key] === this.env,
     ) as keyof typeof Environments;
 
     const envPath = this.resolveEnvPath(envKey);

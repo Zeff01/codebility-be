@@ -27,6 +27,8 @@ model Users {
   portfolio_website String?
   tech_stacks       String[]
   addtl_skills      String[]
+  about_me  String?
+  education String?
   password          String
   created_at        DateTime          @default(now())
   updated_at        DateTime          @default(now())

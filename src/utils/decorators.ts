@@ -3,8 +3,8 @@ import {
   type DefaultDecoratorArgs,
   type DescriptorFn,
   type GeneratedDecorator,
-} from '@/types/decorators.type';
-import logger from '@/lib/logger';
+} from "@/types/decorators.type";
+import logger from "@/lib/logger";
 
 /**
  * Creates a decorator that wraps the original method with an additional function.
@@ -18,14 +18,14 @@ export function createDecorator<
   TReturn = void,
 >(
   descriptorFn: DescriptorFn<TFnArgs, TReturn>,
-  descriptorArgs: TFnArgs
+  descriptorArgs: TFnArgs,
 ): GeneratedDecorator<unknown, TArgs> {
   return function (_target, key, descriptor) {
     const originalMethod = descriptor.value;
     descriptor.value = async function (...args) {
       logger.info(`Executing decorator before method: ${key}`);
       descriptorFn(descriptorArgs);
-      logger.info('Decorator executed');
+      logger.info("Decorator executed");
       return originalMethod ? originalMethod.apply(this, args) : null;
     };
     return descriptor;
@@ -49,7 +49,7 @@ export function createContextDecorator<
   context: ClassMethodDecoratorContext<This, ContextTarget<This, TReturn>>,
   _target: ContextTarget<This, TReturn>,
   descriptorFn: DescriptorFn<TFnArgs, TReturn>,
-  descriptorArgs: TFnArgs
+  descriptorArgs: TFnArgs,
 ): GeneratedDecorator<ContextTarget<This, TReturn>, TArgs> {
   const methodName = String(context.name);
   logger.info(`Executing decorator for ${methodName}`);

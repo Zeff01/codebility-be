@@ -24,7 +24,7 @@ export default class TimeLogsController extends Api {
   public getLogs = async (
     req: Request,
     res: CustomResponse<time_logs>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     console.log(req.body);
     try {
@@ -38,7 +38,7 @@ export default class TimeLogsController extends Api {
   public createTimeOut = async (
     req: Request,
     res: CustomResponse<time_logs>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const logs = await this.timeLogsService.createTimeOut(req.body);
@@ -52,7 +52,7 @@ export default class TimeLogsController extends Api {
   public createTimeIn = async (
     req: Request,
     res: CustomResponse<time_logs>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const logs = await this.timeLogsService.createTimeIn(req.body);
@@ -66,12 +66,12 @@ export default class TimeLogsController extends Api {
   public getLogsByUserId = async (
     req: Request,
     res: CustomResponse<time_logs>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     console.log(req.body);
     try {
       const logs = await this.timeLogsService.getLogsByUserId(
-        req.params.id as string
+        req.params.id as string,
       );
       this.send(res, logs, HttpStatusCode.Ok, "getLogsByUserId");
     } catch (e) {

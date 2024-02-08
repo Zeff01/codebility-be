@@ -1,4 +1,4 @@
-import { HttpStatusCode } from 'axios';
+import { HttpStatusCode } from "axios";
 
 export interface IApiError extends Error {
   statusCode: number;

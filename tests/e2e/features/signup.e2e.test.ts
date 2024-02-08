@@ -1,9 +1,9 @@
-import { type users } from '@prisma/client';
-import request from 'supertest';
-import { type ApiResponse } from '../../types/util-types';
-import app from '../../../src/app';
-import prismaClient from '../../../src/lib/prisma';
-import { createUserBody } from '../../data/user';
+import { type users } from "@prisma/client";
+import request from "supertest";
+import { type ApiResponse } from "../../types/util-types";
+import app from "../../../src/app";
+import prismaClient from "../../../src/lib/prisma";
+import { createUserBody } from "../../data/user";
 
 /**
  * End-to-end (E2E) testing is a type of software testing that focuses on
@@ -14,7 +14,7 @@ import { createUserBody } from '../../data/user';
  * @ref https://katalon.com/resources-center/blog/end-to-end-e2e-testing
  */
 
-describe('[e2e] - sign up a user', () => {
+describe("[e2e] - sign up a user", () => {
   const { name, email, phone } = createUserBody;
 
   beforeAll(async () => {
@@ -30,14 +30,14 @@ describe('[e2e] - sign up a user', () => {
     await prismaClient.$disconnect();
   });
 
-  it('should create a new user', async () => {
+  it("should create a new user", async () => {
     jest.resetModules();
-    jest.mock('../../../src/app');
+    jest.mock("../../../src/app");
 
     const env = process.env.NODE_ENV;
     const response = await request(app)
       .post(`/api/v1/${env}/users/create`)
-      .set('Accept', 'application/json')
+      .set("Accept", "application/json")
       .send(createUserBody);
 
     const { data } = response.body as ApiResponse<users>;

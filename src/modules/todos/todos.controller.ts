@@ -23,7 +23,7 @@ export default class TodoController extends Api {
   public getTodos = async (
     req: Request,
     res: CustomResponse<todo_list>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const todo = await this.todosService.getTodos(req.body);
@@ -36,7 +36,7 @@ export default class TodoController extends Api {
   public createTodo = async (
     req: Request,
     res: CustomResponse<todo_list>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const todo = await this.todosService.createTodo(req.body);
@@ -49,8 +49,8 @@ export default class TodoController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while creating the user"
-          )
+            "An error occurred while creating the user",
+          ),
         );
       }
     }
@@ -59,7 +59,7 @@ export default class TodoController extends Api {
   public createTagTodo = async (
     req: Request,
     res: CustomResponse<Tags>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const tags = await this.todosService.createTagTodo(req.body);
@@ -72,8 +72,8 @@ export default class TodoController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while creating the user"
-          )
+            "An error occurred while creating the user",
+          ),
         );
       }
     }
@@ -82,7 +82,7 @@ export default class TodoController extends Api {
   public updateTodo = async (
     req: Request,
     res: CustomResponse<todo_list>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const id = req.params.id as string;
@@ -93,7 +93,7 @@ export default class TodoController extends Api {
         id,
         todo_id,
         tag_name,
-        updateData
+        updateData,
       );
       this.send(res, todo, HttpStatusCode.Ok, "updateTodos");
     } catch (e) {
@@ -107,8 +107,8 @@ export default class TodoController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while updating the user"
-          )
+            "An error occurred while updating the user",
+          ),
         );
       }
     }

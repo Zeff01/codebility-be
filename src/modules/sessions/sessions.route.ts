@@ -1,25 +1,25 @@
-import { Router } from 'express';
-import RequestValidator from '@/middlewares/request-validator';
-import { verifyAuthToken } from '@/middlewares/auth';
-import SessionsController from './sessions.controller';
-import { ICreateSessionDto, IPaySessionDto } from '@/dto/session.dto';
+import { Router } from "express";
+import RequestValidator from "@/middlewares/request-validator";
+import { verifyAuthToken } from "@/middlewares/auth";
+import SessionsController from "./sessions.controller";
+import { ICreateSessionDto, IPaySessionDto } from "@/dto/session.dto";
 
 const sessionRouter: Router = Router();
 const controller = new SessionsController();
 
-sessionRouter.get('/', verifyAuthToken, controller.getSessions);
+sessionRouter.get("/", verifyAuthToken, controller.getSessions);
 sessionRouter.post(
-  '/',
+  "/",
   verifyAuthToken,
   RequestValidator.validate(ICreateSessionDto),
-  controller.createSession
+  controller.createSession,
 );
 sessionRouter.post(
-  '/payment',
+  "/payment",
   RequestValidator.validate(IPaySessionDto),
-  controller.paySession
+  controller.paySession,
 );
-sessionRouter.post('/payment/callback', controller.paymentCallback);
-sessionRouter.post('/payout/callback', controller.paymentCallback);
+sessionRouter.post("/payment/callback", controller.paymentCallback);
+sessionRouter.post("/payout/callback", controller.paymentCallback);
 
 export default sessionRouter;

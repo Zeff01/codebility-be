@@ -43,7 +43,7 @@ export type GeneratedDecorator<
 > = (
   target: T,
   key: string,
-  descriptor: Descriptor<TArgs>
+  descriptor: Descriptor<TArgs>,
 ) => Descriptor<TArgs>;
 
 /**

@@ -31,7 +31,7 @@ import { sendEmail } from "@/utils/mailer";
 export default class UserService {
   public async getUser(
     data: Prisma.UsersWhereInput,
-    select?: Prisma.UsersSelect
+    select?: Prisma.UsersSelect,
   ) {
     return await prisma.users.findFirst({
       where: data,
@@ -39,7 +39,6 @@ export default class UserService {
     });
   }
 
- 
   public async createUser(data: CreateUserDto) {
     try {
       return await prisma.users.create({
@@ -60,7 +59,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while creating the user"
+        "An error occurred while creating the user",
       );
     }
   }
@@ -83,7 +82,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured while adding work experience"
+        "An error occured while adding work experience",
       );
     }
   }
@@ -126,7 +125,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured whilte updating user work experince"
+        "An error occured whilte updating user work experince",
       );
     }
   }
@@ -142,7 +141,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured while deleting user work experince"
+        "An error occured while deleting user work experince",
       );
     }
   }
@@ -165,7 +164,7 @@ export default class UserService {
 
       const matchPassword = GeneratorProvider.validateHash(
         data.password,
-        isExist.password!
+        isExist.password!,
       );
 
       if (!matchPassword) {
@@ -213,7 +212,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user"
+        "An error occurred while updating the user",
       );
     }
   }
@@ -255,7 +254,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while retrieving the user by ID"
+        "An error occurred while retrieving the user by ID",
       );
     }
   }
@@ -272,7 +271,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while retrieving the Users by Team"
+        "An error occurred while retrieving the Users by Team",
       );
     }
   }
@@ -304,14 +303,14 @@ export default class UserService {
       await sendEmail(
         user.email_address,
         "Your temporary password",
-        `Here is your temporary password: ${tempPassword}`
+        `Here is your temporary password: ${tempPassword}`,
       );
 
       return { message: "Temporary password has been sent to your email." };
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while processing the forgot password request"
+        "An error occurred while processing the forgot password request",
       );
     }
   }
@@ -319,7 +318,7 @@ export default class UserService {
   public async changeUserPassword(
     id: string,
     oldPassword: string,
-    newPassword: string
+    newPassword: string,
   ) {
     try {
       // Get the user
@@ -337,7 +336,7 @@ export default class UserService {
       if (oldPassword === newPassword) {
         throw new HttpBadRequestError(
           "New password cannot be the same as the old password",
-          []
+          [],
         );
       }
 
@@ -353,7 +352,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while changing the password"
+        "An error occurred while changing the password",
       );
     }
   }

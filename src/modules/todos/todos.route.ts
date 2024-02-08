@@ -121,13 +121,13 @@ todos.get("/", controller.getTodos);
 todos.route("/create").post(
   //verifyAuthAdminToken,
   RequestValidator.validate(CreateTodoDto),
-  controller.createTodo
+  controller.createTodo,
 );
 
 todos.route("/tags").post(
   //verifyAuthAdminToken,
   RequestValidator.validate(CreateTagTodoDto),
-  controller.createTagTodo
+  controller.createTagTodo,
 );
 
 // /**
@@ -144,7 +144,7 @@ todos.patch(
   "/:id",
   //   verifyAuthAdminToken,
   RequestValidator.validate(UpdateTodoDto),
-  controller.updateTodo
+  controller.updateTodo,
 );
 
 // /**

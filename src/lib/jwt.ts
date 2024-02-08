@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 /**
  * `JwtUtil` Represents a utility class for handling JSON Web Tokens.
@@ -13,7 +13,7 @@ export class JwtUtil {
    * @returns - The generated JWT token.
    */
   public static generateToken(payload: Record<string, any>): string {
-    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
+    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "7d" });
   }
 
   /**
@@ -25,7 +25,7 @@ export class JwtUtil {
    */
   public static verifyToken(
     token: string,
-    secret: string
+    secret: string,
   ): Record<string, any> | null {
     try {
       return jwt.verify(token, secret) as Record<string, any>;

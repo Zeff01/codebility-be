@@ -1,9 +1,9 @@
-import { config as configDotenv } from 'dotenv';
-import server from './server';
-import { printAppInfo } from './utils/print-app-info';
-import appConfig from './config/app.config';
-import prismaClient from '@/lib/prisma';
-import environment from '@/lib/environment';
+import { config as configDotenv } from "dotenv";
+import server from "./server";
+import { printAppInfo } from "./utils/print-app-info";
+import appConfig from "./config/app.config";
+import prismaClient from "@/lib/prisma";
+import environment from "@/lib/environment";
 
 configDotenv();
 
@@ -17,9 +17,9 @@ server.listen(process.env.PORT, () => {
   printAppInfo(port, env, appUrl, apiUrl);
 });
 
-process.on('SIGINT', () => {
+process.on("SIGINT", () => {
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   prismaClient.$disconnect();
-  console.log('Prisma Disconnected.');
+  console.log("Prisma Disconnected.");
   process.exit(0);
 });

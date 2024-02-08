@@ -1,4 +1,4 @@
-import { DEFAULT_PORT } from '@/utils/constants';
+import { DEFAULT_PORT } from "@/utils/constants";
 
 interface AppConfig {
   api: {
@@ -44,17 +44,17 @@ interface AppConfig {
 
 const appConfig: AppConfig = {
   api: {
-    basePath: 'api',
-    version: 'v1',
+    basePath: "api",
+    version: "v1",
   },
   docs: {
-    swaggerUIPath: '/v1/swagger',
-    apiDocsPath: '/v1/api-docs',
+    swaggerUIPath: "/v1/swagger",
+    apiDocsPath: "/v1/api-docs",
   },
   logs: {
-    dir: './logs',
-    logFile: 'app.log',
-    errorLogFile: 'error.log',
+    dir: "./logs",
+    logFile: "app.log",
+    errorLogFile: "error.log",
   },
   defaultPort: DEFAULT_PORT,
 };
