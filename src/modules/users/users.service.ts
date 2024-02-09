@@ -5,7 +5,6 @@ import {
   type Users,
   $Enums,
   Work_Experience,
-  UserProjects,
 } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import LogMessage from "@/decorators/log-message.decorator";
@@ -53,7 +52,7 @@ export default class UserService {
           schedule: data.schedule,
           position: data.position,
           roleType: RoleTypeEnum.MENTOR,
-          userType: UserTypeEnum.ADMIN,
+          // userType: UserTypeEnum.ADMIN,
         },
       });
     } catch (error) {

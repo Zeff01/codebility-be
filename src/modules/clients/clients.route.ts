@@ -132,7 +132,7 @@ clients
 //  * @security BearerAuth
 //  */
 clients.patch(
-  "/:id",
+  "/",
   verifyAuthAdminToken,
   RequestValidator.validate(UpdateClientDto),
   controller.updateClient,

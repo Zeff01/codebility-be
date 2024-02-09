@@ -18,13 +18,11 @@ export default class TimeLogsService {
   //     });
   //   }
 
-  public async getLogs(data: time_logs) {
-    const { id, ...otherFields } = data;
+  public async getLogs(id: string) {
     return await prisma.time_logs.findFirst({
       where: {
         id,
       },
-      data: { ...otherFields },
     });
   }
 

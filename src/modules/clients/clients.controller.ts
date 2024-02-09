@@ -51,18 +51,11 @@ export default class ClientController extends Api {
 
   public updateClient = async (
     req: Request,
-    res: CustomResponse<Projects>,
+    res: CustomResponse<Clients>,
     next: NextFunction,
   ) => {
     try {
-      const id = req.params.id as string;
-      const users_Id = req.body.users_Id;
-      const updateData = req.body;
-      const project = await this.clientsService.updateClient(
-        id,
-        users_Id,
-        updateData,
-      );
+      const project = await this.clientsService.updateClient(req.body);
       this.send(res, project, HttpStatusCode.Ok, "updateUser");
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {

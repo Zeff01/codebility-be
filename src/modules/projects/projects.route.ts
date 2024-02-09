@@ -79,8 +79,8 @@ projects
  * @security BearerAuth
  */
 projects.patch(
-  "/:id",
-  // verifyAuthAdminToken,
+  "/",
+  verifyAuthAdminToken,
   RequestValidator.validate(UpdateProjectDto),
   controller.updateProject,
 );

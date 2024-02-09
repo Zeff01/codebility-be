@@ -71,6 +71,18 @@ export class CreateUserDto {
   @IsOptional()
   tech_stacks: string[];
 
+  @IsArray()
+  @IsOptional()
+  addtl_skills: string[];
+
+  @IsString()
+  @IsOptional()
+  about_me: string;
+
+  @IsString()
+  @IsOptional()
+  education: string;
+
   @IsString()
   @IsNotEmpty()
   password: string;
@@ -81,7 +93,7 @@ export class CreateUserDto {
 
   @IsArray()
   @IsOptional()
-  position: string;
+  position: string[];
 }
 
 export class IUpdateUserDto {

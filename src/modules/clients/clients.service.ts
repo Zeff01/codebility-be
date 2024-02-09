@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 
 import { HttpInternalServerError } from "@/lib/errors";
 
-import { UpdateClientDto } from "@/dto/client.dto";
+import { CreateClientDto, UpdateClientDto } from "@/dto/client.dto";
 
 export default class ClientsService {
   //   public async getUser(
@@ -20,26 +20,25 @@ export default class ClientsService {
       where: {
         id,
       },
-      include: { UserClients: true },
+      include: { projects: true },
+      // {select:{project_name:true},
+      // users:{select:{name:true}}
     });
   }
 
-  public async createClient({ company_name, users_Id, clientId }) {
+  public async createClient(data: CreateClientDto) {
     try {
       return await prisma.clients.create({
         data: {
-          company_name: company_name,
-          users: {
-            connect: {
-              id: users_Id,
-            },
-          },
-          UserClients: {
-            create: { id: clientId },
-          },
+          company_name: data.company_name,
+          company_logo: data.company_logo,
+          working_hours: data.working_hours,
+          email: data.email,
+          contact_number: data.contact_number,
+          linkedin_link: data.linkedin_link,
+          location: data.location,
+          company_hist: data.company_hist,
         },
-
-        include: { UserClients: true },
       });
     } catch (error) {
       console.error(error);
@@ -49,22 +48,16 @@ export default class ClientsService {
     }
   }
 
-  public async updateClient(
-    id: string,
-    users_Id: string,
-    data: UpdateClientDto,
-  ) {
+  public async updateClient(data: UpdateClientDto) {
+    const { id, ...updateData } = data;
     try {
       return await prisma.clients.update({
         where: {
           id,
         },
         data: {
-          UserClients: { update: { users_Id: users_Id } },
-          company_name: data.company_name,
+          ...updateData,
         },
-
-        include: { UserClients: true },
       });
     } catch (error) {
       console.error(error);

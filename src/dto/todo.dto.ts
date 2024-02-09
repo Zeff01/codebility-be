@@ -20,24 +20,19 @@ export class CreateTodoDto {
   title: string;
 
   @IsString()
-  @IsNotEmpty()
-  users_id: string;
+  @IsOptional()
+  subheader: string;
 
   @IsString()
   @IsOptional()
-  tag_id: string;
+  full_description: string;
 
-  @IsString()
-  @IsOptional()
-  project_id: string;
-
-  @IsString()
-  @IsNotEmpty()
+  @IsEnum(PriorityLevelEnum)
   prio_level: string;
 
   @IsString()
   @IsOptional()
-  tags: string;
+  github_link: string;
 }
 
 export class CreateTagTodoDto {
@@ -47,11 +42,7 @@ export class CreateTagTodoDto {
 
   @IsString()
   @IsNotEmpty()
-  Todos: string;
-
-  @IsString()
-  @IsOptional()
-  title: string;
+  todoId: string;
 }
 
 export class UpdateTodoDto {

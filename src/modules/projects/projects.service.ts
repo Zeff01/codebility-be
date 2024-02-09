@@ -9,7 +9,7 @@ import prisma from "@/lib/prisma";
 
 import { HttpInternalServerError } from "@/lib/errors";
 
-import { UpdateProjectDto } from "@/dto/project.dto";
+import { CreateProjectDto, UpdateProjectDto } from "@/dto/project.dto";
 
 export default class ProjectsService {
   public async getProjects({ id }) {
@@ -17,50 +17,30 @@ export default class ProjectsService {
       where: {
         id,
       },
-      include: { users: true },
+      // select: { users:true}
     });
   }
 
   public async getProjectsByUserId(id: string) {
-    return await prisma.userProjects.findMany({
+    return await prisma.projects.findMany({
       where: {
         id,
       },
       // select: { usersproj_Id: true },
       include: {
-        project: true,
+        users: { select: { name: true } },
       },
     });
   }
 
-  public async createProject({
-    project_name,
-    github_link,
-    clientsId,
-    company_name,
-  }) {
+  public async createProject(data: CreateProjectDto) {
     try {
       return await prisma.projects.create({
         data: {
-          project_name,
-          github_link,
-          Clients: {
-            connectOrCreate: {
-              where: { id: clientsId },
-              create: { company_name: company_name },
-            },
-          },
-          users: {
-            create: {
-              // id: userId,
-            },
-          },
-          // UserProjects: {
-          //   connectOrCreate: { id: userId },
-          // },
+          project_name: data.project_name,
+          github_link: data.github_link,
+          users: data.users,
         },
-
-        include: { Clients: true, users: true },
       });
     } catch (error) {
       console.error(error);
@@ -70,23 +50,16 @@ export default class ProjectsService {
     }
   }
 
-  public async updateProject(
-    id: string,
-    userId: string,
-    data: UpdateProjectDto,
-  ) {
+  public async updateProject(data: UpdateProjectDto) {
+    const { id, ...updateData } = data;
     try {
       return await prisma.projects.update({
         where: {
-          id: id,
+          id,
         },
         data: {
-          UserProjects: { connect: { id: id } },
-          project_name: data.project_name,
-          github_link: data.github_link,
+          ...updateData,
         },
-
-        include: { UserProjects: true },
       });
     } catch (error) {
       console.error(error);

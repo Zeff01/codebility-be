@@ -44,7 +44,7 @@ export default class ProjectController extends Api {
 
   public createProject = async (
     req: Request,
-    res: CustomResponse<Projects>,
+    res: CustomResponse<UserProjects>,
     next: NextFunction,
   ) => {
     try {
@@ -71,14 +71,9 @@ export default class ProjectController extends Api {
     next: NextFunction,
   ) => {
     try {
-      const id = req.params.id as string;
-      const usersproj_Id = req.body.userId;
-      const updateData = req.body;
-      const project = await this.projectsService.updateProject(
-        id,
-        userId,
-        updateData,
-      );
+      // const id = req.params.id as string;
+      // const {updateData} = req.body;
+      const project = await this.projectsService.updateProject(req.body);
       this.send(res, project, HttpStatusCode.Ok, "updateUser");
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {

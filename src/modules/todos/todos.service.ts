@@ -3,8 +3,8 @@ import prisma from "@/lib/prisma";
 import { HttpInternalServerError } from "@/lib/errors";
 
 import { UpdateClientDto } from "@/dto/client.dto";
-import { UpdateTodoDto } from "@/dto/todo.dto";
-import { Tags } from "@prisma/client";
+import { CreateTagTodoDto, CreateTodoDto, UpdateTodoDto } from "@/dto/todo.dto";
+import { PriorityLevelEnum, Tags } from "@prisma/client";
 
 export default class TodosService {
   //   public async getUser(
@@ -22,31 +22,24 @@ export default class TodosService {
       where: {
         id,
       },
-      include: { Tags: true },
+      include: {
+        tags: { select: { tag: true } },
+        userTodo: { select: { name: true } },
+        projects: { select: { project_name: true } },
+      },
     });
   }
 
-  public async createTodo({ title, users_id, prio_level, project_id, tagId }) {
+  public async createTodo(data: CreateTodoDto) {
     try {
       return await prisma.todo_list.create({
         data: {
-          title: title,
-          users: {
-            connect: {
-              id: users_id,
-            },
-          },
-          prio_level: prio_level,
-          projects: {
-            connect: {
-              id: project_id,
-            },
-          },
-          TodoTags: {
-            create: { id: tagId },
-          },
+          title: data.title,
+          subheader: data.subheader,
+          full_description: data.full_description,
+          prio_level: PriorityLevelEnum.LOW,
+          github_link: data.github_link,
         },
-        include: { projects: true, TodoTags: true },
       });
     } catch (error) {
       console.error(error);
@@ -56,22 +49,18 @@ export default class TodosService {
     }
   }
 
-  public async createTagTodo({ tag, Todos, title, prio_level }) {
+  public async createTagTodo(data: CreateTagTodoDto) {
     try {
       return await prisma.tags.create({
         data: {
-          tag,
+          tag: data.tag,
           todo_list: {
-            connectOrCreate: {
-              where: { id: Todos },
-              create: { title: title, prio_level: prio_level },
+            connect: {
+              id: data.todoId,
             },
           },
-          //   TodoTags: {
-          //     create: { todo_id, tags: { connect: { id: tags } } },
-          //   },
         },
-        include: { todo_list: true },
+        // include: { todo_list: {select:{title:true}} },
       });
     } catch (error) {
       console.error(error);

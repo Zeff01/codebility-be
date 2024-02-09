@@ -22,9 +22,21 @@ export class CreateProjectDto {
   @IsString()
   @IsNotEmpty()
   github_link: string;
+
+  @IsArray()
+  @IsNotEmpty()
+  users: string;
+
+  @IsString()
+  @IsOptional()
+  clientId: string;
 }
 
 export class UpdateProjectDto {
+  @IsString()
+  @IsOptional()
+  id: string;
+
   @IsString()
   @IsOptional()
   project_name?: string;
@@ -32,6 +44,10 @@ export class UpdateProjectDto {
   @IsString()
   @IsOptional()
   github_link?: string;
+
+  @IsString()
+  @IsOptional()
+  clientId: string;
 
   // @IsString()
   // @IsOptional()

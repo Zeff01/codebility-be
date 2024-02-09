@@ -8,7 +8,7 @@ import {
   CreateTodoDto,
   UpdateClientDto,
 } from "@/dto/client.dto";
-import { verifyAuthAdminToken } from "@/middlewares/auth";
+import { verifyAuthAdminToken, verifyAuthToken } from "@/middlewares/auth";
 import { CreateTagTodoDto, UpdateTodoDto } from "@/dto/todo.dto";
 
 const todos: Router = Router();
@@ -118,11 +118,13 @@ todos.get("/", controller.getTodos);
 //  * @param {CreateUserDto} request.body.required
 //  * @return {Users} 201 - user created
 //  */
-todos.route("/create").post(
-  //verifyAuthAdminToken,
-  RequestValidator.validate(CreateTodoDto),
-  controller.createTodo,
-);
+todos
+  .route("/create")
+  .post(
+    verifyAuthToken,
+    RequestValidator.validate(CreateTodoDto),
+    controller.createTodo,
+  );
 
 todos.route("/tags").post(
   //verifyAuthAdminToken,
