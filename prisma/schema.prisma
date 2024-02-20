@@ -37,6 +37,7 @@ model Users {
   org_chart         org_chart[]
   time_logs         time_logs[]
   todo_list         todo_list[]
+  checklist         checklist[]
   projects          String[]          @db.ObjectId // IDs of related Projects
   clientId          String?           @db.ObjectId
   clients           Clients?          @relation(fields: [clientId], references: [id])
@@ -117,6 +118,16 @@ model todo_list {
   tags             Tags[]            @relation(fields: [tagId], references: [id])
 
   @@map("todo_list")
+}
+
+model checklist {
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  title            String
+  full_description String?
+  accomplished     Boolean?          @default(false)
+  due_time         DateTime          
+  userChecklistId  String            @db.ObjectId
+  userChecklist    Users?            @relation(fields: [userChecklistId], references: [id])
 }
 
 model Tags {
