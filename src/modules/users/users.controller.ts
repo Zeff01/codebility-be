@@ -274,4 +274,52 @@ export default class UserController extends Api {
       next(e);
     }
   };
+
+  public getuserbyusertypeapplicant = async (
+    req: Request,
+    res: CustomResponse<Work_Experience>,
+    next: NextFunction
+  ) => {
+    try {
+      const applicant = await this.userService.getuserbyusertypeapplicant();
+      this.send(res, applicant, HttpStatusCode.Ok, "getApplicantList");
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  public getuserapplicantPerUser = async (
+    req: Request,
+    res: CustomResponse<Users>,
+    next: NextFunction
+  ) => {
+    try {
+      const id = req.params.id as string;
+      if (id.length != 24) {
+        throw new HttpInternalServerError(`id is not correct format ${id}`);
+      }
+      const users = await this.userService.getuserapplicantPerUser(id);
+      this.send(res, users, HttpStatusCode.Ok, "getApplicantUser");
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  public updateuserapplicantPerUser = async (
+    req: Request,
+    res: CustomResponse<Users>,
+    next: NextFunction
+  ) => {
+    try {
+      const id = req.params.id as string;
+      const data = req.body;
+      const resData = await this.userService.updateuserapplicantPerUser(
+        id,
+        data
+      );
+      this.send(res, resData, HttpStatusCode.Ok, "acceptApplicantUser");
+    } catch (e) {
+      next(e);
+    }
+  };
 }

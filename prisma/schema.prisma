@@ -32,7 +32,7 @@ model Users {
   schedule          String?
   position          String[]
   roleType          RoleTypeEnum      @default(INTERN)
-  userType          UserTypeEnum      @default(USER)
+  userType          UserTypeEnum      @default(APPLICANT)
   work_experience   Work_Experience[]
   org_chart         org_chart[]
   time_logs         time_logs[]
@@ -186,6 +186,7 @@ enum RoleTypeEnum {
 enum UserTypeEnum {
   ADMIN
   USER
+  APPLICANT
 }
 
 enum PriorityLevelEnum {

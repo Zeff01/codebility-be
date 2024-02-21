@@ -62,14 +62,7 @@ const controller = new Controller();
  * @return {Users} 200 - success response - application/json
  */
 users.route("/").get(controller.getAllUsers);
-/**
- * GET /users/{id}
- * @summary Get Users by ID
- * @tags users
- * @param {string} id.path - id param description
- * @return {Users} 200 - success response - application/json
- */
-users.route("/:id").get(controller.getUserById);
+
 /**
  * GET /users/interns
  * @summary Get Users by Interns
@@ -230,5 +223,45 @@ users.patch(
  *  @return {Work_Experience} 200 - success response - application/json
  */
 users.delete("/workexp/:id", verifyAuthToken, controller.deleteWorkExp);
+
+/**
+ *  GET /users/applicant/user
+ *  @summary Get all Applicant
+ *  @tags users
+ *  @return {Users} 200 - success response - application/json
+ */
+users.route("/applicant/").get(controller.getuserbyusertypeapplicant);
+
+/**
+ *  GET /users/applicant/user/{userid}
+ *  @summary Get Applicant per User
+ *  @tags users
+ *  @param {string} userid.path - id
+ *  @return {Users} 200 - success response - application/json
+ */
+users.route("/applicant/:id").get(controller.getuserapplicantPerUser);
+
+/**
+ *  PATCH /users/applicant/user/{id}
+ *  @summary Accept Applicant per User
+ *  @tags users
+ *  @param {string} userid.path - id
+ *  @security BearerAuth
+ *  @return {Users} 200 - success response - application/json
+ */
+users.patch(
+  "/applicant/:id",
+  verifyAuthToken,
+  controller.updateuserapplicantPerUser
+);
+
+/**
+ * GET /users/{id}
+ * @summary Get Users by ID
+ * @tags users
+ * @param {string} id.path - id param description
+ * @return {Users} 200 - success response - application/json
+ */
+users.route("/:id").get(controller.getUserById);
 
 export default users;
