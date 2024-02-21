@@ -2,6 +2,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "./ERD.pdf"
+  theme    = "forest"
+}
+
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
@@ -105,9 +111,9 @@ model todo_list {
   title            String
   subheader        String?
   full_description String?
-  userTodoId       String?            @db.ObjectId
-  userTodo         Users?             @relation(fields: [userTodoId], references: [id])
-  projectId        String?            @db.ObjectId
+  userTodoId       String?           @db.ObjectId
+  userTodo         Users?            @relation(fields: [userTodoId], references: [id])
+  projectId        String?           @db.ObjectId
   projects         Projects?         @relation(fields: [projectId], references: [id])
   prio_level       PriorityLevelEnum
   github_link      String?
@@ -137,7 +143,7 @@ model Projects {
   createdAt    DateTime    @default(now()) @map("created_at")
   updatedAt    DateTime    @default(now()) @map("updated_at")
   users        String[]    @db.ObjectId // IDs of related Users
-  clientId     String?     @db.ObjectId 
+  clientId     String?     @db.ObjectId
   client       Clients?    @relation(fields: [clientId], references: [id])
   todo_list    todo_list[]
 
