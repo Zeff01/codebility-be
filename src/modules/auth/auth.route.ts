@@ -7,13 +7,13 @@ const controller = new Controller();
 
 auth.route("/google").get(controller.googleLogin);
 
-auth.route("/google/callback").get(
-  passport.authenticate("google", {
-    failureRedirect: "/signin",
-    jwt: true,
-  }),
-  controller.googleCallback,
-);
+// auth.route("/google/callback").get(
+//   passport.authenticate("google", {
+//     failureRedirect: "/signin",
+//     jwt: true,
+//   }),
+//   controller.googleCallback,
+// );
 
 auth.route("/login/success").get(controller.googleLoginSuccess);
 

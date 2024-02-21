@@ -5,7 +5,7 @@ import RequestValidator from "@/middlewares/request-validator";
 
 import {
   CreateClientDto,
-  CreateTodoDto,
+  // CreateTodoDto,
   UpdateClientDto,
 } from "@/dto/client.dto";
 import { verifyAuthAdminToken, verifyAuthToken } from "@/middlewares/auth";
@@ -118,18 +118,18 @@ todos.get("/", controller.getTodos);
 //  * @param {CreateUserDto} request.body.required
 //  * @return {Users} 201 - user created
 //  */
-todos
-  .route("/create")
-  .post(
-    verifyAuthToken,
-    RequestValidator.validate(CreateTodoDto),
-    controller.createTodo,
-  );
+// todos
+//   .route("/create")
+//   .post(
+//     verifyAuthToken,
+//     RequestValidator.validate(CreateTodoDto),
+//     controller.createTodo,
+//   );
 
 todos.route("/tags").post(
   //verifyAuthAdminToken,
   RequestValidator.validate(CreateTagTodoDto),
-  controller.createTagTodo,
+  controller.createTagTodo
 );
 
 // /**
@@ -146,7 +146,7 @@ todos.patch(
   "/:id",
   //   verifyAuthAdminToken,
   RequestValidator.validate(UpdateTodoDto),
-  controller.updateTodo,
+  controller.updateTodo
 );
 
 // /**

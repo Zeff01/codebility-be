@@ -1,5 +1,5 @@
 import { type NextFunction, type Request } from "express";
-import { Prisma, Projects, UserProjects, type Users } from "@prisma/client";
+import { Prisma, Projects, type Users } from "@prisma/client";
 import { HttpStatusCode } from "axios";
 
 import { type CustomResponse } from "@/types/common.type";
@@ -17,7 +17,7 @@ export default class ProjectController extends Api {
   public getProjects = async (
     req: Request,
     res: CustomResponse<Projects>,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const project = await this.projectsService.getProjects(req.body);
@@ -29,8 +29,8 @@ export default class ProjectController extends Api {
 
   public getProjectsByUserId = async (
     req: Request,
-    res: CustomResponse<UserProjects>,
-    next: NextFunction,
+    res: CustomResponse<Projects>,
+    next: NextFunction
   ) => {
     try {
       const id = req.params.id;
@@ -44,8 +44,8 @@ export default class ProjectController extends Api {
 
   public createProject = async (
     req: Request,
-    res: CustomResponse<UserProjects>,
-    next: NextFunction,
+    res: CustomResponse<Projects>,
+    next: NextFunction
   ) => {
     try {
       const project = await this.projectsService.createProject(req.body);
@@ -58,8 +58,8 @@ export default class ProjectController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while creating the user",
-          ),
+            "An error occurred while creating the user"
+          )
         );
       }
     }
@@ -68,7 +68,7 @@ export default class ProjectController extends Api {
   public updateProject = async (
     req: Request,
     res: CustomResponse<Projects>,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       // const id = req.params.id as string;
@@ -86,8 +86,8 @@ export default class ProjectController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while updating the user",
-          ),
+            "An error occurred while updating the user"
+          )
         );
       }
     }

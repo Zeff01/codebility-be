@@ -44,7 +44,7 @@ export default class TodosService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while creating the user",
+        "An error occurred while creating the user"
       );
     }
   }
@@ -65,7 +65,7 @@ export default class TodosService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while creating the user",
+        "An error occurred while creating the user"
       );
     }
   }
@@ -74,32 +74,34 @@ export default class TodosService {
     id: string,
     tag_name: string,
     todo_id: string,
-    data: UpdateTodoDto,
+    data: UpdateTodoDto
   ) {
     try {
-      return await prisma.todo_list.update({
-        where: {
-          id,
-        },
-        data: {
-          title: data.title,
-          prio_level: data.prio_level,
-          subheader: data.subheader,
-          full_description: data.full_description,
-          github_link: data.github_link,
-          Tags: {
-            update: {
-              where: { id },
-              data: { todo_id: todo_id, tag_name: tag_name },
-            },
-          },
-        },
-        include: { Tags: true },
-      });
+      return;
+      // todo-be
+      // return await prisma.todo_list.update({
+      //   where: {
+      //     id,
+      //   },
+      //   data: {
+      //     title: data.title,
+      //     prio_level: data.prio_level,
+      //     subheader: data.subheader,
+      //     full_description: data.full_description,
+      //     github_link: data.github_link,
+      //     Tags: {
+      //       update: {
+      //         where: { id },
+      //         data: { todo_id: todo_id, tag_name: tag_name },
+      //       },
+      //     },
+      //   },
+      //   include: { Tags: true },
+      // });
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user",
+        "An error occurred while updating the user"
       );
     }
   }

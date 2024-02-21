@@ -30,7 +30,7 @@ import { sendEmail } from "@/utils/mailer";
 export default class UserService {
   public async getUser(
     data: Prisma.UsersWhereInput,
-    select?: Prisma.UsersSelect,
+    select?: Prisma.UsersSelect
   ) {
     return await prisma.users.findFirst({
       where: data,
@@ -58,30 +58,41 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while creating the user",
+        "An error occurred while creating the user"
       );
     }
   }
   // @LogMessage<[Users]>({ message: "Work Experience added" })
   public async addWorkExp({ user_id, position, company, date, short_desc }) {
     try {
+      if (!user_id) {
+        throw new HttpInternalServerError("user_id should not be empty");
+      }
+
+      const user = await prisma.users.findUnique({
+        // Added 'await' here
+        where: {
+          id: user_id,
+        },
+      });
+
+      if (!user?.id) {
+        throw new HttpInternalServerError("user_id should not be empty");
+      }
+
       return await prisma.work_Experience.create({
         data: {
+          userWorkExpId: user.id,
           position,
           company,
           date,
           short_desc,
-          users: {
-            connect: {
-              id: user_id,
-            },
-          },
         },
       });
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured while adding work experience",
+        "An error occured while adding work experience"
       );
     }
   }
@@ -124,7 +135,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured whilte updating user work experince",
+        "An error occured whilte updating user work experince"
       );
     }
   }
@@ -140,13 +151,15 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured while deleting user work experince",
+        "An error occured while deleting user work experince"
       );
     }
   }
+
   public async login(data: LoginAdminDto) {
     try {
-      const isExist = await prisma.users.findFirst({
+      // Find the user based on the provided email address and userType
+      const user = await prisma.users.findFirst({
         where: {
           email_address: {
             contains: data.email_address,
@@ -157,41 +170,32 @@ export default class UserService {
         },
       });
 
-      if (!isExist) {
+      // If no user is found, throw an error
+      if (!user) {
         throw new HttpNotFoundError("Invalid login");
       }
 
-      const matchPassword = GeneratorProvider.validateHash(
+      // Validate the password
+      const isPasswordMatch = GeneratorProvider.validateHash(
         data.password,
-        isExist.password!,
+        user.password
       );
 
-      if (!matchPassword) {
+      // If the password doesn't match, throw an error
+      if (!isPasswordMatch) {
         throw new HttpNotFoundError("Invalid login");
       }
-
-      let payload: JwtPayload;
-
-      if (isExist.userType === UserTypeEnum.ADMIN) {
-        // If user is an ADMIN
-        payload = {
-          id: isExist.id,
-          email: isExist.email_address!,
-          userType: isExist.userType,
-        };
-      } else if (isExist.userType === UserTypeEnum.USER) {
-        // If user is not an ADMIN
-        payload = {
-          id: isExist.id,
-          email: isExist.email_address!,
-          userType: isExist.userType,
-          // Add additional properties or customize as needed
-        };
+      let payload: JwtPayload = {
+        id: user.id,
+        email: user.email_address!,
+        userType: user.userType,
+      };
+      if (user.userType === UserTypeEnum.USER) {
       }
-
+      const token = JwtUtil.generateToken(payload);
       return {
-        user: isExist,
-        token: JwtUtil.generateToken(payload),
+        user: user,
+        token: token,
       };
     } catch (error) {
       console.error(error);
@@ -202,16 +206,17 @@ export default class UserService {
   public async updateUser(id: string, data: UpdateUserDto) {
     const { ...updateData } = data;
     try {
-      return await prisma.users.update({
-        where: {
-          id: id,
-        },
-        data: { ...updateData },
-      });
+      return;
+      // return await prisma.users.update({
+      //   where: {
+      //     id: id,
+      //   },
+      //   data: { ...updateData },
+      // });
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user",
+        "An error occurred while updating the user"
       );
     }
   }
@@ -238,22 +243,24 @@ export default class UserService {
 
   public async getUserById(id: string) {
     try {
-      return await prisma.users.findFirst({
-        where: { id: id },
-        include: {
-          work_experience: true,
-          org_chart: true,
-          time_logs: true,
-          todo_list: true,
-          projects: true,
-          clients: true,
-          notes: true,
-        },
-      });
+      return false;
+      // todo-be
+      // return await prisma.users.findFirst({
+      //   where: { id: id },
+      //   include: {
+      //     work_experience: true,
+      //     org_chart: true,
+      //     time_logs: true,
+      //     todo_list: true,
+      //     projects: true,
+      //     clients: true,
+      //     notes: true,
+      //   },
+      // });
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while retrieving the user by ID",
+        "An error occurred while retrieving the user by ID"
       );
     }
   }
@@ -270,7 +277,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while retrieving the Users by Team",
+        "An error occurred while retrieving the Users by Team"
       );
     }
   }
@@ -302,14 +309,14 @@ export default class UserService {
       await sendEmail(
         user.email_address,
         "Your temporary password",
-        `Here is your temporary password: ${tempPassword}`,
+        `Here is your temporary password: ${tempPassword}`
       );
 
       return { message: "Temporary password has been sent to your email." };
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while processing the forgot password request",
+        "An error occurred while processing the forgot password request"
       );
     }
   }
@@ -317,41 +324,43 @@ export default class UserService {
   public async changeUserPassword(
     id: string,
     oldPassword: string,
-    newPassword: string,
+    newPassword: string
   ) {
     try {
+      return;
+      // todo-be
       // Get the user
-      const user = await prisma.users.findUnique({
-        where: {
-          id: id,
-        },
-      });
+      // const user = await prisma.users.findUnique({
+      //   where: {
+      //     id: id,
+      //   },
+      // });
 
-      // Check if the old password matches the current password
-      if (!GeneratorProvider.validateHash(oldPassword, user.password)) {
-        throw new HttpBadRequestError("Old password does not match", []);
-      }
+      // // Check if the old password matches the current password
+      // if (!GeneratorProvider.validateHash(oldPassword, user.password)) {
+      //   throw new HttpBadRequestError("Old password does not match", []);
+      // }
 
-      if (oldPassword === newPassword) {
-        throw new HttpBadRequestError(
-          "New password cannot be the same as the old password",
-          [],
-        );
-      }
+      // if (oldPassword === newPassword) {
+      //   throw new HttpBadRequestError(
+      //     "New password cannot be the same as the old password",
+      //     []
+      //   );
+      // }
 
-      // Update the password
-      return await prisma.users.update({
-        where: {
-          id: id,
-        },
-        data: {
-          password: GeneratorProvider.generateHash(newPassword),
-        },
-      });
+      // // Update the password
+      // return await prisma.users.update({
+      //   where: {
+      //     id: id,
+      //   },
+      //   data: {
+      //     password: GeneratorProvider.generateHash(newPassword),
+      //   },
+      // });
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while changing the password",
+        "An error occurred while changing the password"
       );
     }
   }
