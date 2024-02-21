@@ -36,14 +36,18 @@ export class UpdateChecklistDto {
 
   @IsString({ message: "Full description must be a string" })
   @IsOptional()
-  full_description: string;
+  full_description?: string;
 
   @IsDateString()
   @IsNotEmpty({ message: "Due Time cannot be empty" })
   due_time: string;
 
   @IsBoolean()
-  accomplished: boolean;
+  @IsOptional()
+  accomplished?: boolean;
 }
 
-export class ChecklistDetailsDto {}
+export class ChecklistDetailsDto {
+  @IsString({ message: "ID must be a string" })
+  id: string;
+}

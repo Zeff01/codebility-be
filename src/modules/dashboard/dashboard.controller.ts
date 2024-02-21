@@ -116,7 +116,7 @@ export default class DashboardController extends Api {
     next: NextFunction
   ) => {
     try {
-      const id = req.params.id;
+      const id: string = req.params.id;
       const deleteChecklist = await this.dashboardService.DeleteChecklist(id);
 
       this.send(res, deleteChecklist, HttpStatusCode.Ok, "deleteChecklist");
@@ -136,6 +136,7 @@ export default class DashboardController extends Api {
   ) => {
     try {
       const id = req.params.id;
+      console.log(typeof id);
 
       const checklist = await this.dashboardService.getChecklistById(id);
 
