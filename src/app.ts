@@ -54,10 +54,10 @@ class App {
     this.express.use(
       "*",
       cors({
-        origin: "http://localhost:3000",
+        // origin: "http://localhost:3000",
         methods: "GET,POST,PUT,DELETE,PATCH",
         credentials: true,
-        allowedHeaders: "your-custom-headers",
+        // allowedHeaders: "your-custom-headers",
       }),
     );
     this.express.use(
