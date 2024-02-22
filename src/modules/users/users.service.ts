@@ -243,20 +243,21 @@ export default class UserService {
 
   public async getUserById(id: string) {
     try {
-      return false;
-      // todo-be
-      // return await prisma.users.findFirst({
-      //   where: { id: id },
-      //   include: {
-      //     work_experience: true,
-      //     org_chart: true,
-      //     time_logs: true,
-      //     todo_list: true,
-      //     projects: true,
-      //     clients: true,
-      //     notes: true,
-      //   },
-      // });
+      return await prisma.users.findFirst({
+        where: { id: id },
+        include: {
+          work_experience: true,
+          org_chart: true,
+          time_logs: true,
+          todo_list: {
+            include: {
+              projects: true,
+            },
+          },
+          clients: true,
+          notes: true,
+        },
+      });
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
@@ -327,36 +328,37 @@ export default class UserService {
     newPassword: string
   ) {
     try {
-      return;
-      // todo-be
       // Get the user
-      // const user = await prisma.users.findUnique({
-      //   where: {
-      //     id: id,
-      //   },
-      // });
+      const user = await prisma.users.findUnique({
+        where: {
+          id: id,
+        },
+      });
+      if (!user?.password) {
+        throw new HttpBadRequestError("password error", []);
+      }
 
-      // // Check if the old password matches the current password
-      // if (!GeneratorProvider.validateHash(oldPassword, user.password)) {
-      //   throw new HttpBadRequestError("Old password does not match", []);
-      // }
+      // Check if the old password matches the current password
+      if (!GeneratorProvider.validateHash(oldPassword, user.password)) {
+        throw new HttpBadRequestError("Old password does not match", []);
+      }
 
-      // if (oldPassword === newPassword) {
-      //   throw new HttpBadRequestError(
-      //     "New password cannot be the same as the old password",
-      //     []
-      //   );
-      // }
+      if (oldPassword === newPassword) {
+        throw new HttpBadRequestError(
+          "New password cannot be the same as the old password",
+          []
+        );
+      }
 
-      // // Update the password
-      // return await prisma.users.update({
-      //   where: {
-      //     id: id,
-      //   },
-      //   data: {
-      //     password: GeneratorProvider.generateHash(newPassword),
-      //   },
-      // });
+      // Update the password
+      return await prisma.users.update({
+        where: {
+          id: id,
+        },
+        data: {
+          password: GeneratorProvider.generateHash(newPassword),
+        },
+      });
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
