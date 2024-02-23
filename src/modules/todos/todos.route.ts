@@ -56,7 +56,7 @@ const controller = new Controller();
  * @tags users
  * @return {Users} 200 - success response - application/json
  */
-todos.get("/", controller.getTodos);
+todos.get("/", verifyAuthToken, controller.getTodos);
 // /**
 //  * GET /users/{id}
 //  * @summary Get Users by ID
@@ -123,13 +123,13 @@ todos
   .post(
     verifyAuthToken,
     RequestValidator.validate(CreateTodoDto),
-    controller.createTodo,
+    controller.createTodo
   );
 
 todos.route("/tags").post(
   //verifyAuthAdminToken,
   RequestValidator.validate(CreateTagTodoDto),
-  controller.createTagTodo,
+  controller.createTagTodo
 );
 
 // /**
@@ -146,7 +146,7 @@ todos.patch(
   "/:id",
   //   verifyAuthAdminToken,
   RequestValidator.validate(UpdateTodoDto),
-  controller.updateTodo,
+  controller.updateTodo
 );
 
 // /**

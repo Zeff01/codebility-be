@@ -17,10 +17,10 @@ export default class TodosService {
   //     });
   //   }
 
-  public async getTodos(id: string) {
+  public async getTodos(userTodoId: string) {
     return await prisma.todo_list.findMany({
       where: {
-        id,
+        userTodoId,
       },
       include: {
         tags: { select: { tag: true } },
@@ -44,7 +44,7 @@ export default class TodosService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while creating the user",
+        "An error occurred while creating the user"
       );
     }
   }
@@ -65,7 +65,7 @@ export default class TodosService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while creating the user",
+        "An error occurred while creating the user"
       );
     }
   }
@@ -74,7 +74,7 @@ export default class TodosService {
     id: string,
     tag_name: string,
     todo_id: string,
-    data: UpdateTodoDto,
+    data: UpdateTodoDto
   ) {
     try {
       return await prisma.todo_list.update({
@@ -99,7 +99,7 @@ export default class TodosService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user",
+        "An error occurred while updating the user"
       );
     }
   }
