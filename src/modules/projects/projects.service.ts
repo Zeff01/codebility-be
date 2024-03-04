@@ -40,12 +40,15 @@ export default class ProjectsService {
           project_name: data.project_name,
           github_link: data.github_link,
           users: data.users,
+          summary: data.summary,
+          live_link: data.live_link,
+          project_thumbnail: data.project_thumbnail,
         },
       });
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while creating the user",
+        "An error occurred while creating the user"
       );
     }
   }
@@ -64,7 +67,7 @@ export default class ProjectsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user",
+        "An error occurred while updating the user"
       );
     }
   }
