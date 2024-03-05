@@ -27,6 +27,7 @@ model Users {
   about_me          String?
   education         String?
   password          String
+  pronoun           String
   created_at        DateTime          @default(now())
   updated_at        DateTime          @default(now())
   schedule          String?
@@ -47,15 +48,18 @@ model Users {
 }
 
 model Work_Experience {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  userWorkExpId String   @db.ObjectId
-  userWorkExp   Users    @relation(fields: [userWorkExpId], references: [id])
-  position      String
-  company       String
-  date          String
-  short_desc    String
-  created_at    DateTime @default(now())
-  updated_at    DateTime @default(now())
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  userWorkExpId     String   @db.ObjectId
+  userWorkExp       Users    @relation(fields: [userWorkExpId], references: [id])
+  position          String
+  company           String
+  dateFrom          String
+  dateTo            String
+  location          String
+  task              String[]
+  short_desc        String
+  created_at        DateTime @default(now())
+  updated_at        DateTime @default(now())
 
   @@map("work_experience")
 }
