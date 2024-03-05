@@ -53,8 +53,8 @@ export default class ProjectsService {
     }
   }
 
-  public async updateProject(data: UpdateProjectDto) {
-    const { id, ...updateData } = data;
+  public async updateProject(id: string, data: UpdateProjectDto) {
+    const { ...updateData } = data;
     try {
       return await prisma.projects.update({
         where: {
@@ -67,7 +67,7 @@ export default class ProjectsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user"
+        "An error occurred while updating the project"
       );
     }
   }

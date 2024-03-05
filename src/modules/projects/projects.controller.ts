@@ -71,9 +71,12 @@ export default class ProjectController extends Api {
     next: NextFunction
   ) => {
     try {
-      // const id = req.params.id as string;
-      // const {updateData} = req.body;
-      const project = await this.projectsService.updateProject(req.body);
+      const id = req.params.id as string;
+      const { updatingData } = req.body;
+      const project = await this.projectsService.updateProject(
+        id,
+        updatingData
+      );
       this.send(res, project, HttpStatusCode.Ok, "updateUser");
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {

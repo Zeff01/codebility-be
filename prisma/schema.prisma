@@ -134,9 +134,9 @@ model Projects {
   id                String      @id @default(auto()) @map("_id") @db.ObjectId
   project_name      String
   github_link       String
-  summary           String
-  live_link         String
-  project_thumbnail String
+  summary           String?
+  live_link         String?
+  project_thumbnail String?
   createdAt         DateTime    @default(now()) @map("created_at")
   updatedAt         DateTime    @default(now()) @map("updated_at")
   users             String[]    @db.ObjectId // IDs of related Users
