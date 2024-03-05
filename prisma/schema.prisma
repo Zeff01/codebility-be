@@ -27,7 +27,7 @@ model Users {
   about_me          String?
   education         String?
   password          String
-  pronoun           String
+  pronoun           String?
   created_at        DateTime          @default(now())
   updated_at        DateTime          @default(now())
   schedule          String?
