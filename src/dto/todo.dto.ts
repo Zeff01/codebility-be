@@ -33,8 +33,14 @@ export class CreateTodoDto {
   @IsString()
   @IsOptional()
   github_link: string;
-}
 
+  @IsArray()
+  tags: TagsDto[];
+}
+export class TagsDto {
+  @IsString()
+  tag: string;
+}
 export class CreateTagTodoDto {
   @IsString()
   @IsNotEmpty()

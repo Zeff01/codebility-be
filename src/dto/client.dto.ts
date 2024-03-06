@@ -23,7 +23,7 @@ export class CreateClientDto {
   @IsOptional()
   company_logo: string;
 
-  @IsArray()
+  // @IsArray()
   @IsOptional()
   working_hours: string;
 

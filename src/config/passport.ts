@@ -24,7 +24,7 @@ passport.use(
       _: string,
       __: string,
       profile: GoogleProfile,
-      callback: (err: any, user?: any) => void,
+      callback: (err: any, user?: any) => void
     ) => {
       const newUser: any = {
         googleId: profile?.id,
@@ -51,8 +51,8 @@ passport.use(
         console.log(err);
         callback(err, null);
       }
-    },
-  ),
+    }
+  )
 );
 
 passport.serializeUser((user: any, done) => {
