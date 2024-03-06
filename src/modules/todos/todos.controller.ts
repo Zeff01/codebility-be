@@ -23,10 +23,22 @@ export default class TodoController extends Api {
   public getTodos = async (
     req: Request,
     res: CustomResponse<todo_list>,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const todo = await this.todosService.getTodos(req.body);
+      this.send(res, todo, HttpStatusCode.Ok, "Todos");
+    } catch (e) {
+      next(e);
+    }
+  };
+  public getTodosById = async (
+    req: Request,
+    res: CustomResponse<todo_list>,
+    next: NextFunction
+  ) => {
+    try {
+      const todo = await this.todosService.getTodos(req.params.id as string);
       this.send(res, todo, HttpStatusCode.Ok, "Todos");
     } catch (e) {
       next(e);
@@ -36,7 +48,7 @@ export default class TodoController extends Api {
   public createTodo = async (
     req: Request,
     res: CustomResponse<todo_list>,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const todo = await this.todosService.createTodo(req.body);
@@ -49,8 +61,8 @@ export default class TodoController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while creating the user",
-          ),
+            "An error occurred while creating the user"
+          )
         );
       }
     }
@@ -59,7 +71,7 @@ export default class TodoController extends Api {
   public createTagTodo = async (
     req: Request,
     res: CustomResponse<Tags>,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const tags = await this.todosService.createTagTodo(req.body);
@@ -72,8 +84,8 @@ export default class TodoController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while creating the user",
-          ),
+            "An error occurred while creating the user"
+          )
         );
       }
     }
@@ -82,19 +94,13 @@ export default class TodoController extends Api {
   public updateTodo = async (
     req: Request,
     res: CustomResponse<todo_list>,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const id = req.params.id as string;
-      const todo_id = req.body.todo_id;
       const tag_name = req.body.tag_name;
       const updateData = req.body;
-      const todo = await this.todosService.updateTodo(
-        id,
-        todo_id,
-        tag_name,
-        updateData,
-      );
+      const todo = await this.todosService.updateTodo(id, tag_name, updateData);
       this.send(res, todo, HttpStatusCode.Ok, "updateTodos");
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -107,8 +113,34 @@ export default class TodoController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while updating the user",
-          ),
+            "An error occurred while updating the user"
+          )
+        );
+      }
+    }
+  };
+
+  public updateTagsTodo = async (
+    req: Request,
+    res: CustomResponse<todo_list>,
+    next: NextFunction
+  ) => {
+    try {
+      const tags = await this.todosService.updateTagsTodo(
+        req.params.id as string,
+        req.body
+      );
+      this.send(res, tags, HttpStatusCode.Ok, "Update tag todos");
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        // Handle known request errors from Prisma
+        next(new HttpBadRequestError("Bad request", [e.message]));
+      } else {
+        // Handle other errors
+        next(
+          new HttpInternalServerError(
+            "An error occurred while creating the user"
+          )
         );
       }
     }

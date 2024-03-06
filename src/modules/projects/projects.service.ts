@@ -10,6 +10,7 @@ import prisma from "@/lib/prisma";
 import { HttpInternalServerError } from "@/lib/errors";
 
 import { CreateProjectDto, UpdateProjectDto } from "@/dto/project.dto";
+import clients from "../clients/clients.route";
 
 export default class ProjectsService {
   public async getProjects({ id }) {
@@ -17,7 +18,13 @@ export default class ProjectsService {
       where: {
         id,
       },
-      // select: { users:true}
+    });
+  }
+  public async getProjectsById(id: string) {
+    return await prisma.projects.findFirst({
+      where: {
+        id: id,
+      },
     });
   }
 
@@ -45,7 +52,7 @@ export default class ProjectsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while creating the user",
+        "An error occurred while creating the user"
       );
     }
   }
@@ -64,7 +71,22 @@ export default class ProjectsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user",
+        "An error occurred while updating the user"
+      );
+    }
+  }
+
+  public async deleteProjectById(id: string) {
+    try {
+      return await prisma.projects.delete({
+        where: {
+          id: id,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while updating the user"
       );
     }
   }
