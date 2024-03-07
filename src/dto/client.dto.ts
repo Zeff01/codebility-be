@@ -25,7 +25,7 @@ export class CreateClientDto {
 
   @IsArray()
   @IsOptional()
-  working_hours: string;
+  working_hours: string[];
 
   @IsString()
   @IsOptional()
@@ -45,7 +45,7 @@ export class CreateClientDto {
 
   @IsArray()
   @IsOptional()
-  company_hist: string;
+  company_hist: string[];
 }
 
 export class UpdateClientDto {
@@ -63,7 +63,7 @@ export class UpdateClientDto {
 
   @IsArray()
   @IsOptional()
-  working_hours: string;
+  working_hours: string[];
 
   @IsString()
   @IsOptional()
@@ -83,7 +83,7 @@ export class UpdateClientDto {
 
   @IsArray()
   @IsOptional()
-  company_hist: string;
+  company_hist: string[];
 
   // @IsString()
   // @IsOptional()

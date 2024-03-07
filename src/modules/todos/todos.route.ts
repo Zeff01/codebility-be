@@ -3,11 +3,7 @@ import Controller from "./todos.controller";
 
 import RequestValidator from "@/middlewares/request-validator";
 
-import {
-  CreateClientDto,
-  // CreateTodoDto,
-  UpdateClientDto,
-} from "@/dto/client.dto";
+import { CreateTodoDto } from "@/dto/todo.dto";
 import { verifyAuthAdminToken, verifyAuthToken } from "@/middlewares/auth";
 import { CreateTagTodoDto, UpdateTodoDto } from "@/dto/todo.dto";
 

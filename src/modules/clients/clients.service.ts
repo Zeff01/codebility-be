@@ -45,7 +45,7 @@ export default class ClientsService {
           contact_number: data.contact_number,
           linkedin_link: data.linkedin_link,
           location: data.location,
-          company_hist: data.company_hist?,
+          company_hist: data.company_hist,
         },
       });
     } catch (error) {
