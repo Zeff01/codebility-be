@@ -4,15 +4,15 @@ import Controller from "./user.controller";
 const user: Router = Router();
 const controller = new Controller();
 
-import { User } from "@prisma/client";
-
+import { Users } from "@prisma/client";
+//commented for now as codeb will not be avaiable in the public anytime soon
 /**
  * GET /users
  * @summary Get All Users
  * @tags users
  * @return {User} 200 - success response - application/json
  */
-user.route("/").get(controller.getUsers);
+// user.route("/").get(controller.getUsers);
 
 /**
  * GET /users/{email}
@@ -21,7 +21,7 @@ user.route("/").get(controller.getUsers);
  * @param {string} email.path - id param description
  * @return {User} 200 - success response - application/json
  */
-user.route("/:email").get(controller.getUser);
+// user.route("/:email").get(controller.getUser);
 /**
  * POST /users/{id}
  * @summary Update Users by ID
@@ -29,8 +29,8 @@ user.route("/:email").get(controller.getUser);
  * @param {string} id.path - id param description
  * @return {User} 200 - success response - application/json
  */
-user.route("/:id").post(controller.updateProfile);
+// user.route("/:id").post(controller.updateProfile);
 
-user.route("/:email").patch(controller.updateGoogleUser);
+// user.route("/:email").patch(controller.updateGoogleUser);
 
 export default user;

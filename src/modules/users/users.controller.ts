@@ -170,7 +170,8 @@ export default class UserController extends Api {
     next: NextFunction
   ) => {
     try {
-      const user = await this.userService.getUserByTeam(req.params.position);
+      const positionArray = req.params.position.split(","); //change split as needed
+      const user = await this.userService.getUserByTeam(positionArray);
       this.send(res, user, HttpStatusCode.Ok, "getUserByTeam");
     } catch (e) {
       next(e);

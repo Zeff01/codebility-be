@@ -1,10 +1,4 @@
-import {
-  time_logs,
-  type Prisma,
-  type Clients,
-  Projects,
-  UserProjects,
-} from "@prisma/client";
+import { time_logs, type Prisma, type Clients, Projects } from "@prisma/client";
 import prisma from "@/lib/prisma";
 
 import { HttpInternalServerError } from "@/lib/errors";
@@ -34,9 +28,9 @@ export default class ProjectsService {
         id,
       },
       // select: { usersproj_Id: true },
-      include: {
-        users: { select: { name: true } },
-      },
+      // include: {
+      //   users: { select: { name: true } },
+      // },
     });
   }
 

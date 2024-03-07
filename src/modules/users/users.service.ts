@@ -71,7 +71,7 @@ export default class UserService {
           company,
           date,
           short_desc,
-          users: {
+          userWorkExp: {
             connect: {
               id: user_id,
             },
@@ -168,7 +168,11 @@ export default class UserService {
         throw new HttpNotFoundError("Invalid login");
       }
 
-      let payload: JwtPayload;
+      let payload: JwtPayload = {
+        id: "",
+        email: "",
+        userType: UserTypeEnum.USER,
+      };
 
       if (isExist.userType === UserTypeEnum.ADMIN) {
         // If user is an ADMIN
@@ -247,7 +251,7 @@ export default class UserService {
           org_chart: true,
           time_logs: true,
           todo_list: true,
-          projects: true,
+          // projects: true,
           clients: true,
           notes: true,
         },
@@ -260,7 +264,7 @@ export default class UserService {
     }
   }
 
-  public async getUserByTeam(position: []) {
+  public async getUserByTeam(position: string[]) {
     try {
       return await prisma.users.findMany({
         where: {
@@ -328,28 +332,29 @@ export default class UserService {
           id: id,
         },
       });
+      if (user) {
+        // Check if the old password matches the current password
+        if (!GeneratorProvider.validateHash(oldPassword, user.password)) {
+          throw new HttpBadRequestError("Old password does not match", []);
+        }
 
-      // Check if the old password matches the current password
-      if (!GeneratorProvider.validateHash(oldPassword, user.password)) {
-        throw new HttpBadRequestError("Old password does not match", []);
+        if (oldPassword === newPassword) {
+          throw new HttpBadRequestError(
+            "New password cannot be the same as the old password",
+            []
+          );
+        }
+
+        // Update the password
+        return await prisma.users.update({
+          where: {
+            id: id,
+          },
+          data: {
+            password: GeneratorProvider.generateHash(newPassword),
+          },
+        });
       }
-
-      if (oldPassword === newPassword) {
-        throw new HttpBadRequestError(
-          "New password cannot be the same as the old password",
-          []
-        );
-      }
-
-      // Update the password
-      return await prisma.users.update({
-        where: {
-          id: id,
-        },
-        data: {
-          password: GeneratorProvider.generateHash(newPassword),
-        },
-      });
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(

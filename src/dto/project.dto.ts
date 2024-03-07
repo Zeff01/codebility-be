@@ -25,7 +25,7 @@ export class CreateProjectDto {
 
   @IsArray()
   @IsNotEmpty()
-  users: string;
+  users: string[];
 
   @IsString()
   @IsOptional()
