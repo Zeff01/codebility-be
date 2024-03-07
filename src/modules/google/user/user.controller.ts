@@ -1,11 +1,11 @@
-import catchAsync from "@/utils/catchAsync";
+// import catchAsync from "@/utils/catchAsync";
 
-import PrismaUserService from "./user.service";
-import { HttpNotFoundError } from "@/lib/errors";
-import Api from "@/lib/api";
+// import PrismaUserService from "./user.service";
+// import { HttpNotFoundError } from "@/lib/errors";
+// import Api from "@/lib/api";
 
-export default class GoogleUserController extends Api {
-  private readonly prismaUserService = new PrismaUserService();
+// export default class GoogleUserController extends Api {
+//   private readonly prismaUserService = new PrismaUserService();
 
   // public updateProfile = catchAsync(async (req, res) => {
   //   const result = await this.prismaUserService.updateProfile(

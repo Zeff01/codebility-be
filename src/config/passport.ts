@@ -51,17 +51,17 @@ interface GoogleProfile {
 //         console.log(err);
 //         callback(err, null);
 //       }
-//     }
-//   )
+//     },
+//   ),
 // );
 
-passport.serializeUser((user: any, done) => {
-  done(null, user.id);
-});
+// passport.serializeUser((user: any, done) => {
+//   done(null, user.id);
+// });
 
 // passport.deserializeUser(async (id: any, done) => {
 //   try {
-//     const user = await prisma.users.findUnique({
+//     const user = await prisma.user.findUnique({
 //       where: { id },
 //     });
 //     done(null, user);

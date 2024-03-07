@@ -65,17 +65,28 @@ export default class UserService {
   // @LogMessage<[Users]>({ message: "Work Experience added" })
   public async addWorkExp({ user_id, position, company, date, short_desc }) {
     try {
+      if (!user_id) {
+        throw new HttpInternalServerError("user_id should not be empty");
+      }
+
+      const user = await prisma.users.findUnique({
+        // Added 'await' here
+        where: {
+          id: user_id,
+        },
+      });
+
+      if (!user?.id) {
+        throw new HttpInternalServerError("user_id should not be empty");
+      }
+
       return await prisma.work_Experience.create({
         data: {
+          userWorkExpId: user.id,
           position,
           company,
           date,
           short_desc,
-          userWorkExp: {
-            connect: {
-              id: user_id,
-            },
-          },
         },
       });
     } catch (error) {
@@ -144,9 +155,11 @@ export default class UserService {
       );
     }
   }
+
   public async login(data: LoginAdminDto) {
     try {
-      const isExist = await prisma.users.findFirst({
+      // Find the user based on the provided email address and userType
+      const user = await prisma.users.findFirst({
         where: {
           email_address: data.email_address,
           userType: {
@@ -155,45 +168,32 @@ export default class UserService {
         },
       });
 
-      if (!isExist) {
+      // If no user is found, throw an error
+      if (!user) {
         throw new HttpNotFoundError("Invalid login");
       }
 
-      const matchPassword = GeneratorProvider.validateHash(
+      // Validate the password
+      const isPasswordMatch = GeneratorProvider.validateHash(
         data.password,
-        isExist.password!
+        user.password
       );
 
-      if (!matchPassword) {
+      // If the password doesn't match, throw an error
+      if (!isPasswordMatch) {
         throw new HttpNotFoundError("Invalid login");
       }
-
       let payload: JwtPayload = {
-        id: "",
-        email: "",
-        userType: UserTypeEnum.USER,
+        id: user.id,
+        email: user.email_address!,
+        userType: user.userType,
       };
-
-      if (isExist.userType === UserTypeEnum.ADMIN) {
-        // If user is an ADMIN
-        payload = {
-          id: isExist.id,
-          email: isExist.email_address!,
-          userType: isExist.userType,
-        };
-      } else if (isExist.userType === UserTypeEnum.USER) {
-        // If user is not an ADMIN
-        payload = {
-          id: isExist.id,
-          email: isExist.email_address!,
-          userType: isExist.userType,
-          // Add additional properties or customize as needed
-        };
+      if (user.userType === UserTypeEnum.USER) {
       }
-
+      const token = JwtUtil.generateToken(payload);
       return {
-        user: isExist,
-        token: JwtUtil.generateToken(payload),
+        user: user,
+        token: token,
       };
     } catch (error) {
       console.error(error);

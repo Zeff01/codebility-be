@@ -23,26 +23,30 @@ export default class ProjectsService {
   }
 
   public async getProjectsByUserId(id: string) {
-    return await prisma.projects.findMany({
-      where: {
-        id,
-      },
-      // select: { usersproj_Id: true },
-      // include: {
-      //   users: { select: { name: true } },
-      // },
-    });
+    return;
+    // todo-be
+    // return await prisma.projects.findMany({
+    //   where: {
+    //     id,
+    //   },
+    //   // select: { usersproj_Id: true },
+    //   include: {
+    //     users: { select: { name: true } },
+    //   },
+    // });
   }
 
   public async createProject(data: CreateProjectDto) {
     try {
-      return await prisma.projects.create({
-        data: {
-          project_name: data.project_name,
-          github_link: data.github_link,
-          users: data.users,
-        },
-      });
+      return;
+      // todo-be
+      // return await prisma.projects.create({
+      //   data: {
+      //     project_name: data.project_name,
+      //     github_link: data.github_link,
+      //     users: data.users,
+      //   },
+      // });
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(

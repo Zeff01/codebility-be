@@ -1,5 +1,5 @@
 import { type NextFunction, type Request } from "express";
-import { Prisma, Projects, UserProjects, type Users } from "@prisma/client";
+import { Prisma, Projects, type Users } from "@prisma/client";
 import { HttpStatusCode } from "axios";
 
 import { type CustomResponse } from "@/types/common.type";
@@ -41,7 +41,7 @@ export default class ProjectController extends Api {
 
   public getProjectsByUserId = async (
     req: Request,
-    res: CustomResponse<UserProjects>,
+    res: CustomResponse<Projects>,
     next: NextFunction
   ) => {
     try {
@@ -56,7 +56,7 @@ export default class ProjectController extends Api {
 
   public createProject = async (
     req: Request,
-    res: CustomResponse<UserProjects>,
+    res: CustomResponse<Projects>,
     next: NextFunction
   ) => {
     try {
