@@ -186,9 +186,9 @@ model Notes {
 model Levels {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId
   name       String
-  created_by String
+  created_by String?     @db.ObjectId
   created_at DateTime    @default(now())
-  updated_by String
+  updated_by String?     @db.ObjectId
   updated_at DateTime    @default(now())
   Threshold  Threshold[]
 }
@@ -198,9 +198,9 @@ model Threshold {
   levelID    String   @db.ObjectId
   levels     Levels   @relation(fields: [levelID], references: [id])
   threshold  Int
-  created_by String
+  created_by String?
   created_at DateTime @default(now())
-  update_by  String
+  updated_by String?
   updated_at DateTime @default(now())
 }
 
@@ -208,9 +208,9 @@ model Points {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   userId     String   @db.ObjectId
   point      Int
-  created_by String
+  created_by String?
   created_at DateTime @default(now())
-  update_by  String
+  updated_by String?
   updated_at DateTime @default(now())
   Users      Users?   @relation(fields: [userId], references: [id])
 }
