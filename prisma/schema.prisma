@@ -16,8 +16,7 @@ datasource db {
 model Users {
   id                String            @id @default(auto()) @map("_id") @db.ObjectId
   name              String
-  short_bio         String?
-  image_icon        String?
+  image_url         String?
   address           String?
   email_address     String            @unique
   phone_no          String?
@@ -29,13 +28,11 @@ model Users {
   telegram_link     String?
   portfolio_website String?
   tech_stacks       String[]
-  addtl_skills      String[]
   about_me          String?
   education         String?
   password          String
   created_at        DateTime          @default(now())
   updated_at        DateTime          @default(now())
-  schedule          String?
   position          String[]
   roleType          RoleTypeEnum      @default(INTERN)
   userType          UserTypeEnum      @default(APPLICANT)
