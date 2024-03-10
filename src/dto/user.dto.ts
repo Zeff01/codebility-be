@@ -19,13 +19,9 @@ export class CreateUserDto {
   @IsNotEmpty()
   name: string;
 
-  @IsString()
-  @IsOptional()
-  short_bio: string;
-
   @IsUrl()
   @IsOptional()
-  image_icon: string;
+  image_url: string;
 
   @IsString()
   @IsNotEmpty()
@@ -71,10 +67,6 @@ export class CreateUserDto {
   @IsOptional()
   tech_stacks: string[];
 
-  @IsArray()
-  @IsOptional()
-  addtl_skills: string[];
-
   @IsString()
   @IsOptional()
   about_me: string;
@@ -86,10 +78,6 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   password: string;
-
-  @IsString()
-  @IsOptional()
-  schedule: string;
 
   @IsArray()
   @IsOptional()
