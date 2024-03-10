@@ -49,6 +49,7 @@ export default class UserService {
           portfolio_website: data.portfolio_website,
           tech_stacks: data.tech_stacks,
           password: GeneratorProvider.generateHash(data.password),
+          // schedule: data.schedule,
           position: data.position,
           roleType: RoleTypeEnum.MENTOR,
           // userType: UserTypeEnum.ADMIN,
