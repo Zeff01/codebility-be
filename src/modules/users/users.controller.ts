@@ -194,6 +194,22 @@ export default class UserController extends Api {
     }
   };
 
+  public updateUserTypeApplicantToUser = async (
+    req: Request,
+    res: CustomResponse<Users>,
+    next: NextFunction
+  ) => {
+    try {
+      const user = await this.userService.updateUserTypeApplicantToUser(
+        req.body.email_address
+      );
+
+      this.send(res, user, HttpStatusCode.Ok, "updateUserTypeApplicantToUser");
+    } catch (e) {
+      next(e);
+    }
+  };
+
   public addWorkExp = async (
     req: Request,
     res: CustomResponse<Work_Experience>,
