@@ -41,7 +41,7 @@ export default class UserService {
 
   public async createUser(data: CreateUserDto) {
     try {
-      return await prisma.users.create({
+      const user = await prisma.users.create({
         data: {
           name: data.name,
           address: data.address,
@@ -57,6 +57,27 @@ export default class UserService {
           // userType: UserTypeEnum.ADMIN,
         },
       });
+      await sendEmail(
+        user.email_address,
+        "Welcome to Codebility - Your Sign-up Confirmation",
+        `Dear ${user.name},
+
+        Thank you for signing up at Codebility! We're thrilled to have you join our community.
+        
+        Your account is now in the process of approval. Our team is reviewing your information to ensure a secure and positive experience for all members. This process usually takes a short amount of time, and you will receive another email once your account is approved.
+        
+        In the meantime, please explore our website (https://www.codebility.tech/ ) to learn more about what Codebility has to offer. Additionally, stay connected with us and be part of our community discussions by following our Facebook page at https://www.facebook.com/people/Codebility/61556597237211/ .
+        
+        Should you have any questions or need assistance, don't hesitate to reach out to our support team at codebility@gmail.com.
+        
+        We appreciate your patience and look forward to having you as an active member of the Codebility community.
+        
+        Thank you for choosing Codebility!
+        
+        Best regards,
+        Team Codebility`
+      );
+      return { user, message: "Sign-up confirmation has been sent to the email." };
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
