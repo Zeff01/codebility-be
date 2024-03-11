@@ -44,9 +44,9 @@ model Users {
   clientId          String?           @db.ObjectId
   clients           Clients?          @relation(fields: [clientId], references: [id])
   points            Points[]
-
+  prio              Int
   // Other relations and fields...
-  notes Notes[]
+  notes             Notes[]
 
   @@map("users")
 }

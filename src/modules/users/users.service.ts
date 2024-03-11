@@ -28,6 +28,7 @@ import { JwtPayload } from "@/types/common.type";
 import { sendEmail } from "@/utils/mailer";
 
 export default class UserService {
+  private readonly DEFAULT_PRIO_SORT: number = 10;
   public async getUser(
     data: Prisma.UsersWhereInput,
     select?: Prisma.UsersSelect
@@ -52,6 +53,7 @@ export default class UserService {
           // schedule: data.schedule,
           position: data.position,
           roleType: RoleTypeEnum.MENTOR,
+          prio: this.DEFAULT_PRIO_SORT,
           // userType: UserTypeEnum.ADMIN,
         },
       });
@@ -116,6 +118,9 @@ export default class UserService {
     return await prisma.users.findMany({
       where: {
         id,
+      },
+      orderBy: {
+        prio: "asc",
       },
       // include: {
       //   time_logs: {
