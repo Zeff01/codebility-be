@@ -12,7 +12,7 @@ import {
   changePasswordDto,
 } from "@/dto/user.dto";
 import RequestValidator from "@/middlewares/request-validator";
-import { verifyAuthToken } from "@/middlewares/auth";
+import { verifyAuthAdminToken, verifyAuthToken } from "@/middlewares/auth";
 import { CustomResponse } from "@/types/common.type";
 import { Users, Work_Experience } from "@prisma/client";
 
@@ -167,6 +167,20 @@ users.post(
   "/forgot-password",
   RequestValidator.validate(EmailDto),
   controller.forgotPassword,
+);
+/**
+ * POST /users/forgot-password
+ * @typedef {object} EmailDto
+ * @property {string} email_address.required - The email_address
+ * @summary Reset User Password
+ * @tags users
+ * @param {EmailDto} request.body.required
+ * @return {Users} 201 - user password updated
+ */
+users.post(
+  "/update-usertype", verifyAuthAdminToken,
+  RequestValidator.validate(EmailDto),
+  controller.updateUserTypeApplicantToUser,
 );
 /**
  * POST /users/workexp

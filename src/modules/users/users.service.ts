@@ -346,6 +346,62 @@ export default class UserService {
     }
   }
 
+  public async updateUserTypeApplicantToUser(email_address: string) {
+    try {
+      const user = await prisma.users.findFirst({
+        where: {
+          email_address: email_address,
+        },
+      });
+
+      if (!user) {
+        throw new HttpNotFoundError("User not found");
+      }
+
+      const tempPassword = GeneratorProvider.generateRandomString();
+      const hashedPassword = GeneratorProvider.generateHash(tempPassword);
+
+      await prisma.users.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          password: hashedPassword,
+          roleType: RoleTypeEnum.INTERN,
+          userType: UserTypeEnum.USER
+        },
+      });
+
+      await sendEmail(
+        user.email_address,
+        "Congratulations! Your Codebility Account is Approved",
+        `Dear ${user.name},
+
+        We are excited to inform you that your Codebility account has been successfully approved! Welcome to our community.
+        
+        To get started, you can log in using the following link: https://www.codebility.tech/auth/signin
+        
+        Feel free to explore our platform, engage with the community, and take advantage of the resources available. For the latest updates, news, and community discussions, we invite you to follow our Facebook page at https://www.facebook.com/people/Codebility/61556597237211.
+        
+        If you have any questions or need assistance, our support team is here to help at codebility.dev@gmail.com.
+        
+        Thank you for choosing Codebility, and we look forward to seeing you online!
+        
+        Best regards,
+        Team Codebility
+        
+        Here is your temporary password: ${tempPassword}`
+      );
+
+      return { user, message: "Temporary password has been sent to your email." };
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while processing the forgot password request"
+      );
+    }
+  }
+
   public async changeUserPassword(
     id: string,
     oldPassword: string,
