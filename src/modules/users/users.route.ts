@@ -178,9 +178,26 @@ users.post(
  * @return {Users} 201 - user password updated
  */
 users.post(
-  "/update-usertype", verifyAuthAdminToken,
+  "/update-usertype",
+  verifyAuthAdminToken,
   RequestValidator.validate(EmailDto),
   controller.updateUserTypeApplicantToUser,
+);
+
+/**
+ * POST /users/forgot-password
+ * @typedef {object} EmailDto
+ * @property {string} email_address.required - The email_address
+ * @summary Reset User Password
+ * @tags users
+ * @param {EmailDto} request.body.required
+ * @return {Users} 201 - user password updated
+ */
+users.post(
+  "/deny",
+  verifyAuthAdminToken,
+  RequestValidator.validate(EmailDto),
+  controller.denyUserTypeApplicantToUser,
 );
 /**
  * POST /users/workexp
@@ -266,7 +283,7 @@ users.route("/applicant/:id").get(controller.getuserapplicantPerUser);
 users.patch(
   "/applicant/:id",
   verifyAuthToken,
-  controller.updateuserapplicantPerUser
+  controller.updateuserapplicantPerUser,
 );
 
 /**
@@ -277,5 +294,7 @@ users.patch(
  * @return {Users} 200 - success response - application/json
  */
 users.route("/:id").get(controller.getUserById);
+
+users.delete("/:emailAddress", controller.deleteUserByEmail);
 
 export default users;

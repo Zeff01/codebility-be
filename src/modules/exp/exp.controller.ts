@@ -22,13 +22,13 @@ export default class ExpController extends Api {
   public createLevels = async (
     req: Request & { user: User },
     res: CustomResponse<Levels>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       console.log(req.user.id);
       const result = await this.expService.createLevels(
         req.body,
-        req.user.id as string
+        req.user.id as string,
       );
       this.send(res, result, HttpStatusCode.Created, "Created Level");
     } catch (e) {
@@ -38,7 +38,7 @@ export default class ExpController extends Api {
   public getAllLevels = async (
     req: Request,
     res: CustomResponse<Levels>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const result = await this.expService.getAllLevels();
@@ -51,13 +51,13 @@ export default class ExpController extends Api {
   public updateLevels = async (
     req: Request & { user: User },
     res: CustomResponse<Levels>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const result = await this.expService.updateLevels(
         req.body,
         req.params.id as string,
-        req.user.id as string
+        req.user.id as string,
       );
       this.send(res, result, HttpStatusCode.Created, "Updated Level");
     } catch (e) {
@@ -71,12 +71,12 @@ export default class ExpController extends Api {
   public createThreshold = async (
     req: Request & { user: User },
     res: CustomResponse<Threshold>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const result = await this.expService.createThreshold(
         req.body,
-        req.user.id as string
+        req.user.id as string,
       );
       this.send(res, result, HttpStatusCode.Created, "Created Threshold");
     } catch (e) {
@@ -87,7 +87,7 @@ export default class ExpController extends Api {
   public getThreshold = async (
     req: Request,
     res: CustomResponse<Threshold>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const result = await this.expService.getThreshold();
@@ -99,13 +99,13 @@ export default class ExpController extends Api {
   public updateThreshold = async (
     req: Request & { user: User },
     res: CustomResponse<Threshold>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const result = await this.expService.updateThreshold(
         req.body,
         req.params.id as string,
-        req.user.id as string
+        req.user.id as string,
       );
       this.send(res, result, HttpStatusCode.Created, "Updated Threshold");
     } catch (e) {
@@ -117,7 +117,7 @@ export default class ExpController extends Api {
   public getActiveUsers = async (
     req: Request,
     res: CustomResponse<Users>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const result = await this.expService.getActiveUsers();
@@ -130,12 +130,12 @@ export default class ExpController extends Api {
   public addPoints = async (
     req: Request & { user: User },
     res: CustomResponse<Points>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const result = await this.expService.addPoints(
         req.body,
-        req.user.id as string
+        req.user.id as string,
       );
       this.send(res, result, HttpStatusCode.Created, "Points added");
     } catch (e) {
@@ -149,7 +149,7 @@ export default class ExpController extends Api {
   public getLeaderboard = async (
     req: Request,
     res: CustomResponse<Users>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const result = await this.expService.getLeaderboard();

@@ -11,7 +11,7 @@ exp.post(
   "/levels/",
   verifyAuthAdminToken,
   RequestValidator.validate(CreateLevelsDto),
-  controller.createLevels
+  controller.createLevels,
 );
 
 exp.get("/levels", verifyAuthAdminToken, controller.getAllLevels);

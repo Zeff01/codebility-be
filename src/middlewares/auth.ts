@@ -9,7 +9,7 @@ const userService = new UserService();
 export const verifyAuthToken = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const authorizationHeader = req.headers?.authorization;
 
@@ -32,7 +32,7 @@ export const verifyAuthToken = async (
 
   const user: any = await userService.getUser(
     { id: decodedPayload?.id }, // Use optional chain here
-    { id: true, email_address: true, userType: true }
+    { id: true, email_address: true, userType: true },
   );
 
   // if (user.userType === UserTypeEnum.USER) {
@@ -51,7 +51,7 @@ export const verifyAuthToken = async (
 export const verifyAuthAdminToken = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const authorizationHeader = req.headers?.authorization;
 
@@ -74,7 +74,7 @@ export const verifyAuthAdminToken = async (
 
   const user: any = await userService.getUser(
     { id: decodedPayload?.id }, // Use optional chain here
-    { id: true, email_address: true, userType: true }
+    { id: true, email_address: true, userType: true },
   );
 
   if (user.userType === UserTypeEnum.USER) {

@@ -48,14 +48,14 @@ clients
   .post(
     verifyAuthAdminToken,
     RequestValidator.validate(CreateClientDto),
-    controller.createClient
+    controller.createClient,
   );
 
 clients.patch(
   "/",
   verifyAuthAdminToken,
   RequestValidator.validate(UpdateClientDto),
-  controller.updateClient
+  controller.updateClient,
 );
 clients.delete("/:id", verifyAuthAdminToken, controller.deleteClientPerId);
 export default clients;

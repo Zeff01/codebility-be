@@ -50,7 +50,7 @@ export default class ExpService {
   public async updateLevels(
     data: CreateLevelsDto,
     id: string,
-    creator: string
+    creator: string,
   ) {
     try {
       return prisma.levels.update({
@@ -105,7 +105,7 @@ export default class ExpService {
   public async updateThreshold(
     data: Threshold,
     levelId: string,
-    creator: string
+    creator: string,
   ) {
     try {
       return prisma.threshold.update({
@@ -186,7 +186,7 @@ export default class ExpService {
             totalPoints: point._sum,
             name: user?.name ?? "Unknown",
           };
-        })
+        }),
       );
 
       const threshold = await prisma.threshold.findMany({
@@ -211,7 +211,7 @@ export default class ExpService {
       //determin current level based on threshold
       function determineLevel(
         totalPoints: number | null,
-        thresholds: threshold[]
+        thresholds: threshold[],
       ): string {
         const actualPoints = totalPoints ?? 0;
         console.log(actualPoints, thresholds);
