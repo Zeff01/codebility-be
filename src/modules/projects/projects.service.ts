@@ -1,15 +1,10 @@
-import {
-  time_logs,
-  type Prisma,
-  type Clients,
-  Projects,
-  UserProjects,
-} from "@prisma/client";
+import { time_logs, type Prisma, type Clients, Projects } from "@prisma/client";
 import prisma from "@/lib/prisma";
 
 import { HttpInternalServerError } from "@/lib/errors";
 
 import { CreateProjectDto, UpdateProjectDto } from "@/dto/project.dto";
+import clients from "../clients/clients.route";
 
 export default class ProjectsService {
   public async getProjects({ id }) {
@@ -17,20 +12,28 @@ export default class ProjectsService {
       where: {
         id,
       },
-      // select: { users:true}
+    });
+  }
+  public async getProjectsById(id: string) {
+    return await prisma.projects.findFirst({
+      where: {
+        id: id,
+      },
     });
   }
 
   public async getProjectsByUserId(id: string) {
-    return await prisma.projects.findMany({
-      where: {
-        id,
-      },
-      // select: { usersproj_Id: true },
-      include: {
-        users: { select: { name: true } },
-      },
-    });
+    return;
+    // todo-be
+    // return await prisma.projects.findMany({
+    //   where: {
+    //     id,
+    //   },
+    //   // select: { usersproj_Id: true },
+    //   include: {
+    //     users: { select: { name: true } },
+    //   },
+    // });
   }
 
   public async createProject(data: CreateProjectDto) {
@@ -68,6 +71,21 @@ export default class ProjectsService {
       console.error(error);
       throw new HttpInternalServerError(
         "An error occurred while updating the project"
+      );
+    }
+  }
+
+  public async deleteProjectById(id: string) {
+    try {
+      return await prisma.projects.delete({
+        where: {
+          id: id,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while deleting the project"
       );
     }
   }

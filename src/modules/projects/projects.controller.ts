@@ -1,5 +1,5 @@
 import { type NextFunction, type Request } from "express";
-import { Prisma, Projects, UserProjects, type Users } from "@prisma/client";
+import { Prisma, Projects, type Users } from "@prisma/client";
 import { HttpStatusCode } from "axios";
 
 import { type CustomResponse } from "@/types/common.type";
@@ -26,10 +26,22 @@ export default class ProjectController extends Api {
       next(e);
     }
   };
+  public getProjectsById = async (
+    req: Request,
+    res: CustomResponse<Projects>,
+    next: NextFunction
+  ) => {
+    try {
+      const project = await this.projectsService.getProjectsById(req.params.id);
+      this.send(res, project, HttpStatusCode.Ok, "Project By Id");
+    } catch (e) {
+      next(e);
+    }
+  };
 
   public getProjectsByUserId = async (
     req: Request,
-    res: CustomResponse<UserProjects>,
+    res: CustomResponse<Projects>,
     next: NextFunction
   ) => {
     try {
@@ -44,7 +56,7 @@ export default class ProjectController extends Api {
 
   public createProject = async (
     req: Request,
-    res: CustomResponse<UserProjects>,
+    res: CustomResponse<Projects>,
     next: NextFunction
   ) => {
     try {
@@ -58,7 +70,7 @@ export default class ProjectController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while creating the project"
+            "An error occurred while creating the user"
           )
         );
       }
@@ -78,6 +90,33 @@ export default class ProjectController extends Api {
         updatingData
       );
       this.send(res, project, HttpStatusCode.Ok, "updateUser");
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        // Handle known request errors from Prisma
+        next(new HttpBadRequestError("Bad request", [e.message]));
+      } else if (e instanceof HttpNotFoundError) {
+        // Handle not found errors (e.g., user not found)
+        next(e);
+      } else {
+        // Handle other errors
+        next(
+          new HttpInternalServerError(
+            "An error occurred while updating the user"
+          )
+        );
+      }
+    }
+  };
+  public deleteProjectById = async (
+    req: Request,
+    res: CustomResponse<Projects>,
+    next: NextFunction
+  ) => {
+    try {
+      const project = await this.projectsService.deleteProjectById(
+        req.params.id as string
+      );
+      this.send(res, project, HttpStatusCode.Ok, "Delete Project By Id");
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         // Handle known request errors from Prisma

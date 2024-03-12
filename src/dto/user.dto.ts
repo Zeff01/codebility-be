@@ -12,6 +12,7 @@ import {
   isString,
   IsDate,
   IsDateString,
+  IsInt,
 } from "class-validator";
 
 export class CreateUserDto {
@@ -19,13 +20,9 @@ export class CreateUserDto {
   @IsNotEmpty()
   name: string;
 
-  @IsString()
-  @IsOptional()
-  short_bio: string;
-
   @IsUrl()
   @IsOptional()
-  image_icon: string;
+  image_url: string;
 
   @IsString()
   @IsNotEmpty()
@@ -71,10 +68,6 @@ export class CreateUserDto {
   @IsOptional()
   tech_stacks: string[];
 
-  @IsArray()
-  @IsOptional()
-  addtl_skills: string[];
-
   @IsString()
   @IsOptional()
   about_me: string;
@@ -87,13 +80,21 @@ export class CreateUserDto {
   @IsNotEmpty()
   password: string;
 
-  @IsString()
-  @IsOptional()
-  schedule: string;
-
   @IsArray()
   @IsOptional()
   position: string[];
+
+  @IsInt()
+  @IsNotEmpty()
+  prio: number;
+
+  @IsDate()
+  @IsNotEmpty()
+  start_time: Date;
+
+  @IsDate()
+  @IsNotEmpty()
+  end_time: Date;
 }
 
 export class IUpdateUserDto {

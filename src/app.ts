@@ -3,7 +3,7 @@ import nocache from "nocache";
 import express from "express";
 import cookieSession from "cookie-session";
 import cookieParser from "cookie-parser";
-import passport from "passport";
+// import passport from "passport";
 import helmet from "helmet";
 import morgan from "morgan";
 import expressJSDocSwagger from "express-jsdoc-swagger";
@@ -15,7 +15,7 @@ import errorHandler from "@/middlewares/error-handler";
 import routes from "@/modules/index";
 import prismaClient from "@/lib/prisma";
 
-require("@/config/passport.ts");
+// require("@/config/passport.ts");
 
 class App {
   public express: express.Application;
@@ -24,7 +24,7 @@ class App {
     this.express = express();
     this.cookieSession();
     this.cookieParser();
-    this.passport();
+    // this.passport();
     this.setMiddlewares();
     this.disableSettings();
     this.setRoutes();
@@ -38,17 +38,17 @@ class App {
         name: "session",
         keys: ["codebility"],
         maxAge: 24 * 60 * 60 * 100,
-      }),
+      })
     );
   }
   private cookieParser(): void {
     this.express.use(cookieParser());
   }
 
-  private passport() {
-    this.express.use(passport.initialize());
-    this.express.use(passport.session());
-  }
+  // private passport() {
+  //   this.express.use(passport.initialize());
+  //   this.express.use(passport.session());
+  // }
 
   private setMiddlewares(): void {
     this.express.use(
@@ -58,18 +58,18 @@ class App {
         methods: "GET,POST,PUT,DELETE,PATCH",
         credentials: true,
         // allowedHeaders: "your-custom-headers",
-      }),
+      })
     );
     this.express.use(
       cookieSession({
         name: "session",
         keys: ["codebility"],
         maxAge: 24 * 60 * 60 * 100,
-      }),
+      })
     );
     this.express.use(cookieParser());
-    this.express.use(passport.initialize());
-    this.express.use(passport.session());
+    // this.express.use(passport.initialize());
+    // this.express.use(passport.session());
     this.express.use(morgan("dev"));
     this.express.use(nocache());
     this.express.use(express.json());

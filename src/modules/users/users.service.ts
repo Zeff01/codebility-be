@@ -28,9 +28,10 @@ import { JwtPayload } from "@/types/common.type";
 import { sendEmail } from "@/utils/mailer";
 
 export default class UserService {
+  private readonly DEFAULT_PRIO_SORT: number = 10;
   public async getUser(
     data: Prisma.UsersWhereInput,
-    select?: Prisma.UsersSelect,
+    select?: Prisma.UsersSelect
   ) {
     return await prisma.users.findFirst({
       where: data,
@@ -40,7 +41,7 @@ export default class UserService {
 
   public async createUser(data: CreateUserDto) {
     try {
-      return await prisma.users.create({
+      const user = await prisma.users.create({
         data: {
           name: data.name,
           address: data.address,
@@ -49,39 +50,73 @@ export default class UserService {
           portfolio_website: data.portfolio_website,
           tech_stacks: data.tech_stacks,
           password: GeneratorProvider.generateHash(data.password),
-          schedule: data.schedule,
           position: data.position,
+          start_time: data.start_time,
+          end_time: data.end_time,
           roleType: RoleTypeEnum.MENTOR,
+          prio: this.DEFAULT_PRIO_SORT,
           // userType: UserTypeEnum.ADMIN,
         },
       });
+      await sendEmail(
+        user.email_address,
+        "Welcome to Codebility - Your Sign-up Confirmation",
+        `Dear ${user.name},
+
+        Thank you for signing up at Codebility! We're thrilled to have you join our community.
+        
+        Your account is now in the process of approval. Our team is reviewing your information to ensure a secure and positive experience for all members. This process usually takes a short amount of time, and you will receive another email once your account is approved.
+        
+        In the meantime, please explore our website (https://www.codebility.tech/ ) to learn more about what Codebility has to offer. Additionally, stay connected with us and be part of our community discussions by following our Facebook page at https://www.facebook.com/people/Codebility/61556597237211/ .
+        
+        Should you have any questions or need assistance, don't hesitate to reach out to our support team at codebility@gmail.com.
+        
+        We appreciate your patience and look forward to having you as an active member of the Codebility community.
+        
+        Thank you for choosing Codebility!
+        
+        Best regards,
+        Team Codebility`
+      );
+      return { user, message: "Sign-up confirmation has been sent to the email." };
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while creating the user",
+        "An error occurred while creating the user"
       );
     }
   }
   // @LogMessage<[Users]>({ message: "Work Experience added" })
   public async addWorkExp({ user_id, position, company, date, short_desc }) {
     try {
+      if (!user_id) {
+        throw new HttpInternalServerError("user_id should not be empty");
+      }
+
+      const user = await prisma.users.findUnique({
+        // Added 'await' here
+        where: {
+          id: user_id,
+        },
+      });
+
+      if (!user?.id) {
+        throw new HttpInternalServerError("user_id should not be empty");
+      }
+
       return await prisma.work_Experience.create({
         data: {
+          userWorkExpId: user.id,
           position,
           company,
           date,
           short_desc,
-          users: {
-            connect: {
-              id: user_id,
-            },
-          },
         },
       });
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured while adding work experience",
+        "An error occured while adding work experience"
       );
     }
   }
@@ -106,6 +141,9 @@ export default class UserService {
       where: {
         id,
       },
+      orderBy: {
+        prio: "asc",
+      },
       // include: {
       //   time_logs: {
       //     select: { time_in: true, time_out:true },
@@ -124,7 +162,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured whilte updating user work experince",
+        "An error occured whilte updating user work experince"
       );
     }
   }
@@ -140,58 +178,49 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured while deleting user work experince",
+        "An error occured while deleting user work experince"
       );
     }
   }
+
   public async login(data: LoginAdminDto) {
     try {
-      const isExist = await prisma.users.findFirst({
+      // Find the user based on the provided email address and userType
+      const user = await prisma.users.findFirst({
         where: {
-          email_address: {
-            contains: data.email_address,
-          },
+          email_address: data.email_address,
           userType: {
             in: [UserTypeEnum.ADMIN, UserTypeEnum.USER],
           },
         },
       });
 
-      if (!isExist) {
+      // If no user is found, throw an error
+      if (!user) {
         throw new HttpNotFoundError("Invalid login");
       }
 
-      const matchPassword = GeneratorProvider.validateHash(
+      // Validate the password
+      const isPasswordMatch = GeneratorProvider.validateHash(
         data.password,
-        isExist.password!,
+        user.password
       );
 
-      if (!matchPassword) {
+      // If the password doesn't match, throw an error
+      if (!isPasswordMatch) {
         throw new HttpNotFoundError("Invalid login");
       }
-
-      let payload: JwtPayload;
-
-      if (isExist.userType === UserTypeEnum.ADMIN) {
-        // If user is an ADMIN
-        payload = {
-          id: isExist.id,
-          email: isExist.email_address!,
-          userType: isExist.userType,
-        };
-      } else if (isExist.userType === UserTypeEnum.USER) {
-        // If user is not an ADMIN
-        payload = {
-          id: isExist.id,
-          email: isExist.email_address!,
-          userType: isExist.userType,
-          // Add additional properties or customize as needed
-        };
+      let payload: JwtPayload = {
+        id: user.id,
+        email: user.email_address!,
+        userType: user.userType,
+      };
+      if (user.userType === UserTypeEnum.USER) {
       }
-
+      const token = JwtUtil.generateToken(payload);
       return {
-        user: isExist,
-        token: JwtUtil.generateToken(payload),
+        user: user,
+        token: token,
       };
     } catch (error) {
       console.error(error);
@@ -199,19 +228,23 @@ export default class UserService {
     }
   }
 
-  public async updateUser(id: string, data: UpdateUserDto) {
-    const { ...updateData } = data;
+  public async updateUser(id: string, data: Users) {
     try {
+      const { ...updateData } = data;
+
       return await prisma.users.update({
         where: {
           id: id,
         },
-        data: { ...updateData },
+        data: {
+          ...updateData,
+          updated_at: new Date(),
+        },
       });
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user",
+        "An error occurred while updating the user"
       );
     }
   }
@@ -245,7 +278,7 @@ export default class UserService {
           org_chart: true,
           time_logs: true,
           todo_list: true,
-          projects: true,
+          // projects: true,
           clients: true,
           notes: true,
         },
@@ -253,12 +286,12 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while retrieving the user by ID",
+        "An error occurred while retrieving the user by ID"
       );
     }
   }
 
-  public async getUserByTeam(position: []) {
+  public async getUserByTeam(position: string[]) {
     try {
       return await prisma.users.findMany({
         where: {
@@ -270,7 +303,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while retrieving the Users by Team",
+        "An error occurred while retrieving the Users by Team"
       );
     }
   }
@@ -302,14 +335,70 @@ export default class UserService {
       await sendEmail(
         user.email_address,
         "Your temporary password",
-        `Here is your temporary password: ${tempPassword}`,
+        `Here is your temporary password: ${tempPassword}`
       );
 
       return { message: "Temporary password has been sent to your email." };
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while processing the forgot password request",
+        "An error occurred while processing the forgot password request"
+      );
+    }
+  }
+
+  public async updateUserTypeApplicantToUser(email_address: string) {
+    try {
+      const user = await prisma.users.findFirst({
+        where: {
+          email_address: email_address,
+        },
+      });
+
+      if (!user) {
+        throw new HttpNotFoundError("User not found");
+      }
+
+      const tempPassword = GeneratorProvider.generateRandomString();
+      const hashedPassword = GeneratorProvider.generateHash(tempPassword);
+
+      await prisma.users.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          password: hashedPassword,
+          roleType: RoleTypeEnum.INTERN,
+          userType: UserTypeEnum.USER
+        },
+      });
+
+      await sendEmail(
+        user.email_address,
+        "Congratulations! Your Codebility Account is Approved",
+        `Dear ${user.name},
+
+        We are excited to inform you that your Codebility account has been successfully approved! Welcome to our community.
+        
+        To get started, you can log in using the following link: https://www.codebility.tech/auth/signin
+        
+        Feel free to explore our platform, engage with the community, and take advantage of the resources available. For the latest updates, news, and community discussions, we invite you to follow our Facebook page at https://www.facebook.com/people/Codebility/61556597237211.
+        
+        If you have any questions or need assistance, our support team is here to help at codebility.dev@gmail.com.
+        
+        Thank you for choosing Codebility, and we look forward to seeing you online!
+        
+        Best regards,
+        Team Codebility
+        
+        Here is your temporary password: ${tempPassword}`
+      );
+
+      return { user, message: "Temporary password has been sent to your email." };
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while processing the forgot password request"
       );
     }
   }
@@ -317,7 +406,7 @@ export default class UserService {
   public async changeUserPassword(
     id: string,
     oldPassword: string,
-    newPassword: string,
+    newPassword: string
   ) {
     try {
       // Get the user
@@ -326,32 +415,33 @@ export default class UserService {
           id: id,
         },
       });
+      if (user) {
+        // Check if the old password matches the current password
+        if (!GeneratorProvider.validateHash(oldPassword, user.password)) {
+          throw new HttpBadRequestError("Old password does not match", []);
+        }
 
-      // Check if the old password matches the current password
-      if (!GeneratorProvider.validateHash(oldPassword, user.password)) {
-        throw new HttpBadRequestError("Old password does not match", []);
+        if (oldPassword === newPassword) {
+          throw new HttpBadRequestError(
+            "New password cannot be the same as the old password",
+            []
+          );
+        }
+
+        // Update the password
+        return await prisma.users.update({
+          where: {
+            id: id,
+          },
+          data: {
+            password: GeneratorProvider.generateHash(newPassword),
+          },
+        });
       }
-
-      if (oldPassword === newPassword) {
-        throw new HttpBadRequestError(
-          "New password cannot be the same as the old password",
-          [],
-        );
-      }
-
-      // Update the password
-      return await prisma.users.update({
-        where: {
-          id: id,
-        },
-        data: {
-          password: GeneratorProvider.generateHash(newPassword),
-        },
-      });
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while changing the password",
+        "An error occurred while changing the password"
       );
     }
   }

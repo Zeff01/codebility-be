@@ -25,6 +25,14 @@ export default class ClientsService {
       // users:{select:{name:true}}
     });
   }
+  public async getClientsById(id: string) {
+    return await prisma.clients.findFirst({
+      where: {
+        id: id,
+      },
+      include: { projects: true },
+    });
+  }
 
   public async createClient(data: CreateClientDto) {
     try {
@@ -43,7 +51,7 @@ export default class ClientsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while creating the user",
+        "An error occurred while creating the user"
       );
     }
   }
@@ -57,12 +65,27 @@ export default class ClientsService {
         },
         data: {
           ...updateData,
+          updated_at: new Date(),
         },
       });
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user",
+        "An error occurred while updating the user"
+      );
+    }
+  }
+  public async deleteClientPerId(id: string) {
+    try {
+      return await prisma.clients.delete({
+        where: {
+          id: id,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while updating the user"
       );
     }
   }
