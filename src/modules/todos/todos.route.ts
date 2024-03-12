@@ -18,24 +18,24 @@ todos
   .post(
     verifyAuthToken,
     RequestValidator.validate(CreateTodoDto),
-    controller.createTodo
+    controller.createTodo,
   );
 
 todos.route("/tags").post(
   //verifyAuthAdminToken,
   RequestValidator.validate(CreateTagTodoDto),
-  controller.createTagTodo
+  controller.createTagTodo,
 );
 
 todos.patch(
   "/:id",
   //   verifyAuthAdminToken,
   RequestValidator.validate(UpdateTodoDto),
-  controller.updateTodo
+  controller.updateTodo,
 );
 todos.put(
   "/tags/:id",
   RequestValidator.validate(CreateTagTodoDto),
-  controller.updateTagsTodo
+  controller.updateTagsTodo,
 );
 export default todos;

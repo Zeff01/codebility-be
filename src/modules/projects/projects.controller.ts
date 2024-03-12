@@ -17,7 +17,7 @@ export default class ProjectController extends Api {
   public getProjects = async (
     req: Request,
     res: CustomResponse<Projects>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const project = await this.projectsService.getProjects(req.body);
@@ -29,7 +29,7 @@ export default class ProjectController extends Api {
   public getProjectsById = async (
     req: Request,
     res: CustomResponse<Projects>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const project = await this.projectsService.getProjectsById(req.params.id);
@@ -42,7 +42,7 @@ export default class ProjectController extends Api {
   public getProjectsByUserId = async (
     req: Request,
     res: CustomResponse<Projects>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const id = req.params.id;
@@ -57,7 +57,7 @@ export default class ProjectController extends Api {
   public createProject = async (
     req: Request,
     res: CustomResponse<Projects>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const project = await this.projectsService.createProject(req.body);
@@ -70,8 +70,8 @@ export default class ProjectController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while creating the user"
-          )
+            "An error occurred while creating the user",
+          ),
         );
       }
     }
@@ -80,7 +80,7 @@ export default class ProjectController extends Api {
   public updateProject = async (
     req: Request,
     res: CustomResponse<Projects>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       // const id = req.params.id as string;
@@ -98,8 +98,8 @@ export default class ProjectController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while updating the user"
-          )
+            "An error occurred while updating the user",
+          ),
         );
       }
     }
@@ -107,11 +107,11 @@ export default class ProjectController extends Api {
   public deleteProjectById = async (
     req: Request,
     res: CustomResponse<Projects>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const project = await this.projectsService.deleteProjectById(
-        req.params.id as string
+        req.params.id as string,
       );
       this.send(res, project, HttpStatusCode.Ok, "Delete Project By Id");
     } catch (e) {
@@ -125,8 +125,8 @@ export default class ProjectController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while updating the user"
-          )
+            "An error occurred while updating the user",
+          ),
         );
       }
     }

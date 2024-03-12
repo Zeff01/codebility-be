@@ -51,7 +51,7 @@ export default class ClientsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while creating the user"
+        "An error occurred while creating the user",
       );
     }
   }
@@ -71,7 +71,7 @@ export default class ClientsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user"
+        "An error occurred while updating the user",
       );
     }
   }
@@ -85,7 +85,7 @@ export default class ClientsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user"
+        "An error occurred while updating the user",
       );
     }
   }

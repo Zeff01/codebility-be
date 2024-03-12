@@ -31,7 +31,7 @@ export default class UserService {
   private readonly DEFAULT_PRIO_SORT: number = 10;
   public async getUser(
     data: Prisma.UsersWhereInput,
-    select?: Prisma.UsersSelect
+    select?: Prisma.UsersSelect,
   ) {
     return await prisma.users.findFirst({
       where: data,
@@ -76,13 +76,16 @@ export default class UserService {
         Thank you for choosing Codebility!
         
         Best regards,
-        Team Codebility`
+        Team Codebility`,
       );
-      return { user, message: "Sign-up confirmation has been sent to the email." };
+      return {
+        user,
+        message: "Sign-up confirmation has been sent to the email.",
+      };
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while creating the user"
+        "An error occurred while creating the user",
       );
     }
   }
@@ -116,7 +119,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured while adding work experience"
+        "An error occured while adding work experience",
       );
     }
   }
@@ -162,7 +165,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured whilte updating user work experince"
+        "An error occured whilte updating user work experince",
       );
     }
   }
@@ -178,7 +181,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured while deleting user work experince"
+        "An error occured while deleting user work experince",
       );
     }
   }
@@ -203,7 +206,7 @@ export default class UserService {
       // Validate the password
       const isPasswordMatch = GeneratorProvider.validateHash(
         data.password,
-        user.password
+        user.password,
       );
 
       // If the password doesn't match, throw an error
@@ -244,7 +247,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user"
+        "An error occurred while updating the user",
       );
     }
   }
@@ -286,7 +289,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while retrieving the user by ID"
+        "An error occurred while retrieving the user by ID",
       );
     }
   }
@@ -303,7 +306,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while retrieving the Users by Team"
+        "An error occurred while retrieving the Users by Team",
       );
     }
   }
@@ -335,14 +338,14 @@ export default class UserService {
       await sendEmail(
         user.email_address,
         "Your temporary password",
-        `Here is your temporary password: ${tempPassword}`
+        `Here is your temporary password: ${tempPassword}`,
       );
 
       return { message: "Temporary password has been sent to your email." };
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while processing the forgot password request"
+        "An error occurred while processing the forgot password request",
       );
     }
   }
@@ -369,7 +372,7 @@ export default class UserService {
         data: {
           password: hashedPassword,
           roleType: RoleTypeEnum.INTERN,
-          userType: UserTypeEnum.USER
+          userType: UserTypeEnum.USER,
         },
       });
 
@@ -391,14 +394,17 @@ export default class UserService {
         Best regards,
         Team Codebility
         
-        Here is your temporary password: ${tempPassword}`
+        Here is your temporary password: ${tempPassword}`,
       );
 
-      return { user, message: "Temporary password has been sent to your email." };
+      return {
+        user,
+        message: "Temporary password has been sent to your email.",
+      };
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while processing the forgot password request"
+        "An error occurred while processing the forgot password request",
       );
     }
   }
@@ -406,7 +412,7 @@ export default class UserService {
   public async changeUserPassword(
     id: string,
     oldPassword: string,
-    newPassword: string
+    newPassword: string,
   ) {
     try {
       // Get the user
@@ -424,7 +430,7 @@ export default class UserService {
         if (oldPassword === newPassword) {
           throw new HttpBadRequestError(
             "New password cannot be the same as the old password",
-            []
+            [],
           );
         }
 
@@ -441,7 +447,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while changing the password"
+        "An error occurred while changing the password",
       );
     }
   }
@@ -457,7 +463,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured getting applicant user list"
+        "An error occured getting applicant user list",
       );
     }
   }
@@ -473,7 +479,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured getting applicant user by id"
+        "An error occured getting applicant user by id",
       );
     }
   }
@@ -505,7 +511,79 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured while accepting applicant user by id"
+        "An error occured while accepting applicant user by id",
+      );
+    }
+  }
+
+  public async deleteUserByEmail(email_address: string) {
+    try {
+      return await prisma.users.delete({
+        where: {
+          email_address,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while updating the user",
+      );
+    }
+  }
+
+  public async denyUserTypeApplicantToUser(emailAddress: string) {
+    try {
+      const user = await prisma.users.findFirst({
+        where: {
+          email_address: emailAddress,
+        },
+      });
+
+      if (!user) {
+        throw new HttpNotFoundError("User not found");
+      }
+
+      await prisma.users.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          userType: UserTypeEnum.DENIED,
+        },
+      });
+
+      await sendEmail(
+        user.email_address,
+        "Codebility Account Registration - Application Denied",
+        `Dear ${user.name},
+
+        We regret to inform you that your application for a Codebility account has been denied. We appreciate your interest in joining our community.
+
+Your data remains secure with us, and you have the option to request its deletion. If you would like to proceed with data deletion, please click the following link:
+
+[Data Deletion Link]
+
+By clicking the link above, you will be redirected to a secure page where you can confirm the deletion of your data. If you have any questions or concerns, please feel free to contact our support team at codebility@gmail.com.
+
+For the latest updates, news, and community discussions, we invite you to follow our Facebook page at https://www.facebook.com/people/Codebility/61556597237211.
+
+If you believe this decision is in error or would like more information about the denial, please don't hesitate to contact us. We're here to assist you.
+
+Thank you for considering Codebility, and we wish you the best in your endeavors.
+
+Best regards,
+Team Codebility`,
+      );
+
+      return {
+        user,
+        message:
+          "This applicant has been denied and a confirmation has been sent to their email.",
+      };
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while processing the denied application request",
       );
     }
   }
