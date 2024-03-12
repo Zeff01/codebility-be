@@ -16,7 +16,7 @@ export default class ClientController extends Api {
   public getClients = async (
     req: Request,
     res: CustomResponse<Clients>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const client = await this.clientsService.getClients(req.body);
@@ -28,7 +28,7 @@ export default class ClientController extends Api {
   public getClientsById = async (
     req: Request,
     res: CustomResponse<Clients>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const client = await this.clientsService.getClientsById(req.params.id);
@@ -41,7 +41,7 @@ export default class ClientController extends Api {
   public createClient = async (
     req: Request,
     res: CustomResponse<Clients>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const client = await this.clientsService.createClient(req.body);
@@ -54,8 +54,8 @@ export default class ClientController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while creating the user"
-          )
+            "An error occurred while creating the user",
+          ),
         );
       }
     }
@@ -64,7 +64,7 @@ export default class ClientController extends Api {
   public updateClient = async (
     req: Request,
     res: CustomResponse<Clients>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const client = await this.clientsService.updateClient(req.body);
@@ -80,8 +80,8 @@ export default class ClientController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while updating the user"
-          )
+            "An error occurred while updating the user",
+          ),
         );
       }
     }
@@ -89,11 +89,11 @@ export default class ClientController extends Api {
   public deleteClientPerId = async (
     req: Request,
     res: CustomResponse<Clients>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const client = await this.clientsService.deleteClientPerId(
-        req.params.id as string
+        req.params.id as string,
       );
       this.send(res, client, HttpStatusCode.Ok, "Delete Client");
     } catch (e) {
@@ -107,8 +107,8 @@ export default class ClientController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while updating the user"
-          )
+            "An error occurred while updating the user",
+          ),
         );
       }
     }

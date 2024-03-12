@@ -34,8 +34,8 @@ model Users {
   created_at        DateTime          @default(now())
   updated_at        DateTime          @default(now())
   position          String[]
-  start_time        DateTime
-  end_time          DateTime
+  start_time        DateTime?
+  end_time          DateTime?
   roleType          RoleTypeEnum      @default(INTERN)
   userType          UserTypeEnum      @default(APPLICANT)
   work_experience   Work_Experience[]
@@ -230,6 +230,7 @@ enum UserTypeEnum {
   ADMIN
   USER
   APPLICANT
+  DENIED
 }
 
 enum PriorityLevelEnum {

@@ -38,7 +38,7 @@ class App {
         name: "session",
         keys: ["codebility"],
         maxAge: 24 * 60 * 60 * 100,
-      })
+      }),
     );
   }
   private cookieParser(): void {
@@ -58,14 +58,14 @@ class App {
         methods: "GET,POST,PUT,DELETE,PATCH",
         credentials: true,
         // allowedHeaders: "your-custom-headers",
-      })
+      }),
     );
     this.express.use(
       cookieSession({
         name: "session",
         keys: ["codebility"],
         maxAge: 24 * 60 * 60 * 100,
-      })
+      }),
     );
     this.express.use(cookieParser());
     // this.express.use(passport.initialize());

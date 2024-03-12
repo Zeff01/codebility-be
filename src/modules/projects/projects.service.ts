@@ -85,7 +85,7 @@ export default class ProjectsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while deleting the project"
+        "An error occurred while updating the project"
       );
     }
   }

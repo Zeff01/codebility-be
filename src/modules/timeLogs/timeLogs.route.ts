@@ -36,7 +36,7 @@ logs.post(
   "/timein",
   verifyAuthToken,
   RequestValidator.validate(CreateTimeDto),
-  controller.createTimeIn
+  controller.createTimeIn,
 );
 /**
  * POST /logs/timeout
@@ -52,7 +52,7 @@ logs.post(
   "/timeout",
   verifyAuthToken,
   RequestValidator.validate(CreateTimeDto),
-  controller.createTimeOut
+  controller.createTimeOut,
 );
 
 logs.get("", controller.getLogs);

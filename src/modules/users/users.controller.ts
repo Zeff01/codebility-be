@@ -16,7 +16,7 @@ export default class UserController extends Api {
   public getAllUsers = async (
     req: Request,
     res: CustomResponse<Users>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const user = await this.userService.getAllUsers(req.body);
@@ -29,7 +29,7 @@ export default class UserController extends Api {
   public createUser = async (
     req: Request,
     res: CustomResponse<Users>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const user = await this.userService.createUser(req.body);
@@ -42,8 +42,8 @@ export default class UserController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while creating the user"
-          )
+            "An error occurred while creating the user",
+          ),
         );
       }
     }
@@ -52,7 +52,7 @@ export default class UserController extends Api {
   public getAdminInfo = async (
     req: Request,
     res: CustomResponse<Users>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const user = await this.userService.getAdminInfo(req.body);
@@ -65,7 +65,7 @@ export default class UserController extends Api {
   public login = async (
     req: Request,
     res: CustomResponse<Users>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const user = await this.userService.login(req.body);
@@ -78,7 +78,7 @@ export default class UserController extends Api {
   public updateUser = async (
     req: Request,
     res: CustomResponse<Users>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const id = req.params.id as string;
@@ -96,8 +96,8 @@ export default class UserController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while updating the user"
-          )
+            "An error occurred while updating the user",
+          ),
         );
       }
     }
@@ -106,7 +106,7 @@ export default class UserController extends Api {
   public getUserInterns = async (
     req: Request,
     res: CustomResponse<Users>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const user = await this.userService.getUserInterns();
@@ -119,7 +119,7 @@ export default class UserController extends Api {
   public getUserMentors = async (
     req: Request,
     res: CustomResponse<Users>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const user = await this.userService.getUserMentors();
@@ -132,7 +132,7 @@ export default class UserController extends Api {
   public getUserById = async (
     req: Request,
     res: CustomResponse<Users>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const user = await this.userService.getUserById(req.params.id as string);
@@ -148,7 +148,7 @@ export default class UserController extends Api {
   public changeUserPassword = async (
     req: Request,
     res: CustomResponse<Users>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const id = req.params.id as string;
@@ -156,7 +156,7 @@ export default class UserController extends Api {
       const user = await this.userService.changeUserPassword(
         id,
         oldPassword,
-        newPassword
+        newPassword,
       );
       this.send(res, user, HttpStatusCode.Ok, "Password updated successfully");
     } catch (e) {
@@ -167,7 +167,7 @@ export default class UserController extends Api {
   public getUserByTeam = async (
     req: Request,
     res: CustomResponse<Users>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const positionArray = req.params.position.split(","); //change split as needed
@@ -181,11 +181,11 @@ export default class UserController extends Api {
   public forgotPassword = async (
     req: Request,
     res: CustomResponse<Users>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const user = await this.userService.forgotPassword(
-        req.body.email_address
+        req.body.email_address,
       );
 
       this.send(res, user, HttpStatusCode.Ok, "forgotPassword");
@@ -197,11 +197,11 @@ export default class UserController extends Api {
   public updateUserTypeApplicantToUser = async (
     req: Request,
     res: CustomResponse<Users>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const user = await this.userService.updateUserTypeApplicantToUser(
-        req.body.email_address
+        req.body.email_address,
       );
 
       this.send(res, user, HttpStatusCode.Ok, "updateUserTypeApplicantToUser");
@@ -210,10 +210,26 @@ export default class UserController extends Api {
     }
   };
 
+  public denyUserTypeApplicantToUser = async (
+    req: Request,
+    res: CustomResponse<Users>,
+    next: NextFunction,
+  ) => {
+    try {
+      const user = await this.userService.denyUserTypeApplicantToUser(
+        req.body.email_address,
+      );
+
+      this.send(res, user, HttpStatusCode.Ok, "denyUserTypeApplicantToUser");
+    } catch (e) {
+      next(e);
+    }
+  };
+
   public addWorkExp = async (
     req: Request,
     res: CustomResponse<Work_Experience>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const workexp = await this.userService.addWorkExp(req.body);
@@ -221,7 +237,7 @@ export default class UserController extends Api {
         res,
         workexp,
         HttpStatusCode.Ok,
-        "Work experience added successfully"
+        "Work experience added successfully",
       );
     } catch (e) {
       next(e);
@@ -231,7 +247,7 @@ export default class UserController extends Api {
   public getWorkExpPerUser = async (
     req: Request,
     res: CustomResponse<Work_Experience>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const workexp = await this.userService.getWorkExpPerUser(req.params.id);
@@ -243,7 +259,7 @@ export default class UserController extends Api {
   public updateWorkExp = async (
     req: Request,
     res: CustomResponse<Work_Experience>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const id = req.params.id as string;
@@ -253,7 +269,7 @@ export default class UserController extends Api {
         res,
         workExp,
         HttpStatusCode.Ok,
-        "Work experience updated successfully"
+        "Work experience updated successfully",
       );
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -266,8 +282,8 @@ export default class UserController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while updating user work experience."
-          )
+            "An error occurred while updating user work experience.",
+          ),
         );
       }
     }
@@ -276,7 +292,7 @@ export default class UserController extends Api {
   public deleteWorkExp = async (
     req: Request,
     res: CustomResponse<Work_Experience>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const id = req.params.id as string;
@@ -285,7 +301,7 @@ export default class UserController extends Api {
         res,
         workExp,
         HttpStatusCode.Ok,
-        "Work experience deleted successfully"
+        "Work experience deleted successfully",
       );
     } catch (e) {
       next(e);
@@ -295,7 +311,7 @@ export default class UserController extends Api {
   public getuserbyusertypeapplicant = async (
     req: Request,
     res: CustomResponse<Work_Experience>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const applicant = await this.userService.getuserbyusertypeapplicant();
@@ -308,7 +324,7 @@ export default class UserController extends Api {
   public getuserapplicantPerUser = async (
     req: Request,
     res: CustomResponse<Users>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const id = req.params.id as string;
@@ -325,18 +341,46 @@ export default class UserController extends Api {
   public updateuserapplicantPerUser = async (
     req: Request,
     res: CustomResponse<Users>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const id = req.params.id as string;
       const data = req.body;
       const resData = await this.userService.updateuserapplicantPerUser(
         id,
-        data
+        data,
       );
       this.send(res, resData, HttpStatusCode.Ok, "acceptApplicantUser");
     } catch (e) {
       next(e);
+    }
+  };
+
+  public deleteUserByEmail = async (
+    req: Request,
+    res: CustomResponse<Users>,
+    next: NextFunction,
+  ) => {
+    try {
+      const user = await this.userService.deleteUserByEmail(
+        req.params.emailAddress as string,
+      );
+      this.send(res, user, HttpStatusCode.Ok, "Delete User Data");
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        // Handle known request errors from Prisma
+        next(new HttpBadRequestError("Bad request", [e.message]));
+      } else if (e instanceof HttpNotFoundError) {
+        // Handle not found errors (e.g., user not found)
+        next(e);
+      } else {
+        // Handle other errors
+        next(
+          new HttpInternalServerError(
+            "An error occurred while updating the user",
+          ),
+        );
+      }
     }
   };
 }

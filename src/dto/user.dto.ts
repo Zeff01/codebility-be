@@ -89,11 +89,11 @@ export class CreateUserDto {
   prio: number;
 
   @IsDate()
-  @IsNotEmpty()
+  @IsOptional()
   start_time: Date;
 
   @IsDate()
-  @IsNotEmpty()
+  @IsOptional()
   end_time: Date;
 }
 
