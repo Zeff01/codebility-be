@@ -87,6 +87,14 @@ export class CreateUserDto {
   @IsInt()
   @IsNotEmpty()
   prio: number;
+
+  @IsDate()
+  @IsNotEmpty()
+  start_time: Date;
+
+  @IsDate()
+  @IsNotEmpty()
+  end_time: Date;
 }
 
 export class IUpdateUserDto {
