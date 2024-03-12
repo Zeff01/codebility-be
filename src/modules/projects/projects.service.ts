@@ -38,25 +38,26 @@ export default class ProjectsService {
 
   public async createProject(data: CreateProjectDto) {
     try {
-      return;
-      // todo-be
-      // return await prisma.projects.create({
-      //   data: {
-      //     project_name: data.project_name,
-      //     github_link: data.github_link,
-      //     users: data.users,
-      //   },
-      // });
+      return await prisma.projects.create({
+        data: {
+          project_name: data.project_name,
+          github_link: data.github_link,
+          users: data.users,
+          summary: data.summary,
+          live_link: data.live_link,
+          project_thumbnail: data.project_thumbnail,
+        },
+      });
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while creating the user",
+        "An error occurred while creating the user"
       );
     }
   }
 
-  public async updateProject(data: UpdateProjectDto) {
-    const { id, ...updateData } = data;
+  public async updateProject(id: string, data: UpdateProjectDto) {
+    const { ...updateData } = data;
     try {
       return await prisma.projects.update({
         where: {
@@ -69,7 +70,7 @@ export default class ProjectsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user",
+        "An error occurred while updating the project"
       );
     }
   }
@@ -84,7 +85,7 @@ export default class ProjectsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user",
+        "An error occurred while updating the project"
       );
     }
   }

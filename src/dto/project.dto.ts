@@ -23,6 +23,18 @@ export class CreateProjectDto {
   @IsNotEmpty()
   github_link: string;
 
+  @IsString()
+  @IsNotEmpty()
+  summary: string;
+
+  @IsString()
+  @IsNotEmpty()
+  live_link: string;
+
+  @IsString()
+  @IsNotEmpty()
+  project_thumbnail: string;
+
   @IsArray()
   @IsNotEmpty()
   users: string[];
