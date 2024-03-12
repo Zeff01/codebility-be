@@ -170,7 +170,8 @@ export default class UserController extends Api {
     next: NextFunction,
   ) => {
     try {
-      const user = await this.userService.getUserByTeam(req.params.position);
+      const positionArray = req.params.position.split(","); //change split as needed
+      const user = await this.userService.getUserByTeam(positionArray);
       this.send(res, user, HttpStatusCode.Ok, "getUserByTeam");
     } catch (e) {
       next(e);
@@ -188,6 +189,38 @@ export default class UserController extends Api {
       );
 
       this.send(res, user, HttpStatusCode.Ok, "forgotPassword");
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  public updateUserTypeApplicantToUser = async (
+    req: Request,
+    res: CustomResponse<Users>,
+    next: NextFunction,
+  ) => {
+    try {
+      const user = await this.userService.updateUserTypeApplicantToUser(
+        req.body.email_address,
+      );
+
+      this.send(res, user, HttpStatusCode.Ok, "updateUserTypeApplicantToUser");
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  public denyUserTypeApplicantToUser = async (
+    req: Request,
+    res: CustomResponse<Users>,
+    next: NextFunction,
+  ) => {
+    try {
+      const user = await this.userService.denyUserTypeApplicantToUser(
+        req.body.email_address,
+      );
+
+      this.send(res, user, HttpStatusCode.Ok, "denyUserTypeApplicantToUser");
     } catch (e) {
       next(e);
     }
@@ -278,7 +311,7 @@ export default class UserController extends Api {
   public getuserbyusertypeapplicant = async (
     req: Request,
     res: CustomResponse<Work_Experience>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const applicant = await this.userService.getuserbyusertypeapplicant();
@@ -291,7 +324,7 @@ export default class UserController extends Api {
   public getuserapplicantPerUser = async (
     req: Request,
     res: CustomResponse<Users>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const id = req.params.id as string;
@@ -308,18 +341,46 @@ export default class UserController extends Api {
   public updateuserapplicantPerUser = async (
     req: Request,
     res: CustomResponse<Users>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const id = req.params.id as string;
       const data = req.body;
       const resData = await this.userService.updateuserapplicantPerUser(
         id,
-        data
+        data,
       );
       this.send(res, resData, HttpStatusCode.Ok, "acceptApplicantUser");
     } catch (e) {
       next(e);
+    }
+  };
+
+  public deleteUserByEmail = async (
+    req: Request,
+    res: CustomResponse<Users>,
+    next: NextFunction,
+  ) => {
+    try {
+      const user = await this.userService.deleteUserByEmail(
+        req.params.emailAddress as string,
+      );
+      this.send(res, user, HttpStatusCode.Ok, "Delete User Data");
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        // Handle known request errors from Prisma
+        next(new HttpBadRequestError("Bad request", [e.message]));
+      } else if (e instanceof HttpNotFoundError) {
+        // Handle not found errors (e.g., user not found)
+        next(e);
+      } else {
+        // Handle other errors
+        next(
+          new HttpInternalServerError(
+            "An error occurred while updating the user",
+          ),
+        );
+      }
     }
   };
 }

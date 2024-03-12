@@ -2,6 +2,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "./ERD.pdf"
+  theme    = "forest"
+}
+
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
@@ -10,8 +16,7 @@ datasource db {
 model Users {
   id                String            @id @default(auto()) @map("_id") @db.ObjectId
   name              String
-  short_bio         String?
-  image_icon        String?
+  image_url         String?
   address           String?
   email_address     String            @unique
   phone_no          String?
@@ -23,15 +28,15 @@ model Users {
   telegram_link     String?
   portfolio_website String?
   tech_stacks       String[]
-  addtl_skills      String[]
   about_me          String?
   education         String?
   password          String
   pronoun           String?
   created_at        DateTime          @default(now())
   updated_at        DateTime          @default(now())
-  schedule          String?
   position          String[]
+  start_time        DateTime?
+  end_time          DateTime?
   roleType          RoleTypeEnum      @default(INTERN)
   userType          UserTypeEnum      @default(APPLICANT)
   work_experience   Work_Experience[]
@@ -41,6 +46,8 @@ model Users {
   projects          String[]          @db.ObjectId // IDs of related Projects
   clientId          String?           @db.ObjectId
   clients           Clients?          @relation(fields: [clientId], references: [id])
+  points            Points[]
+  prio              Int
   // Other relations and fields...
   notes             Notes[]
 
@@ -109,9 +116,9 @@ model todo_list {
   title            String
   subheader        String?
   full_description String?
-  userTodoId       String?            @db.ObjectId
-  userTodo         Users?             @relation(fields: [userTodoId], references: [id])
-  projectId        String?            @db.ObjectId
+  userTodoId       String?           @db.ObjectId
+  userTodo         Users?            @relation(fields: [userTodoId], references: [id])
+  projectId        String?           @db.ObjectId
   projects         Projects?         @relation(fields: [projectId], references: [id])
   prio_level       PriorityLevelEnum
   github_link      String?
@@ -135,15 +142,19 @@ model Tags {
 }
 
 model Projects {
-  id           String      @id @default(auto()) @map("_id") @db.ObjectId
-  project_name String
-  github_link  String
-  createdAt    DateTime    @default(now()) @map("created_at")
-  updatedAt    DateTime    @default(now()) @map("updated_at")
-  users        String[]    @db.ObjectId // IDs of related Users
-  clientId     String?     @db.ObjectId 
-  client       Clients?    @relation(fields: [clientId], references: [id])
-  todo_list    todo_list[]
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  project_name      String
+  github_link       String
+  summary           String?
+  live_link         String?
+  project_thumbnail String?
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @default(now()) @map("updated_at")
+  users             String[]    @db.ObjectId // IDs of related Users
+  clientId          String?     @db.ObjectId 
+  client            Clients?    @relation(fields: [clientId], references: [id])
+  todo_list         todo_list[]
+
 
   @@map("projects")
 }
@@ -153,12 +164,12 @@ model Clients {
   projects       Projects[]
   company_name   String
   company_logo   String?
-  working_hours  String?
+  working_hours  String[]
   email          String?
   contact_number String?
   linkedin_link  String?
   location       String?
-  company_hist   String?
+  company_hist   String[]
   created_at     DateTime   @default(now())
   updated_at     DateTime   @default(now())
 
@@ -182,6 +193,38 @@ model Notes {
   @@map("notes")
 }
 
+model Levels {
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  created_by String?     @db.ObjectId
+  created_at DateTime    @default(now())
+  updated_by String?     @db.ObjectId
+  updated_at DateTime    @default(now())
+  Threshold  Threshold[]
+}
+
+model Threshold {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  levelID    String   @db.ObjectId
+  levels     Levels   @relation(fields: [levelID], references: [id])
+  threshold  Int
+  created_by String?
+  created_at DateTime @default(now())
+  updated_by String?
+  updated_at DateTime @default(now())
+}
+
+model Points {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String   @db.ObjectId
+  point      Int
+  created_by String?
+  created_at DateTime @default(now())
+  updated_by String?
+  updated_at DateTime @default(now())
+  Users      Users?   @relation(fields: [userId], references: [id])
+}
+
 enum RoleTypeEnum {
   MENTOR
   INTERN
@@ -191,6 +234,7 @@ enum UserTypeEnum {
   ADMIN
   USER
   APPLICANT
+  DENIED
 }
 
 enum PriorityLevelEnum {

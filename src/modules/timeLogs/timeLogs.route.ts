@@ -9,7 +9,7 @@ import {
 import RequestValidator from "@/middlewares/request-validator";
 import { verifyAuthToken } from "@/middlewares/auth";
 import { CreateTimeDto } from "@/dto/timeLogs.dto";
-import { Timestamp } from "mongodb";
+// import { Timestamp } from "mongodb";
 
 const logs: Router = Router();
 const controller = new Controller();

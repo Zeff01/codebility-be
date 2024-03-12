@@ -32,6 +32,18 @@ export default class TodoController extends Api {
       next(e);
     }
   };
+  public getTodosById = async (
+    req: Request,
+    res: CustomResponse<todo_list>,
+    next: NextFunction,
+  ) => {
+    try {
+      const todo = await this.todosService.getTodos(req.params.id as string);
+      this.send(res, todo, HttpStatusCode.Ok, "Todos");
+    } catch (e) {
+      next(e);
+    }
+  };
 
   public createTodo = async (
     req: Request,
@@ -86,15 +98,9 @@ export default class TodoController extends Api {
   ) => {
     try {
       const id = req.params.id as string;
-      const todo_id = req.body.todo_id;
       const tag_name = req.body.tag_name;
       const updateData = req.body;
-      const todo = await this.todosService.updateTodo(
-        id,
-        todo_id,
-        tag_name,
-        updateData,
-      );
+      const todo = await this.todosService.updateTodo(id, tag_name, updateData);
       this.send(res, todo, HttpStatusCode.Ok, "updateTodos");
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -108,6 +114,32 @@ export default class TodoController extends Api {
         next(
           new HttpInternalServerError(
             "An error occurred while updating the user",
+          ),
+        );
+      }
+    }
+  };
+
+  public updateTagsTodo = async (
+    req: Request,
+    res: CustomResponse<todo_list>,
+    next: NextFunction,
+  ) => {
+    try {
+      const tags = await this.todosService.updateTagsTodo(
+        req.params.id as string,
+        req.body,
+      );
+      this.send(res, tags, HttpStatusCode.Ok, "Update tag todos");
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        // Handle known request errors from Prisma
+        next(new HttpBadRequestError("Bad request", [e.message]));
+      } else {
+        // Handle other errors
+        next(
+          new HttpInternalServerError(
+            "An error occurred while creating the user",
           ),
         );
       }

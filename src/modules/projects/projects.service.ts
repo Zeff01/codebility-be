@@ -1,15 +1,10 @@
-import {
-  time_logs,
-  type Prisma,
-  type Clients,
-  Projects,
-  UserProjects,
-} from "@prisma/client";
+import { time_logs, type Prisma, type Clients, Projects } from "@prisma/client";
 import prisma from "@/lib/prisma";
 
 import { HttpInternalServerError } from "@/lib/errors";
 
 import { CreateProjectDto, UpdateProjectDto } from "@/dto/project.dto";
+import clients from "../clients/clients.route";
 
 export default class ProjectsService {
   public async getProjects({ id }) {
@@ -17,20 +12,28 @@ export default class ProjectsService {
       where: {
         id,
       },
-      // select: { users:true}
+    });
+  }
+  public async getProjectsById(id: string) {
+    return await prisma.projects.findFirst({
+      where: {
+        id: id,
+      },
     });
   }
 
   public async getProjectsByUserId(id: string) {
-    return await prisma.projects.findMany({
-      where: {
-        id,
-      },
-      // select: { usersproj_Id: true },
-      include: {
-        users: { select: { name: true } },
-      },
-    });
+    return;
+    // todo-be
+    // return await prisma.projects.findMany({
+    //   where: {
+    //     id,
+    //   },
+    //   // select: { usersproj_Id: true },
+    //   include: {
+    //     users: { select: { name: true } },
+    //   },
+    // });
   }
 
   public async createProject(data: CreateProjectDto) {
@@ -40,18 +43,21 @@ export default class ProjectsService {
           project_name: data.project_name,
           github_link: data.github_link,
           users: data.users,
+          summary: data.summary,
+          live_link: data.live_link,
+          project_thumbnail: data.project_thumbnail,
         },
       });
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while creating the user",
+        "An error occurred while creating the user"
       );
     }
   }
 
-  public async updateProject(data: UpdateProjectDto) {
-    const { id, ...updateData } = data;
+  public async updateProject(id: string, data: UpdateProjectDto) {
+    const { ...updateData } = data;
     try {
       return await prisma.projects.update({
         where: {
@@ -64,7 +70,22 @@ export default class ProjectsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user",
+        "An error occurred while updating the project"
+      );
+    }
+  }
+
+  public async deleteProjectById(id: string) {
+    try {
+      return await prisma.projects.delete({
+        where: {
+          id: id,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while updating the project"
       );
     }
   }

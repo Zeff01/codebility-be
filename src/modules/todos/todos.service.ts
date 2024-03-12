@@ -30,6 +30,19 @@ export default class TodosService {
     });
   }
 
+  public async getTodosById(id: string) {
+    return await prisma.todo_list.findMany({
+      where: {
+        id: id,
+      },
+      include: {
+        tags: { select: { tag: true } },
+        userTodo: { select: { name: true } },
+        projects: { select: { project_name: true } },
+      },
+    });
+  }
+
   public async createTodo(data: CreateTodoDto) {
     try {
       return await prisma.todo_list.create({
@@ -37,8 +50,11 @@ export default class TodosService {
           title: data.title,
           subheader: data.subheader,
           full_description: data.full_description,
-          prio_level: PriorityLevelEnum.LOW,
+          prio_level: PriorityLevelEnum[data.prio_level],
           github_link: data.github_link,
+          tags: {
+            create: data.tags.map((tag) => ({ tag: tag.tag })),
+          },
         },
       });
     } catch (error) {
@@ -70,32 +86,38 @@ export default class TodosService {
     }
   }
 
-  public async updateTodo(
-    id: string,
-    tag_name: string,
-    todo_id: string,
-    data: UpdateTodoDto,
-  ) {
+  public async updateTodo(id: string, tag_name: string, data: UpdateTodoDto) {
     try {
       return await prisma.todo_list.update({
         where: {
-          id,
+          id: id,
         },
         data: {
           title: data.title,
-          prio_level: data.prio_level,
+          prio_level: PriorityLevelEnum[data.prio_level],
           subheader: data.subheader,
           full_description: data.full_description,
           github_link: data.github_link,
-          Tags: {
-            update: {
-              where: { id },
-              data: { todo_id: todo_id, tag_name: tag_name },
+        },
+        include: {
+          tags: {
+            select: {
+              tag: true,
             },
           },
         },
-        include: { Tags: true },
       });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while updating the user",
+      );
+    }
+  }
+
+  public async updateTagsTodo(id: string, data: CreateTagTodoDto) {
+    try {
+      //TODO update tags per todo id
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(

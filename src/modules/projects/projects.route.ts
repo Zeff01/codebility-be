@@ -32,6 +32,7 @@ const controller = new Controller();
  * @return {UserProjects} 200 - success response - application/json
  */
 projects.get("/", controller.getProjects);
+projects.get("/:id", controller.getProjectsById);
 /**
  * GET /projects/:userId
  * @summary Get Projects
@@ -79,10 +80,12 @@ projects
  * @security BearerAuth
  */
 projects.patch(
-  "/",
+  "/:id",
   verifyAuthAdminToken,
   RequestValidator.validate(UpdateProjectDto),
   controller.updateProject,
 );
+
+projects.delete("/:id", verifyAuthAdminToken, controller.deleteProjectById);
 
 export default projects;
