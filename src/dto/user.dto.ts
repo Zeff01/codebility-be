@@ -89,8 +89,8 @@ export class CreateUserDto {
   position: string[];
 
   @IsInt()
-  @IsNotEmpty()
-  prio: number;
+  @IsOptional()
+  prio?: number;
 
   @IsDate()
   @IsOptional()
