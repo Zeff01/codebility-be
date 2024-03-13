@@ -175,7 +175,6 @@ model Clients {
   projects       Projects[]
   company_name   String
   company_logo   String?
-  working_hours  String[]
   email          String?
   contact_number String?
   linkedin_link  String?
