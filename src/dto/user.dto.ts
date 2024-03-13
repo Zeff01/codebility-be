@@ -276,12 +276,26 @@ export class AddWorkExpDto {
 
   @IsString()
   @IsNotEmpty()
-  date: string;
+  dateFrom: string;
+
+  @IsString()
+  @IsNotEmpty()
+  dateTo: string;
+
+  @IsString()
+  @IsNotEmpty()
+  location: string;
+
+  @IsString({ each: true })
+  @IsArray()
+  @IsNotEmpty()
+  task: string[];
 
   @IsString()
   @IsOptional()
   short_desc: string;
 }
+
 export class WorkExpDto {
   @IsString()
   @IsNotEmpty()
