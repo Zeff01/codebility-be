@@ -171,17 +171,19 @@ model UserProjects {
 }
 
 model Clients {
-  id             String     @id @default(auto()) @map("_id") @db.ObjectId
-  projects       Projects[]
-  company_name   String
-  company_logo   String?
-  email          String?
-  contact_number String?
-  linkedin_link  String?
-  location       String?
-  company_hist   String[]
-  created_at     DateTime   @default(now())
-  updated_at     DateTime   @default(now())
+  id                  String     @id @default(auto()) @map("_id") @db.ObjectId
+  projects            Projects[]
+  company_name        String
+  company_logo        String?
+  client_start_time   DateTime
+  client_end_time     DateTime
+  email               String?
+  contact_number      String?
+  linkedin_link       String?
+  location            String?
+  company_hist        String[]
+  created_at          DateTime   @default(now())
+  updated_at          DateTime   @default(now())
 
   users Users[]
 
