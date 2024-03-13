@@ -40,7 +40,8 @@ export default class ClientsService {
         data: {
           company_name: data.company_name,
           company_logo: data.company_logo,
-          working_hours: data.working_hours,
+          client_start_time: data.client_start_time,
+          client_end_time: data.client_end_time,
           email: data.email,
           contact_number: data.contact_number,
           linkedin_link: data.linkedin_link,
@@ -51,7 +52,7 @@ export default class ClientsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while creating the user",
+        "An error occurred while creating the client"
       );
     }
   }
@@ -71,7 +72,7 @@ export default class ClientsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user",
+        "An error occurred while updating the client"
       );
     }
   }
@@ -85,7 +86,7 @@ export default class ClientsService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user",
+        "An error occurred while deleting the client"
       );
     }
   }
