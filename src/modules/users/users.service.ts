@@ -31,7 +31,7 @@ export default class UserService {
   private readonly DEFAULT_PRIO_SORT: number = 10;
   public async getUser(
     data: Prisma.UsersWhereInput,
-    select?: Prisma.UsersSelect
+    select?: Prisma.UsersSelect,
   ) {
     return await prisma.users.findFirst({
       where: data,
@@ -76,7 +76,7 @@ export default class UserService {
         Thank you for choosing Codebility!
         
         Best regards,
-        Team Codebility`
+        Team Codebility`,
       );
       return {
         user,
@@ -85,7 +85,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while creating the user"
+        "An error occurred while creating the user",
       );
     }
   }
@@ -131,7 +131,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured while adding work experience"
+        "An error occured while adding work experience",
       );
     }
   }
@@ -177,7 +177,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured whilte updating user work experince"
+        "An error occured whilte updating user work experince",
       );
     }
   }
@@ -193,7 +193,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured while deleting user work experince"
+        "An error occured while deleting user work experince",
       );
     }
   }
@@ -218,7 +218,7 @@ export default class UserService {
       // Validate the password
       const isPasswordMatch = GeneratorProvider.validateHash(
         data.password,
-        user.password
+        user.password,
       );
 
       // If the password doesn't match, throw an error
@@ -245,21 +245,33 @@ export default class UserService {
 
   public async updateUser(id: string, data: Users) {
     try {
-      const { ...updateData } = data;
-
       return await prisma.users.update({
         where: {
           id: id,
         },
         data: {
-          ...updateData,
-          updated_at: new Date(),
+          name: data.name,
+          pronoun: data.pronoun,
+          image_url: data.image_url,
+          address: data.address,
+          phone_no: data.phone_no,
+          github_link: data.github_link,
+          fb_link: data.fb_link,
+          linkedin_link: data.linkedin_link,
+          whatsapp_link: data.whatsapp_link,
+          skype_link: data.skype_link,
+          telegram_link: data.telegram_link,
+          portfolio_website: data.portfolio_website,
+          tech_stacks: data.tech_stacks,
+          about_me: data.about_me,
+          education: data.education,
+          position: data.position,
         },
       });
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user"
+        "An error occurred while updating the user",
       );
     }
   }
@@ -301,7 +313,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while retrieving the user by ID"
+        "An error occurred while retrieving the user by ID",
       );
     }
   }
@@ -318,7 +330,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while retrieving the Users by Team"
+        "An error occurred while retrieving the Users by Team",
       );
     }
   }
@@ -350,14 +362,14 @@ export default class UserService {
       await sendEmail(
         user.email_address,
         "Your temporary password",
-        `Here is your temporary password: ${tempPassword}`
+        `Here is your temporary password: ${tempPassword}`,
       );
 
       return { message: "Temporary password has been sent to your email." };
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while processing the forgot password request"
+        "An error occurred while processing the forgot password request",
       );
     }
   }
@@ -406,7 +418,7 @@ export default class UserService {
         Best regards,
         Team Codebility
         
-        Here is your temporary password: ${tempPassword}`
+        Here is your temporary password: ${tempPassword}`,
       );
 
       return {
@@ -416,66 +428,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while processing the forgot password request"
-      );
-    }
-  }
-
-  public async updateUserTypeApplicantToUser(email_address: string) {
-    try {
-      const user = await prisma.users.findFirst({
-        where: {
-          email_address: email_address,
-        },
-      });
-
-      if (!user) {
-        throw new HttpNotFoundError("User not found");
-      }
-
-      const tempPassword = GeneratorProvider.generateRandomString();
-      const hashedPassword = GeneratorProvider.generateHash(tempPassword);
-
-      await prisma.users.update({
-        where: {
-          id: user.id,
-        },
-        data: {
-          password: hashedPassword,
-          roleType: RoleTypeEnum.INTERN,
-          userType: UserTypeEnum.USER,
-        },
-      });
-
-      await sendEmail(
-        user.email_address,
-        "Congratulations! Your Codebility Account is Approved",
-        `Dear ${user.name},
-
-        We are excited to inform you that your Codebility account has been successfully approved! Welcome to our community.
-        
-        To get started, you can log in using the following link: https://www.codebility.tech/auth/signin
-        
-        Feel free to explore our platform, engage with the community, and take advantage of the resources available. For the latest updates, news, and community discussions, we invite you to follow our Facebook page at https://www.facebook.com/people/Codebility/61556597237211.
-        
-        If you have any questions or need assistance, our support team is here to help at codebility.dev@gmail.com.
-        
-        Thank you for choosing Codebility, and we look forward to seeing you online!
-        
-        Best regards,
-        Team Codebility
-        
-        Here is your temporary password: ${tempPassword}`
-      );
-
-      return {
-        user,
-        message: "Temporary password has been sent to your email.",
-      };
-    } catch (error) {
-      console.error(error);
-      throw new HttpInternalServerError(
-        "An error occurred while processing the forgot password request"
+        "An error occurred while processing the forgot password request",
       );
     }
   }
@@ -483,7 +436,7 @@ export default class UserService {
   public async changeUserPassword(
     id: string,
     oldPassword: string,
-    newPassword: string
+    newPassword: string,
   ) {
     try {
       // Get the user
@@ -501,7 +454,7 @@ export default class UserService {
         if (oldPassword === newPassword) {
           throw new HttpBadRequestError(
             "New password cannot be the same as the old password",
-            []
+            [],
           );
         }
 
@@ -518,7 +471,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while changing the password"
+        "An error occurred while changing the password",
       );
     }
   }
@@ -534,7 +487,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured getting applicant user list"
+        "An error occured getting applicant user list",
       );
     }
   }
@@ -550,7 +503,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured getting applicant user by id"
+        "An error occured getting applicant user by id",
       );
     }
   }
@@ -582,7 +535,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occured while accepting applicant user by id"
+        "An error occured while accepting applicant user by id",
       );
     }
   }
@@ -597,7 +550,7 @@ export default class UserService {
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while updating the user"
+        "An error occurred while updating the user",
       );
     }
   }
@@ -643,7 +596,7 @@ If you believe this decision is in error or would like more information about th
 Thank you for considering Codebility, and we wish you the best in your endeavors.
 
 Best regards,
-Team Codebility`
+Team Codebility`,
       );
 
       return {
@@ -654,7 +607,7 @@ Team Codebility`
     } catch (error) {
       console.error(error);
       throw new HttpInternalServerError(
-        "An error occurred while processing the denied application request"
+        "An error occurred while processing the denied application request",
       );
     }
   }

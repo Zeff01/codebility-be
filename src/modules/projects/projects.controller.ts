@@ -17,7 +17,7 @@ export default class ProjectController extends Api {
   public getProjects = async (
     req: Request,
     res: CustomResponse<Projects>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const project = await this.projectsService.getProjects(req.body);
@@ -29,7 +29,7 @@ export default class ProjectController extends Api {
   public getProjectsById = async (
     req: Request,
     res: CustomResponse<Projects>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const project = await this.projectsService.getProjectsById(req.params.id);
@@ -42,7 +42,7 @@ export default class ProjectController extends Api {
   public getProjectsByUserId = async (
     req: Request,
     res: CustomResponse<Projects>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const id = req.params.id;
@@ -57,7 +57,7 @@ export default class ProjectController extends Api {
   public createProject = async (
     req: Request,
     res: CustomResponse<Projects>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const project = await this.projectsService.createProject(req.body);
@@ -70,8 +70,8 @@ export default class ProjectController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while creating the user"
-          )
+            "An error occurred while creating the user",
+          ),
         );
       }
     }
@@ -80,7 +80,7 @@ export default class ProjectController extends Api {
   public updateProject = async (
     req: Request,
     res: CustomResponse<Projects>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const projectId = req.params.projectId as string;
@@ -90,7 +90,7 @@ export default class ProjectController extends Api {
         projectId,
         // userProjectId,
 
-        updateData
+        updateData,
       );
       this.send(res, project, HttpStatusCode.Ok, "updateProject");
     } catch (e) {
@@ -104,8 +104,8 @@ export default class ProjectController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while updating the user"
-          )
+            "An error occurred while updating the user",
+          ),
         );
       }
     }
@@ -114,15 +114,12 @@ export default class ProjectController extends Api {
   public addUsersToProject = async (
     req: Request,
     res: CustomResponse<UserProjects>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
-      //  const id = req.body.id as string;
-      //  const user_id = req.body.user_id as string[];
-      //  const updateData = req.body;
-      const project = await this.projectsService.addUsersToProject(
-        req.body
-      );
+      // const id = req.body.id as string;
+      // const user_id = req.body.user_id as string[];
+      const project = await this.projectsService.addUsersToProject(req.body);
       this.send(res, project, HttpStatusCode.Created, "addUsersToProject");
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -135,20 +132,52 @@ export default class ProjectController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while updating the user"
-          )
+            "An error occurred while updating the user",
+          ),
         );
       }
     }
   };
+
+  public removeUsersFromProject = async (
+    req: Request,
+    res: CustomResponse<Projects>,
+    next: NextFunction,
+  ) => {
+    try {
+      //  const id = req.body.id as string;
+      //  const user_id = req.body.user_id as string[];
+      //  const updateData = req.body;
+      const project = await this.projectsService.removeUsersFromProject(
+        req.body,
+      );
+      this.send(res, project, HttpStatusCode.Created, "removeUsersFromProject");
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        // Handle known request errors from Prisma
+        next(new HttpBadRequestError("Bad request", [e.message]));
+      } else if (e instanceof HttpNotFoundError) {
+        // Handle not found errors (e.g., user not found)
+        next(e);
+      } else {
+        // Handle other errors
+        next(
+          new HttpInternalServerError(
+            "An error occurred while updating the user",
+          ),
+        );
+      }
+    }
+  };
+
   public deleteProjectById = async (
     req: Request,
     res: CustomResponse<Projects>,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       const project = await this.projectsService.deleteProjectById(
-        req.params.id as string
+        req.params.id as string,
       );
       this.send(res, project, HttpStatusCode.Ok, "Delete Project By Id");
     } catch (e) {
@@ -162,8 +191,8 @@ export default class ProjectController extends Api {
         // Handle other errors
         next(
           new HttpInternalServerError(
-            "An error occurred while updating the user"
-          )
+            "An error occurred while updating the user",
+          ),
         );
       }
     }

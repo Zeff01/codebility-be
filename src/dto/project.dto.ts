@@ -76,8 +76,6 @@ export class UpdateProjectDto {
   @IsString()
   @IsOptional()
   clientId?: string;
-
- 
 }
 
 export class AddUsersToProjectDto {
@@ -89,8 +87,21 @@ export class AddUsersToProjectDto {
   @IsNotEmpty()
   user_id: string[];
 
+  // @IsString()
+  // @IsNotEmpty()
+  // projectId: string;
+}
+
+export class RemoveUsersFromProjectDto {
   @IsString()
   @IsNotEmpty()
-  projectId: string;
+  id: string;
 
+  @IsArray()
+  @IsNotEmpty()
+  user_id: string[];
+
+  // @IsString()
+  // @IsNotEmpty()
+  // projectId: string;
 }

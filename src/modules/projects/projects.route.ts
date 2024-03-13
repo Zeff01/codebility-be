@@ -7,6 +7,7 @@ import { verifyAuthAdminToken } from "@/middlewares/auth";
 import {
   AddUsersToProjectDto,
   CreateProjectDto,
+  RemoveUsersFromProjectDto,
   UpdateProjectDto,
 } from "@/dto/project.dto";
 
@@ -66,7 +67,7 @@ projects
   .post(
     verifyAuthAdminToken,
     RequestValidator.validate(CreateProjectDto),
-    controller.createProject
+    controller.createProject,
   );
 
 /**
@@ -88,14 +89,22 @@ projects
   .put(
     verifyAuthAdminToken,
     RequestValidator.validate(AddUsersToProjectDto),
-    controller.addUsersToProject
+    controller.addUsersToProject,
+  );
+
+projects
+  .route("/reassign")
+  .put(
+    verifyAuthAdminToken,
+    RequestValidator.validate(RemoveUsersFromProjectDto),
+    controller.removeUsersFromProject,
   );
 
 projects.patch(
   "/:projectId",
   verifyAuthAdminToken,
   RequestValidator.validate(UpdateProjectDto),
-  controller.updateProject
+  controller.updateProject,
 );
 
 projects.delete("/:id", verifyAuthAdminToken, controller.deleteProjectById);
