@@ -117,7 +117,7 @@ export default class ProjectsService {
           // user_id: data.user_id,
           // projectId: data.projectId
 
-          UserProjects: { connect: { user_id } },
+          // UserProjects: { connect: { user_id } },
           // summary:data.summary,
           // live_link: data.live_link,
           // project_thumbnail: data.project_thumbnail,
@@ -145,7 +145,7 @@ export default class ProjectsService {
         data: {
           // user_id: data.user_id,
           // projectId: data.projectId
-          UserProjects: { set: { user_id: data.user_id } },
+          // UserProjects: { set: { user_id: data.user_id } },
           // summary:data.summary,
           // live_link: data.live_link,
           // project_thumbnail: data.project_thumbnail,
