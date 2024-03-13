@@ -3,7 +3,11 @@ import prisma from "@/lib/prisma";
 
 import { HttpInternalServerError } from "@/lib/errors";
 
-import { CreateProjectDto, UpdateProjectDto } from "@/dto/project.dto";
+import {
+  AddUsersToProjectDto,
+  CreateProjectDto,
+  UpdateProjectDto,
+} from "@/dto/project.dto";
 import clients from "../clients/clients.route";
 
 export default class ProjectsService {
@@ -12,6 +16,7 @@ export default class ProjectsService {
       where: {
         id,
       },
+      include: { UserProjects: true },
     });
   }
   public async getProjectsById(id: string) {
@@ -36,17 +41,34 @@ export default class ProjectsService {
     // });
   }
 
-  public async createProject(data: CreateProjectDto) {
+  public async createProject({
+    project_name,
+    github_link,
+    summary,
+    live_link,
+    project_thumbnail,
+    clientId,
+  }) {
     try {
       return await prisma.projects.create({
         data: {
-          project_name: data.project_name,
-          github_link: data.github_link,
-          users: data.users,
-          summary: data.summary,
-          live_link: data.live_link,
-          project_thumbnail: data.project_thumbnail,
+          project_name: project_name,
+          github_link: github_link,
+          summary: summary,
+          live_link: live_link,
+          project_thumbnail: project_thumbnail,
+          // users: data.users,
+          UserProjects: {
+            create: {},
+            // id: userId,
+          },
+          // connect:{user_id:user_id}
+
+          client: {
+            connect: { id: clientId },
+          },
         },
+        include: { UserProjects: true },
       });
     } catch (error) {
       console.error(error);
@@ -56,16 +78,49 @@ export default class ProjectsService {
     }
   }
 
-  public async updateProject(id: string, data: UpdateProjectDto) {
+  public async updateProject(
+    projectId: string,
+    // user_id: string[],
+    data: UpdateProjectDto
+  ) {
     const { ...updateData } = data;
     try {
       return await prisma.projects.update({
         where: {
-          id,
+          id: projectId,
         },
         data: {
           ...updateData,
         },
+        // include: { UserProjects: true },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while updating the project"
+      );
+    }
+  }
+
+  public async addUsersToProject(
+    data: AddUsersToProjectDto
+    //  data: UpdateProjectDto
+  ) {
+    // const { ...updateData } = data;
+    try {
+      return await prisma.userProjects.update({
+        where: {
+          id: data.id,
+        },
+        data: {
+          user_id: data.user_id,
+          projectId: data.projectId
+          // UserProjects: { connect: { user_id:[user_id], } },
+          // summary:data.summary,
+          // live_link: data.live_link,
+          // project_thumbnail: data.project_thumbnail,
+        },
+        // include: { UserProjects: true },
       });
     } catch (error) {
       console.error(error);

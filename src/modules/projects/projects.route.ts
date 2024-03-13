@@ -4,7 +4,11 @@ import Controller from "./projects.controller";
 import RequestValidator from "@/middlewares/request-validator";
 import { verifyAuthAdminToken } from "@/middlewares/auth";
 
-import { CreateProjectDto, UpdateProjectDto } from "@/dto/project.dto";
+import {
+  AddUsersToProjectDto,
+  CreateProjectDto,
+  UpdateProjectDto,
+} from "@/dto/project.dto";
 
 const projects: Router = Router();
 const controller = new Controller();
@@ -62,7 +66,7 @@ projects
   .post(
     verifyAuthAdminToken,
     RequestValidator.validate(CreateProjectDto),
-    controller.createProject,
+    controller.createProject
   );
 
 /**
@@ -79,11 +83,19 @@ projects
  * @return {UserProjects} 200 - success response - application/json
  * @security BearerAuth
  */
+projects
+  .route("/assign")
+  .put(
+    verifyAuthAdminToken,
+    RequestValidator.validate(AddUsersToProjectDto),
+    controller.addUsersToProject
+  );
+
 projects.patch(
-  "/:id",
+  "/:projectId",
   verifyAuthAdminToken,
   RequestValidator.validate(UpdateProjectDto),
-  controller.updateProject,
+  controller.updateProject
 );
 
 projects.delete("/:id", verifyAuthAdminToken, controller.deleteProjectById);
