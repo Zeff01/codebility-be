@@ -78,30 +78,16 @@ export class UpdateProjectDto {
   clientId?: string;
 }
 
-export class AddUsersToProjectDto {
+export class UpdateUsersToProjectDto {
   @IsString()
   @IsNotEmpty()
   id: string;
 
   @IsArray()
   @IsNotEmpty()
-  user_id: string[];
+  usersId: string[];
 
-  // @IsString()
-  // @IsNotEmpty()
-  // projectId: string;
-}
-
-export class RemoveUsersFromProjectDto {
   @IsString()
   @IsNotEmpty()
-  id: string;
-
-  @IsArray()
-  @IsNotEmpty()
-  user_id: string[];
-
-  // @IsString()
-  // @IsNotEmpty()
-  // projectId: string;
+  projectsId: string;
 }

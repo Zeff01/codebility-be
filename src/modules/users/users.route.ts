@@ -12,7 +12,11 @@ import {
   changePasswordDto,
 } from "@/dto/user.dto";
 import RequestValidator from "@/middlewares/request-validator";
-import { verifyAuthAdminToken, verifyAuthToken } from "@/middlewares/auth";
+import {
+  verifyAuthAdminToken,
+  verifyAuthDeniedToken,
+  verifyAuthToken,
+} from "@/middlewares/auth";
 import { CustomResponse } from "@/types/common.type";
 import { Users, Work_Experience } from "@prisma/client";
 
@@ -132,7 +136,7 @@ users
  */
 users.patch(
   "/:id",
-  verifyAuthToken,
+  verifyAuthToken || verifyAuthAdminToken,
   RequestValidator.validate(UpdateUserDto),
   controller.updateUser,
 );
@@ -151,6 +155,7 @@ users.patch(
  */
 users.put(
   "/changePassword/:id",
+  verifyAuthToken || verifyAuthAdminToken,
   RequestValidator.validate(changePasswordDto),
   controller.changeUserPassword,
 );
@@ -165,6 +170,7 @@ users.put(
  */
 users.post(
   "/forgot-password",
+  verifyAuthToken || verifyAuthAdminToken,
   RequestValidator.validate(EmailDto),
   controller.forgotPassword,
 );
@@ -295,6 +301,10 @@ users.patch(
  */
 users.route("/:id").get(controller.getUserById);
 
-users.delete("/:emailAddress", controller.deleteUserByEmail);
+users.delete(
+  "/:emailAddress",
+  verifyAuthDeniedToken,
+  controller.deleteUserByEmail,
+);
 
 export default users;

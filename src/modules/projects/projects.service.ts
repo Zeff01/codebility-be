@@ -3,43 +3,21 @@ import prisma from "@/lib/prisma";
 
 import { HttpInternalServerError } from "@/lib/errors";
 
-import {
-  AddUsersToProjectDto,
-  CreateProjectDto,
-  RemoveUsersFromProjectDto,
-  UpdateProjectDto,
-} from "@/dto/project.dto";
-import clients from "../clients/clients.route";
+import { UpdateProjectDto } from "@/dto/project.dto";
 
 export default class ProjectsService {
-  public async getProjects({ id }) {
+  public async getProjects(id: string) {
     return await prisma.projects.findMany({
-      where: {
-        id,
-      },
-      include: { UserProjects: true },
+      include: { users: true },
     });
   }
+
   public async getProjectsById(id: string) {
     return await prisma.projects.findFirst({
       where: {
         id: id,
       },
     });
-  }
-
-  public async getProjectsByUserId(id: string) {
-    return;
-    // todo-be
-    // return await prisma.projects.findMany({
-    //   where: {
-    //     id,
-    //   },
-    //   // select: { usersproj_Id: true },
-    //   include: {
-    //     users: { select: { name: true } },
-    //   },
-    // });
   }
 
   public async createProject({
@@ -59,7 +37,7 @@ export default class ProjectsService {
           live_link: live_link,
           project_thumbnail: project_thumbnail,
           // users: data.users,
-          UserProjects: {
+          users: {
             create: {},
             // id: userId,
           },
@@ -69,7 +47,7 @@ export default class ProjectsService {
             connect: { id: clientId },
           },
         },
-        include: { UserProjects: true },
+        include: { users: true },
       });
     } catch (error) {
       console.error(error);
@@ -103,13 +81,15 @@ export default class ProjectsService {
     }
   }
 
-  public async addUsersToProject(
-    { id, user_id },
+  public async updateUsersToProject(
+    id: string,
+    usersId: string[],
+    projectsId: string,
     //  data: UpdateProjectDto
   ) {
     // const { ...updateData } = data;
     try {
-      return await prisma.projects.update({
+      return await prisma.userProjects.update({
         where: {
           id: id,
         },
@@ -117,40 +97,13 @@ export default class ProjectsService {
           // user_id: data.user_id,
           // projectId: data.projectId
 
-          // UserProjects: { connect: { user_id } },
+          usersId: usersId,
+          projectsId: projectsId,
           // summary:data.summary,
           // live_link: data.live_link,
           // project_thumbnail: data.project_thumbnail,
         },
-        include: { UserProjects: true },
-      });
-    } catch (error) {
-      console.error(error);
-      throw new HttpInternalServerError(
-        "An error occurred while updating the project",
-      );
-    }
-  }
-
-  public async removeUsersFromProject(
-    data: RemoveUsersFromProjectDto,
-    //  data: UpdateProjectDto
-  ) {
-    // const { ...updateData } = data;
-    try {
-      return await prisma.projects.update({
-        where: {
-          id: data.id,
-        },
-        data: {
-          // user_id: data.user_id,
-          // projectId: data.projectId
-          // UserProjects: { set: { user_id: data.user_id } },
-          // summary:data.summary,
-          // live_link: data.live_link,
-          // project_thumbnail: data.project_thumbnail,
-        },
-        include: { UserProjects: { select: { user_id: true } } },
+        //  include: { UserProjects: true },
       });
     } catch (error) {
       console.error(error);

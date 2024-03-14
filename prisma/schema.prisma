@@ -48,7 +48,7 @@ model Users {
   clients           Clients?          @relation(fields: [clientId], references: [id])
   points            Points[]
   prio              Int?
-  UserProjects UserProjects[]
+  projects UserProjects[]
   // Other relations and fields...
   notes             Notes[]
 
@@ -155,7 +155,7 @@ model Projects {
   clientId          String?     @db.ObjectId 
   client            Clients?    @relation(fields: [clientId], references: [id])
   todo_list         todo_list[]
-  UserProjects UserProjects[]
+  users UserProjects[]
 
 
   @@map("projects")
@@ -163,11 +163,13 @@ model Projects {
 
 model UserProjects {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  user_id    String[]  @db.ObjectId
-  user      Users    @relation(fields: [user_id], references: [id])
-  projectId String  @db.ObjectId
-  project   Projects @relation(fields: [projectId], references: [id])
- 
+  usersId   String[]  @db.ObjectId
+  user      Users?    @relation(fields: [usersId], references: [id])
+  projectsId String?  @db.ObjectId
+  project   Projects? @relation(fields: [projectsId], references: [id])
+  @@index([usersId, projectsId])
+  @@map("userprojects")
+  
 }
 
 model Clients {

@@ -298,16 +298,16 @@ export default class UserService {
 
   public async getUserById(id: string) {
     try {
-      return await prisma.users.findFirst({
+      return await prisma.users.findUniqueOrThrow({
         where: { id: id },
         include: {
-          work_experience: true,
-          org_chart: true,
-          time_logs: true,
-          todo_list: true,
-          // projects: true,
-          clients: true,
-          notes: true,
+          // work_experience: true,
+          // org_chart: true,
+          // time_logs: true,
+          // todo_list: true,
+          projects: true,
+          // clients: true,
+          // notes: true,
         },
       });
     } catch (error) {

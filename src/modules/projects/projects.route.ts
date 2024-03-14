@@ -5,10 +5,9 @@ import RequestValidator from "@/middlewares/request-validator";
 import { verifyAuthAdminToken } from "@/middlewares/auth";
 
 import {
-  AddUsersToProjectDto,
   CreateProjectDto,
-  RemoveUsersFromProjectDto,
   UpdateProjectDto,
+  UpdateUsersToProjectDto,
 } from "@/dto/project.dto";
 
 const projects: Router = Router();
@@ -38,15 +37,7 @@ const controller = new Controller();
  */
 projects.get("/", controller.getProjects);
 projects.get("/:id", controller.getProjectsById);
-/**
- * GET /projects/:userId
- * @summary Get Projects
- * @tags projects
- * @param {string} userId.path - id param description
- * @return {Projects} 200 - success response - application/json
- * @return {UserProjects} 200 - success response - application/json
- */
-projects.get("/:id", controller.getProjectsByUserId);
+
 /**
  * POST /projects/create
  * @typedef {object} CreateProjectDto
@@ -85,19 +76,11 @@ projects
  * @security BearerAuth
  */
 projects
-  .route("/assign")
+  .route("/update")
   .put(
     verifyAuthAdminToken,
-    RequestValidator.validate(AddUsersToProjectDto),
-    controller.addUsersToProject,
-  );
-
-projects
-  .route("/reassign")
-  .put(
-    verifyAuthAdminToken,
-    RequestValidator.validate(RemoveUsersFromProjectDto),
-    controller.removeUsersFromProject,
+    RequestValidator.validate(UpdateUsersToProjectDto),
+    controller.updateUsersToProject,
   );
 
 projects.patch(
