@@ -16,7 +16,7 @@ router.use("/users", users);
 router.use("/logs", time_logs);
 router.use("/projects", projects);
 router.use("/clients", clients);
-router.use("/todos", todos);
+router.use("/tasks", todos);
 router.use("/xp", exp);
 
 export default router;

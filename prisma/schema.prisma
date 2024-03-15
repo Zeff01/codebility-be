@@ -81,8 +81,8 @@ model org_chart {
   userOrgChart   Users         @relation(fields: [userOrgChartId], references: [id])
   level          Int           @unique
   org_hierarchy  Org_Hierarchy @relation(fields: [level], references: [level])
-  createdAt      DateTime      @default(now()) @map("created_at")
-  updatedAt      DateTime      @default(now()) @map("updated_at")
+  created_at       DateTime          @default(now())
+  updated_at       DateTime          @default(now())
 
   @@map("org_chart")
 }
@@ -91,8 +91,8 @@ model Org_Hierarchy {
   id        String      @id @default(auto()) @map("_id") @db.ObjectId
   level     Int         @unique
   position  String
-  createdAt DateTime    @default(now()) @map("created_at")
-  updatedAt DateTime    @default(now()) @map("updated_at")
+ created_at       DateTime          @default(now())
+  updated_at       DateTime          @default(now())
   org_chart org_chart[]
 
   @@map("org_hierarchy")
@@ -109,8 +109,8 @@ model time_logs {
   total_ot_time      Int?
   scheduled_time_in  DateTime?
   scheduled_time_out DateTime?
-  createdAt          DateTime  @default(now()) @map("created_at")
-  updatedAt          DateTime  @default(now()) @map("updated_at")
+  created_at       DateTime          @default(now())
+  updated_at       DateTime          @default(now())
 
   @@map("time_logs")
 }
@@ -152,8 +152,8 @@ model Projects {
   summary           String?
   live_link         String?
   project_thumbnail String?
-  createdAt         DateTime    @default(now()) @map("created_at")
-  updatedAt         DateTime    @default(now()) @map("updated_at")
+ created_at       DateTime          @default(now())
+  updated_at       DateTime          @default(now())
   //  users             String[]    @db.ObjectId // IDs of related Users
   // 
   // client            Clients?   

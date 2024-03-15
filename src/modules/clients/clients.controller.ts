@@ -1,5 +1,5 @@
 import { type NextFunction, type Request } from "express";
-import { Clients, Prisma, Projects, type Users } from "@prisma/client";
+import { Clients, Prisma, Projects, UserClients, type Users } from "@prisma/client";
 import { HttpStatusCode } from "axios";
 import { type CustomResponse } from "@/types/common.type";
 import Api from "@/lib/api";
@@ -86,6 +86,40 @@ export default class ClientController extends Api {
       }
     }
   };
+
+  public updateUsersToClient = async (
+    req: Request,
+    res: CustomResponse<UserClients>,
+    next: NextFunction,
+  ) => {
+    try {
+      const id = req.body.id as string;
+      const usersClientId = req.body.usersClientId as string[];
+      const clientsId = req.body.clientsId as string;
+      const client = await this.clientsService.updateUsersToClient(
+        id,
+        usersClientId,
+        clientsId,
+      );
+      this.send(res, client, HttpStatusCode.Created, "updateUsersToClient");
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        // Handle known request errors from Prisma
+        next(new HttpBadRequestError("Bad request", [e.message]));
+      } else if (e instanceof HttpNotFoundError) {
+        // Handle not found errors (e.g., user not found)
+        next(e);
+      } else {
+        // Handle other errors
+        next(
+          new HttpInternalServerError(
+            "An error occurred while updating the user",
+          ),
+        );
+      }
+    }
+  };
+
   public deleteClientPerId = async (
     req: Request,
     res: CustomResponse<Clients>,

@@ -3,7 +3,7 @@ import Controller from "./clients.controller";
 
 import RequestValidator from "@/middlewares/request-validator";
 
-import { CreateClientDto, UpdateClientDto } from "@/dto/client.dto";
+import { CreateClientDto, UpdateClientDto, UpdateUsersToClientDto } from "@/dto/client.dto";
 import { verifyAuthAdminToken } from "@/middlewares/auth";
 
 const clients: Router = Router();
@@ -57,5 +57,28 @@ clients.patch(
   RequestValidator.validate(UpdateClientDto),
   controller.updateClient,
 );
+
+/**
+ * PATCH /projects/{id}
+ * @typedef {object} UpdateProjectDto
+ * @summary Edit Project Info
+ * @tags projects
+ * @param {string} id.path - id param description
+ * @property {string} project_name.required - project_name Optional
+ * @property {string} github_link.required - github_link Optional
+ * @property {array} userId.required - userId Optional
+ * @param {UpdateUserDto} request.body.required
+ * @return {Projects} 201 - project updated
+ * @return {UserProjects} 200 - success response - application/json
+ * @security BearerAuth
+ */
+clients
+  .route("/update")
+  .put(
+    verifyAuthAdminToken,
+    RequestValidator.validate(UpdateUsersToClientDto),
+    controller.updateUsersToClient,
+  );
+
 clients.delete("/:id", verifyAuthAdminToken, controller.deleteClientPerId);
 export default clients;

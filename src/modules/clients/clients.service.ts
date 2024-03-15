@@ -72,6 +72,38 @@ export default class ClientsService {
       );
     }
   }
+  public async updateUsersToClient(
+    id: string,
+    usersClientId: string[],
+    clientsId: string,
+    //  data: UpdateProjectDto
+  ) {
+    // const { ...updateData } = data;
+    try {
+      return await prisma.userClients.update({
+        where: {
+          id: id,
+        },
+        data: {
+          // user_id: data.user_id,
+          // projectId: data.projectId
+
+          usersClientId: usersClientId,
+          clientsId: clientsId,
+          // summary:data.summary,
+          // live_link: data.live_link,
+          // project_thumbnail: data.project_thumbnail,
+        },
+        //  include: { UserProjects: true },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while updating the client",
+      );
+    }
+  }
+
   public async deleteClientPerId(id: string) {
     try {
       return await prisma.clients.delete({
