@@ -17,10 +17,8 @@ export default class ClientsService {
 
   public async getClients(id: string) {
     return await prisma.clients.findMany({
-      where: {
-        id,
-      },
-      include: { projects: true },
+     
+      include: { users: true },
       // {select:{project_name:true},
       // users:{select:{name:true}}
     });
@@ -30,7 +28,7 @@ export default class ClientsService {
       where: {
         id: id,
       },
-      include: { projects: true },
+      include: { users: true },
     });
   }
 
@@ -65,7 +63,7 @@ export default class ClientsService {
         },
         data: {
           ...updateData,
-          updated_at: new Date(),
+         
         },
       });
     } catch (error) {

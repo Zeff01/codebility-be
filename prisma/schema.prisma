@@ -6,6 +6,8 @@ generator erd {
   provider = "prisma-erd-generator"
   output   = "./ERD.pdf"
   theme    = "forest"
+  includeRelationFromFields = true
+  // tableOnly = true
 }
 
 datasource db {
@@ -44,12 +46,13 @@ model Users {
   time_logs         time_logs[]
   todo_list         todo_list[]
   // projects          String[]          @db.ObjectId // IDs of related Projects
-  clientId          String?           @db.ObjectId
-  clients           Clients?          @relation(fields: [clientId], references: [id])
+  // clientId          String?           @db.ObjectId
+  // clients           Clients?          @relation(fields: [clientId], references: [id])
+  
   points            Points[]
   prio              Int?
   projects UserProjects[]
-  // Other relations and fields...
+  clients UserClients[]
   notes             Notes[]
 
   @@map("users")
@@ -152,8 +155,10 @@ model Projects {
   createdAt         DateTime    @default(now()) @map("created_at")
   updatedAt         DateTime    @default(now()) @map("updated_at")
   //  users             String[]    @db.ObjectId // IDs of related Users
-  clientId          String?     @db.ObjectId 
-  client            Clients?    @relation(fields: [clientId], references: [id])
+  // 
+  // client            Clients?   
+  client Clients?  @relation(fields: [clientId], references: [id])
+  clientId          String?    @unique @db.ObjectId 
   todo_list         todo_list[]
   users UserProjects[]
 
@@ -167,6 +172,7 @@ model UserProjects {
   user      Users?    @relation(fields: [usersId], references: [id])
   projectsId String?  @db.ObjectId
   project   Projects? @relation(fields: [projectsId], references: [id])
+  
   @@index([usersId, projectsId])
   @@map("userprojects")
   
@@ -174,7 +180,9 @@ model UserProjects {
 
 model Clients {
   id             String     @id @default(auto()) @map("_id") @db.ObjectId
-  projects       Projects[]
+//  project Projects[]
+//  projectId          String?     @unique @db.ObjectId 
+  project            Projects?    
   company_name   String
   company_logo   String?
   working_hours  String[]
@@ -185,10 +193,22 @@ model Clients {
   company_hist   String[]
   created_at     DateTime   @default(now())
   updated_at     DateTime   @default(now())
-
-  users Users[]
+  // projectId          String?     @db.ObjectId 
+  // project            Projects?    @relation(fields: [projectId], references: [id])
+ 
+  users UserClients[]
 
   @@map("clients")
+}
+
+model UserClients {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  usersClientId   String[]  @db.ObjectId
+  userclients      Users?    @relation(fields: [usersClientId], references: [id])
+  clientsId String?  @db.ObjectId
+  client   Clients? @relation(fields: [clientsId], references: [id])
+  @@index([usersClientId, clientsId])
+  @@map("userclients")
 }
 
 model Notes {
