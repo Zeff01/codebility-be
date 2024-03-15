@@ -185,7 +185,8 @@ model Clients {
   project            Projects?    
   company_name   String
   company_logo   String?
-  working_hours  String[]
+  client_start_time   String?
+  client_end_time     String?
   email          String?
   contact_number String?
   linkedin_link  String?
