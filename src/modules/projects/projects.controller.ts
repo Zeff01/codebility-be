@@ -20,7 +20,7 @@ export default class ProjectController extends Api {
     next: NextFunction,
   ) => {
     try {
-      const project = await this.projectsService.getProjects(req.body);
+      const project = await this.projectsService.getProjects();
       this.send(res, project, HttpStatusCode.Ok, "Projects");
     } catch (e) {
       next(e);
@@ -96,21 +96,22 @@ export default class ProjectController extends Api {
     }
   };
 
-  public updateUsersToProject = async (
+  public addUsersToProject = async (
     req: Request,
-    res: CustomResponse<Users>,
+    res: CustomResponse<Projects>,
     next: NextFunction,
   ) => {
     try {
-      const id = req.body.id as string;
-      const usersId = req.body.usersId as string[];
-      const projectId = req.body.projectId as string;
-      const project = await this.projectsService.updateUsersToProject(
-        id,
-        usersId,
-        projectId,
+      // const projectId = req.params.projectId as string;
+      // const user_id = req.body.user_id as string[];
+      // const updateData = req.body;
+      const project = await this.projectsService.addUsersToProject(
+        //projectId,
+        // userProjectId,
+        req.body,
+        //updateData,
       );
-      this.send(res, project, HttpStatusCode.Created, "updateUsersToProject");
+      this.send(res, project, HttpStatusCode.Ok, "addUsersToProject");
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         // Handle known request errors from Prisma
@@ -128,6 +129,39 @@ export default class ProjectController extends Api {
       }
     }
   };
+
+  // public updateUsersToProject = async (
+  //   req: Request,
+  //   res: CustomResponse<Users>,
+  //   next: NextFunction,
+  // ) => {
+  //   try {
+  //     const id = req.body.id as string;
+  //     const usersId = req.body.usersId as string[];
+  //     const projectId = req.body.projectId as string;
+  //     const project = await this.projectsService.updateUsersToProject(
+  //       id,
+  //       usersId,
+  //       projectId,
+  //     );
+  //     this.send(res, project, HttpStatusCode.Created, "updateUsersToProject");
+  //   } catch (e) {
+  //     if (e instanceof Prisma.PrismaClientKnownRequestError) {
+  //       // Handle known request errors from Prisma
+  //       next(new HttpBadRequestError("Bad request", [e.message]));
+  //     } else if (e instanceof HttpNotFoundError) {
+  //       // Handle not found errors (e.g., user not found)
+  //       next(e);
+  //     } else {
+  //       // Handle other errors
+  //       next(
+  //         new HttpInternalServerError(
+  //           "An error occurred while updating the user",
+  //         ),
+  //       );
+  //     }
+  //   }
+  // };
 
   public deleteProjectById = async (
     req: Request,

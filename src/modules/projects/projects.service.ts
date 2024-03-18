@@ -3,12 +3,27 @@ import prisma from "@/lib/prisma";
 
 import { HttpInternalServerError } from "@/lib/errors";
 
-import { UpdateProjectDto } from "@/dto/project.dto";
+import {
+  CreateProjectDto,
+  UpdateProjectDto,
+  UpdateUsersToProjectDto,
+} from "@/dto/project.dto";
 
 export default class ProjectsService {
-  public async getProjects(id: string) {
+  public async getProjects() {
     return await prisma.projects.findMany({
-      include: { users: true },
+      // include: { users:{select:{user:{select:{name:true,position:true}}}}}},
+      // include: {
+      //   users: {
+      //     include: { user: { select: { name: true, position: true } } },
+      //   },
+      // },
+
+      include: {
+        users: {
+          select: { user: { select: { name: true, position: true } } },
+        },
+      },
     });
   }
 
@@ -20,34 +35,33 @@ export default class ProjectsService {
     });
   }
 
-  public async createProject({
-    project_name,
-    github_link,
-    summary,
-    live_link,
-    project_thumbnail,
-    clientId,
-  }) {
+  public async createProject(data: CreateProjectDto) {
     try {
       return await prisma.projects.create({
         data: {
-          project_name: project_name,
-          github_link: github_link,
-          summary: summary,
-          live_link: live_link,
-          project_thumbnail: project_thumbnail,
-          // users: data.users,
+          project_name: data.project_name,
+          github_link: data.github_link,
+          summary: data.summary,
+          live_link: data.live_link,
+          project_thumbnail: data.project_thumbnail,
+          client: data.clientId
+            ? { connect: { id: data.clientId } }
+            : undefined,
           users: {
-            create: {},
-            // id: userId,
-          },
-          // connect:{user_id:user_id}
-
-          client: {
-            connect: { id: clientId },
+            create: data.users.map((usersId) => ({
+              user: {
+                connect: {
+                  id: usersId.usersId, // Assuming 'usersId' is the unique identifier for users
+                },
+              },
+            })),
           },
         },
-        include: { users: true },
+        include: {
+          users: {
+            include: { user: true },
+          },
+        },
       });
     } catch (error) {
       console.error(error);
@@ -70,8 +84,17 @@ export default class ProjectsService {
         },
         data: {
           ...updateData,
+          users: {
+            disconnect: data.users.map((userProject) => ({
+              id: userProject.id,
+            })),
+          },
         },
-        // include: { UserProjects: true },
+        include: {
+          users: {
+            include: { user: true },
+          },
+        },
       });
     } catch (error) {
       console.error(error);
@@ -81,29 +104,33 @@ export default class ProjectsService {
     }
   }
 
-  public async updateUsersToProject(
-    id: string,
-    usersId: string[],
-    projectsId: string,
-    //  data: UpdateProjectDto
+  public async addUsersToProject(
+    // user_id: string[],
+    data: UpdateUsersToProjectDto,
   ) {
     // const { ...updateData } = data;
     try {
-      return await prisma.userProjects.update({
+      return await prisma.projects.update({
         where: {
-          id: id,
+          id: data.projectsId,
         },
         data: {
-          // user_id: data.user_id,
-          // projectId: data.projectId
-
-          usersId: usersId,
-          projectsId: projectsId,
-          // summary:data.summary,
-          // live_link: data.live_link,
-          // project_thumbnail: data.project_thumbnail,
+          // ...updateData,
+          users: {
+            create: data.users.map((usersId) => ({
+              user: {
+                connect: {
+                  id: usersId.usersId, // Assuming 'usersId' is the unique identifier for users
+                },
+              },
+            })),
+          },
         },
-        //  include: { UserProjects: true },
+        include: {
+          users: {
+            include: { user: true },
+          },
+        },
       });
     } catch (error) {
       console.error(error);
@@ -112,6 +139,38 @@ export default class ProjectsService {
       );
     }
   }
+
+  // public async updateUsersToProject(
+  //   id: string,
+  //   usersId: string[],
+  //   projectsId: string
+  //   //  data: UpdateProjectDto
+  // ) {
+  //   // const { ...updateData } = data;
+  //   try {
+  //     return await prisma.userProjects.update({
+  //       where: {
+  //         id: id,
+  //       },
+  //       data: {
+  //         // user_id: data.user_id,
+  //         // projectId: data.projectId
+
+  //         usersId: usersId,
+  //         projectsId: projectsId,
+  //         // summary:data.summary,
+  //         // live_link: data.live_link,
+  //         // project_thumbnail: data.project_thumbnail,
+  //       },
+  //       //  include: { UserProjects: true },
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw new HttpInternalServerError(
+  //       "An error occurred while updating the project"
+  //     );
+  //   }
+  // }
 
   public async deleteProjectById(id: string) {
     try {

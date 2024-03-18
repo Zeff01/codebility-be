@@ -1,4 +1,5 @@
 import { $Enums } from "@prisma/client";
+import { Type } from "class-transformer";
 import {
   IsEmail,
   IsEnum,
@@ -12,9 +13,14 @@ import {
   isString,
   IsDate,
   IsDateString,
+  ValidateNested,
+  ArrayUnique,
 } from "class-validator";
 
 export class CreateProjectDto {
+  //   @IsString()
+  // @IsOptional()
+  // projectsId?: string;
   @IsString()
   @IsNotEmpty()
   project_name: string;
@@ -35,13 +41,23 @@ export class CreateProjectDto {
   @IsNotEmpty()
   project_thumbnail: string;
 
-  // @IsArray()
-  // @IsNotEmpty()
-  // userId: string[];
-
   @IsString()
   @IsOptional()
   clientId: string;
+
+  // @IsArray()
+  //  @IsOptional()
+  // email_address: string[];
+
+  @IsArray()
+  // @IsString({ each: true })
+  // @ArrayUnique()
+  users: UserDto[];
+}
+
+export class UserDto {
+  @IsString()
+  usersId: string;
 }
 
 export class UpdateProjectDto {
@@ -76,18 +92,30 @@ export class UpdateProjectDto {
   @IsString()
   @IsOptional()
   clientId?: string;
+
+  @IsArray()
+  @IsOptional()
+  users: UserProjectsDto[];
+}
+export class UserProjectsDto {
+  @IsString()
+  id: string;
 }
 
 export class UpdateUsersToProjectDto {
-  @IsString()
-  @IsNotEmpty()
-  id: string;
+  // @IsString()
+  // @IsNotEmpty()
+  // id: string;
 
   @IsArray()
-  @IsNotEmpty()
-  usersId: string[];
+  @IsOptional()
+  users: AddUserToProjectsDto[];
 
   @IsString()
   @IsNotEmpty()
   projectsId: string;
+}
+export class AddUserToProjectsDto {
+  @IsString()
+  usersId: string;
 }

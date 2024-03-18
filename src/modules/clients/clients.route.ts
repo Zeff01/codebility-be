@@ -3,7 +3,11 @@ import Controller from "./clients.controller";
 
 import RequestValidator from "@/middlewares/request-validator";
 
-import { CreateClientDto, UpdateClientDto, UpdateUsersToClientDto } from "@/dto/client.dto";
+import {
+  CreateClientDto,
+  UpdateClientDto,
+  UpdateUsersToClientDto,
+} from "@/dto/client.dto";
 import { verifyAuthAdminToken } from "@/middlewares/auth";
 
 const clients: Router = Router();

@@ -1,5 +1,11 @@
 import { type NextFunction, type Request } from "express";
-import { Clients, Prisma, Projects, UserClients, type Users } from "@prisma/client";
+import {
+  Clients,
+  Prisma,
+  Projects,
+  UserClients,
+  type Users,
+} from "@prisma/client";
 import { HttpStatusCode } from "axios";
 import { type CustomResponse } from "@/types/common.type";
 import Api from "@/lib/api";

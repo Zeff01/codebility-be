@@ -80,7 +80,7 @@ projects
   .put(
     verifyAuthAdminToken,
     RequestValidator.validate(UpdateUsersToProjectDto),
-    controller.updateUsersToProject,
+    controller.addUsersToProject,
   );
 
 projects.patch(

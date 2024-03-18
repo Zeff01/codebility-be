@@ -168,7 +168,7 @@ model Projects {
 
 model UserProjects {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  usersId   String[]  @db.ObjectId
+  usersId   String? @db.ObjectId
   user      Users?    @relation(fields: [usersId], references: [id])
   projectsId String?  @db.ObjectId
   project   Projects? @relation(fields: [projectsId], references: [id])
