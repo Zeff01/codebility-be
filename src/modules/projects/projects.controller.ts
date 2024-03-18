@@ -26,6 +26,20 @@ export default class ProjectController extends Api {
       next(e);
     }
   };
+
+  public getFeaturedProjects = async (
+    req: Request,
+    res: CustomResponse<Projects>,
+    next: NextFunction,
+  ) => {
+    try {
+      const project = await this.projectsService.getFeaturedProjects();
+      this.send(res, project, HttpStatusCode.Ok, "Projects");
+    } catch (e) {
+      next(e);
+    }
+  };
+
   public getProjectsById = async (
     req: Request,
     res: CustomResponse<Projects>,

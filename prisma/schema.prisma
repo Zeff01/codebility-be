@@ -152,6 +152,7 @@ model Projects {
   summary           String?
   live_link         String?
   project_thumbnail String?
+   viewType  ProjectViewTypeEnum?   @default(DEFAULT)
  created_at       DateTime          @default(now())
   updated_at       DateTime          @default(now())
   //  users             String[]    @db.ObjectId // IDs of related Users
@@ -168,7 +169,7 @@ model Projects {
 
 model UserProjects {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  usersId   String? @db.ObjectId
+  usersId   String? @unique @db.ObjectId
   user      Users?    @relation(fields: [usersId], references: [id])
   projectsId String?  @db.ObjectId
   project   Projects? @relation(fields: [projectsId], references: [id])
@@ -182,7 +183,7 @@ model Clients {
   id             String     @id @default(auto()) @map("_id") @db.ObjectId
 //  project Projects[]
 //  projectId          String?     @unique @db.ObjectId 
-  project            Projects?    
+  project            Projects?      
   company_name   String
   company_logo   String?
   client_start_time   String?
@@ -192,6 +193,7 @@ model Clients {
   linkedin_link  String?
   location       String?
   company_hist   String[]
+  statusType  ClientStatusEnum?   @default(ACTIVE)
   created_at     DateTime   @default(now())
   updated_at     DateTime   @default(now())
   // projectId          String?     @db.ObjectId 
@@ -204,7 +206,7 @@ model Clients {
 
 model UserClients {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  usersClientId   String[]  @db.ObjectId
+  usersClientId   String?  @db.ObjectId
   userclients      Users?    @relation(fields: [usersClientId], references: [id])
   clientsId String?  @db.ObjectId
   client   Clients? @relation(fields: [clientsId], references: [id])
@@ -269,6 +271,15 @@ enum UserTypeEnum {
   USER
   APPLICANT
   DENIED
+}
+
+enum ClientStatusEnum {
+  ACTIVE
+  ARCHIVE
+}
+enum ProjectViewTypeEnum {
+  FEATURED
+  DEFAULT
 }
 
 enum PriorityLevelEnum {

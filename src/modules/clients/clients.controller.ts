@@ -25,7 +25,7 @@ export default class ClientController extends Api {
     next: NextFunction,
   ) => {
     try {
-      const client = await this.clientsService.getClients(req.body);
+      const client = await this.clientsService.getClients();
       this.send(res, client, HttpStatusCode.Ok, "Clients");
     } catch (e) {
       next(e);
@@ -93,49 +93,47 @@ export default class ClientController extends Api {
     }
   };
 
-  public updateUsersToClient = async (
-    req: Request,
-    res: CustomResponse<UserClients>,
-    next: NextFunction,
-  ) => {
-    try {
-      const id = req.body.id as string;
-      const usersClientId = req.body.usersClientId as string[];
-      const clientsId = req.body.clientsId as string;
-      const client = await this.clientsService.updateUsersToClient(
-        id,
-        usersClientId,
-        clientsId,
-      );
-      this.send(res, client, HttpStatusCode.Created, "updateUsersToClient");
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        // Handle known request errors from Prisma
-        next(new HttpBadRequestError("Bad request", [e.message]));
-      } else if (e instanceof HttpNotFoundError) {
-        // Handle not found errors (e.g., user not found)
-        next(e);
-      } else {
-        // Handle other errors
-        next(
-          new HttpInternalServerError(
-            "An error occurred while updating the user",
-          ),
-        );
-      }
-    }
-  };
+  // public updateUsersToClient = async (
+  //   req: Request,
+  //   res: CustomResponse<UserClients>,
+  //   next: NextFunction,
+  // ) => {
+  //   try {
+  //     const id = req.body.id as string;
+  //     const usersClientId = req.body.usersClientId as string[];
+  //     const clientsId = req.body.clientsId as string;
+  //     const client = await this.clientsService.updateUsersToClient(
+  //       id,
+  //       usersClientId,
+  //       clientsId,
+  //     );
+  //     this.send(res, client, HttpStatusCode.Created, "updateUsersToClient");
+  //   } catch (e) {
+  //     if (e instanceof Prisma.PrismaClientKnownRequestError) {
+  //       // Handle known request errors from Prisma
+  //       next(new HttpBadRequestError("Bad request", [e.message]));
+  //     } else if (e instanceof HttpNotFoundError) {
+  //       // Handle not found errors (e.g., user not found)
+  //       next(e);
+  //     } else {
+  //       // Handle other errors
+  //       next(
+  //         new HttpInternalServerError(
+  //           "An error occurred while updating the user",
+  //         ),
+  //       );
+  //     }
+  //   }
+  // };
 
-  public deleteClientPerId = async (
+  public archiveClientPerId = async (
     req: Request,
     res: CustomResponse<Clients>,
     next: NextFunction,
   ) => {
     try {
-      const client = await this.clientsService.deleteClientPerId(
-        req.params.id as string,
-      );
-      this.send(res, client, HttpStatusCode.Ok, "Delete Client");
+      const client = await this.clientsService.archiveClientPerId(req.body);
+      this.send(res, client, HttpStatusCode.Ok, "archiveClientPerId");
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         // Handle known request errors from Prisma

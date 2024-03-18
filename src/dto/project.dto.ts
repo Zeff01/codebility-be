@@ -1,4 +1,4 @@
-import { $Enums } from "@prisma/client";
+import { $Enums, ProjectViewTypeEnum } from "@prisma/client";
 import { Type } from "class-transformer";
 import {
   IsEmail,
@@ -85,10 +85,6 @@ export class UpdateProjectDto {
   @IsOptional()
   project_thumbnail?: string;
 
-  // @IsArray()
-  // @IsOptional()
-  // user_id: string[];
-
   @IsString()
   @IsOptional()
   clientId?: string;
@@ -106,6 +102,9 @@ export class UpdateUsersToProjectDto {
   // @IsString()
   // @IsNotEmpty()
   // id: string;
+  @IsOptional()
+  @IsEnum(ProjectViewTypeEnum)
+  viewType: string;
 
   @IsArray()
   @IsOptional()

@@ -1,4 +1,4 @@
-import { $Enums } from "@prisma/client";
+import { $Enums, ClientStatusEnum } from "@prisma/client";
 import {
   IsEmail,
   IsEnum,
@@ -126,4 +126,13 @@ export class UpdateUsersToClientDto {
   @IsString()
   @IsNotEmpty()
   clientsId: string;
+}
+
+export class UpdateClientsToArchiveDto {
+  @IsString()
+  @IsNotEmpty()
+  id: string;
+
+  @IsEnum(ClientStatusEnum)
+  statusType: string;
 }

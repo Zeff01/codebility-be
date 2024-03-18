@@ -2,7 +2,12 @@ import prisma from "@/lib/prisma";
 
 import { HttpInternalServerError } from "@/lib/errors";
 
-import { CreateClientDto, UpdateClientDto } from "@/dto/client.dto";
+import {
+  CreateClientDto,
+  UpdateClientDto,
+  UpdateClientsToArchiveDto,
+} from "@/dto/client.dto";
+import { ClientStatusEnum } from "@prisma/client";
 
 export default class ClientsService {
   //   public async getUser(
@@ -15,9 +20,11 @@ export default class ClientsService {
   //     });
   //   }
 
-  public async getClients(id: string) {
+  public async getClients() {
     return await prisma.clients.findMany({
-      include: { users: true },
+      where: { statusType: { not: "ARCHIVE" } },
+      include: { users: true, project: true },
+
       // {select:{project_name:true},
       // users:{select:{name:true}}
     });
@@ -44,6 +51,9 @@ export default class ClientsService {
           linkedin_link: data.linkedin_link,
           location: data.location,
           company_hist: data.company_hist,
+        },
+        include: {
+          project: true,
         },
       });
     } catch (error) {
@@ -72,44 +82,45 @@ export default class ClientsService {
       );
     }
   }
-  public async updateUsersToClient(
-    id: string,
-    usersClientId: string[],
-    clientsId: string,
-    //  data: UpdateProjectDto
-  ) {
-    // const { ...updateData } = data;
-    try {
-      return await prisma.userClients.update({
-        where: {
-          id: id,
-        },
-        data: {
-          // user_id: data.user_id,
-          // projectId: data.projectId
+  // public async updateUsersToClient(
+  //   id: string,
+  //   usersClientId: string[],
+  //   clientsId: string,
+  //   //  data: UpdateClientDto
+  // ) {
+  //   // const { ...updateData } = data;
+  //   try {
+  //     return await prisma.userClients.update({
+  //       where: {
+  //         id: id,
+  //       },
+  //       data: {
+  //         // user_id: data.user_id,
+  //         // projectId: data.projectId
 
-          usersClientId: usersClientId,
-          clientsId: clientsId,
-          // summary:data.summary,
-          // live_link: data.live_link,
-          // project_thumbnail: data.project_thumbnail,
-        },
-        //  include: { UserProjects: true },
-      });
-    } catch (error) {
-      console.error(error);
-      throw new HttpInternalServerError(
-        "An error occurred while updating the client",
-      );
-    }
-  }
+  //         usersClientId: usersClientId,
+  //         clientsId: clientsId,
+  //         // summary:data.summary,
+  //         // live_link: data.live_link,
+  //         // project_thumbnail: data.project_thumbnail,
+  //       },
+  //       //  include: { UserProjects: true },
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw new HttpInternalServerError(
+  //       "An error occurred while updating the client",
+  //     );
+  //   }
+  // }
 
-  public async deleteClientPerId(id: string) {
+  public async archiveClientPerId(data: UpdateClientsToArchiveDto) {
     try {
-      return await prisma.clients.delete({
+      return await prisma.clients.update({
         where: {
-          id: id,
+          id: data.id,
         },
+        data: { statusType: ClientStatusEnum[data.statusType] },
       });
     } catch (error) {
       console.error(error);

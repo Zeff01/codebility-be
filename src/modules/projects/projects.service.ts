@@ -1,4 +1,10 @@
-import { time_logs, type Prisma, type Clients, Projects } from "@prisma/client";
+import {
+  time_logs,
+  type Prisma,
+  type Clients,
+  Projects,
+  ProjectViewTypeEnum,
+} from "@prisma/client";
 import prisma from "@/lib/prisma";
 
 import { HttpInternalServerError } from "@/lib/errors";
@@ -12,13 +18,17 @@ import {
 export default class ProjectsService {
   public async getProjects() {
     return await prisma.projects.findMany({
-      // include: { users:{select:{user:{select:{name:true,position:true}}}}}},
-      // include: {
-      //   users: {
-      //     include: { user: { select: { name: true, position: true } } },
-      //   },
-      // },
+      include: {
+        users: {
+          include: { user: true },
+        },
+      },
+    });
+  }
 
+  public async getFeaturedProjects() {
+    return await prisma.projects.findMany({
+      where: { viewType: { not: "DEFAULT" } },
       include: {
         users: {
           select: { user: { select: { name: true, position: true } } },
@@ -115,7 +125,7 @@ export default class ProjectsService {
           id: data.projectsId,
         },
         data: {
-          // ...updateData,
+          viewType: ProjectViewTypeEnum[data.viewType],
           users: {
             create: data.users.map((usersId) => ({
               user: {

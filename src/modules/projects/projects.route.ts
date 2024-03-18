@@ -36,6 +36,7 @@ const controller = new Controller();
  * @return {UserProjects} 200 - success response - application/json
  */
 projects.get("/", controller.getProjects);
+projects.get("/featured", controller.getFeaturedProjects);
 projects.get("/:id", controller.getProjectsById);
 
 /**
