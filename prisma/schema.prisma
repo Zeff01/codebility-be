@@ -41,14 +41,11 @@ model Users {
   end_time          DateTime?
   roleType          RoleTypeEnum      @default(INTERN)
   userType          UserTypeEnum      @default(APPLICANT)
-  work_experience   Work_Experience[]
+  jobStatusType          UserJobStatusTypeEnum      @default(AVAILABLE)
+ Work_Experience  Work_Experience[]
   org_chart         org_chart[]
   time_logs         time_logs[]
-  todo_list         todo_list[]
-  // projects          String[]          @db.ObjectId // IDs of related Projects
-  // clientId          String?           @db.ObjectId
-  // clients           Clients?          @relation(fields: [clientId], references: [id])
-  
+  todo_list         todo_list[]  
   points            Points[]
   prio              Int?
   projects UserProjects[]
@@ -62,13 +59,13 @@ model Work_Experience {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
   userWorkExpId     String   @db.ObjectId
   userWorkExp       Users    @relation(fields: [userWorkExpId], references: [id])
-  position          String
-  company           String
-  dateFrom          String
-  dateTo            String
-  location          String
+  position          String?
+  company           String?
+  dateFrom          String?
+  dateTo            String?
+  location          String?
   task              String[]
-  short_desc        String
+  short_desc        String?
   created_at        DateTime @default(now())
   updated_at        DateTime @default(now())
 
@@ -169,7 +166,7 @@ model Projects {
 
 model UserProjects {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  usersId   String? @unique @db.ObjectId
+  usersId   String?  @db.ObjectId
   user      Users?    @relation(fields: [usersId], references: [id])
   projectsId String?  @db.ObjectId
   project   Projects? @relation(fields: [projectsId], references: [id])
@@ -271,6 +268,11 @@ enum UserTypeEnum {
   USER
   APPLICANT
   DENIED
+}
+
+enum UserJobStatusTypeEnum {
+ AVAILABLE
+ DEPLOYED
 }
 
 enum ClientStatusEnum {

@@ -8,6 +8,7 @@ import {
   LoginAdminDto,
   UpdateUserDto,
   UpdateWorkExpDto,
+  UserJobStatusTypeExpDto,
   WorkExpDto,
   changePasswordDto,
 } from "@/dto/user.dto";
@@ -232,9 +233,7 @@ users.post(
  *  @security BearerAuth
  *  @return {Work_Experience} 200 - success response - application/json
  */
-users
-  .route("/workexp/:userid")
-  .get(verifyAuthToken, controller.getWorkExpPerUser);
+users.route("/workexp/:id").get(verifyAuthToken, controller.getWorkExpPerUser);
 /**
  *  PATCH /users/workexp/{id}
  *  @summary Update Work Experience per User
@@ -245,7 +244,7 @@ users
  *  @return {Work_Experience} 200 - success response - application/json
  */
 users.patch(
-  "/workexp/:id",
+  "/workexp/:workExpId",
   verifyAuthToken,
   RequestValidator.validate(UpdateWorkExpDto),
   controller.updateWorkExp,
@@ -259,7 +258,7 @@ users.patch(
  *  @security BearerAuth
  *  @return {Work_Experience} 200 - success response - application/json
  */
-users.delete("/workexp/:id", verifyAuthToken, controller.deleteWorkExp);
+users.delete("/workexp", verifyAuthToken, controller.deleteWorkExp);
 
 /**
  *  GET /users/applicant/user
@@ -305,6 +304,13 @@ users.delete(
   "/:emailAddress",
   verifyAuthDeniedToken,
   controller.deleteUserByEmail,
+);
+
+users.put(
+  "/changeJobStatus",
+  verifyAuthAdminToken,
+  RequestValidator.validate(UserJobStatusTypeExpDto),
+  controller.changeUserJobStatusType,
 );
 
 export default users;

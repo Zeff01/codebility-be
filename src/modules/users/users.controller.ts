@@ -164,6 +164,26 @@ export default class UserController extends Api {
     }
   };
 
+  public changeUserJobStatusType = async (
+    req: Request,
+    res: CustomResponse<Users>,
+    next: NextFunction,
+  ) => {
+    try {
+      // const id = req.params.id as string;
+      // const { oldPassword, newPassword } = req.body;
+      const user = await this.userService.changeUserJobStatusType(req.body);
+      this.send(
+        res,
+        user,
+        HttpStatusCode.Ok,
+        "Job Status updated successfully",
+      );
+    } catch (e) {
+      next(e);
+    }
+  };
+
   public getUserByTeam = async (
     req: Request,
     res: CustomResponse<Users>,
@@ -250,7 +270,8 @@ export default class UserController extends Api {
     next: NextFunction,
   ) => {
     try {
-      const workexp = await this.userService.getWorkExpPerUser(req.params.id);
+      const id = req.params.id as string;
+      const workexp = await this.userService.getWorkExpPerUser(id);
       this.send(res, workexp, HttpStatusCode.Ok, "getWorkExpPerUser");
     } catch (e) {
       next(e);
@@ -262,9 +283,12 @@ export default class UserController extends Api {
     next: NextFunction,
   ) => {
     try {
-      const id = req.params.id as string;
-      const data = req.body;
-      const workExp = await this.userService.updateWorkExp(id, data);
+      const workExpId = req.params.workExpId as string;
+      const updateData = req.body;
+      const workExp = await this.userService.updateWorkExp(
+        workExpId,
+        updateData,
+      );
       this.send(
         res,
         workExp,
@@ -295,8 +319,8 @@ export default class UserController extends Api {
     next: NextFunction,
   ) => {
     try {
-      const id = req.params.id as string;
-      const workExp = await this.userService.deleteWorkExp(id, req.body);
+      const id = req.body.id as string;
+      const workExp = await this.userService.deleteWorkExp(id);
       this.send(
         res,
         workExp,

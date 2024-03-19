@@ -5,6 +5,7 @@ import {
   type Users,
   $Enums,
   Work_Experience,
+  UserJobStatusTypeEnum,
 } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import LogMessage from "@/decorators/log-message.decorator";
@@ -15,6 +16,7 @@ import {
   LoginAdminDto,
   UpdateUserDto,
   UpdateWorkExpDto,
+  UserJobStatusTypeExpDto,
   WorkExpDto,
 } from "@/dto/user.dto";
 import {
@@ -89,44 +91,21 @@ export default class UserService {
       );
     }
   }
-  // @LogMessage<[Users]>({ message: "Work Experience added" })
-  public async addWorkExp({
-    user_id,
-    position,
-    company,
-    dateFrom,
-    dateTo,
-    location,
-    task,
-    short_desc,
-  }: AddWorkExpDto) {
+
+  public async addWorkExp(data: AddWorkExpDto) {
     try {
-      if (!user_id) {
-        throw new HttpInternalServerError("user_id should not be empty");
-      }
-
-      const user = await prisma.users.findUnique({
-        // Added 'await' here
-        where: {
-          id: user_id,
-        },
-      });
-
-      if (!user?.id) {
-        throw new HttpInternalServerError("user_id should not be empty");
-      }
-
       return await prisma.work_Experience.create({
         data: {
-          userWorkExpId: user.id,
-          position,
-          company,
-          dateFrom,
-          dateTo,
-          location,
-          task,
-          short_desc,
+          userWorkExpId: data.userWorkExpId,
+          position: data.position,
+          company: data.company,
+          dateFrom: data.dateFrom,
+          dateTo: data.dateTo,
+          location: data.location,
+          task: data.task,
+          short_desc: data.short_desc,
         },
+        include: { userWorkExp: true },
       });
     } catch (error) {
       console.error(error);
@@ -166,13 +145,14 @@ export default class UserService {
     });
   }
 
-  public async updateWorkExp(id: string, data: UpdateWorkExpDto) {
+  public async updateWorkExp(workExpId: string, data: UpdateWorkExpDto) {
+    const { ...updateData } = data;
     try {
       return await prisma.work_Experience.update({
         where: {
-          id: id,
+          id: workExpId,
         },
-        data: data,
+        data: { ...updateData },
       });
     } catch (error) {
       console.error(error);
@@ -182,7 +162,7 @@ export default class UserService {
     }
   }
 
-  public async deleteWorkExp(id: string, data: Work_Experience) {
+  public async deleteWorkExp(id: string) {
     try {
       return await prisma.work_Experience.delete({
         where: {
@@ -200,7 +180,6 @@ export default class UserService {
 
   public async login(data: LoginAdminDto) {
     try {
-      // Find the user based on the provided email address and userType
       const user = await prisma.users.findFirst({
         where: {
           email_address: data.email_address,
@@ -439,7 +418,6 @@ export default class UserService {
     newPassword: string,
   ) {
     try {
-      // Get the user
       const user = await prisma.users.findUnique({
         where: {
           id: id,
@@ -476,9 +454,38 @@ export default class UserService {
     }
   }
 
+  public async changeUserJobStatusType(data: UserJobStatusTypeExpDto) {
+    try {
+      const user = await prisma.users.findFirst({
+        where: {
+          id: data.id,
+          userType: {
+            in: [UserTypeEnum.ADMIN, UserTypeEnum.USER],
+          },
+        },
+      });
+      if (!user) {
+        throw new HttpNotFoundError("User Type not valid");
+      }
+
+      return await prisma.users.update({
+        where: {
+          id: data.id,
+        },
+        data: {
+          jobStatusType: UserJobStatusTypeEnum[data.jobStatusType],
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpInternalServerError(
+        "An error occurred while changing the password",
+      );
+    }
+  }
+
   public async getuserbyusertypeapplicant() {
     try {
-      // Get the user
       return await prisma.users.findMany({
         where: {
           userType: "APPLICANT",

@@ -1,4 +1,4 @@
-import { $Enums } from "@prisma/client";
+import { $Enums, UserJobStatusTypeEnum } from "@prisma/client";
 import {
   IsEmail,
   IsEnum,
@@ -109,26 +109,6 @@ export class IUpdateUserDto {
   @IsString()
   @IsNotEmpty()
   newPassword: string;
-
-  // @IsString()
-  // @IsOptional()
-  // portfolio_website?: string;
-
-  // @IsString()
-  // @IsOptional()
-  // tech_stacks?: string;
-
-  // @IsString()
-  // @IsOptional()
-  // password?: string;
-
-  // @IsString()
-  // @IsOptional()
-  // schedule?: string;
-
-  // @IsString()
-  // @IsOptional()
-  // position?: string;
 }
 
 export class LoginAdminDto {
@@ -264,7 +244,7 @@ export class changePasswordDto {
 export class AddWorkExpDto {
   @IsString()
   @IsNotEmpty()
-  user_id: string;
+  userWorkExpId: string;
 
   @IsString()
   @IsNotEmpty()
@@ -286,7 +266,6 @@ export class AddWorkExpDto {
   @IsNotEmpty()
   location: string;
 
-  @IsString({ each: true })
   @IsArray()
   @IsNotEmpty()
   task: string[];
@@ -320,48 +299,44 @@ export class WorkExpDto {
 
 export class UpdateWorkExpDto {
   @IsString()
-  @IsOptional()
-  position?: string;
+  @IsNotEmpty()
+  userWorkExpId: string;
 
   @IsString()
   @IsOptional()
-  company?: string;
+  position: string;
 
   @IsString()
   @IsOptional()
-  date?: string;
+  company: string;
 
   @IsString()
   @IsOptional()
-  short_desc?: string;
+  dateFrom: string;
+
+  @IsString()
+  @IsOptional()
+  dateTo: string;
+
+  @IsString()
+  @IsOptional()
+  location: string;
+
+  // @IsString({ each: true })
+  @IsArray()
+  @IsOptional()
+  task: string[];
+
+  @IsString()
+  @IsOptional()
+  short_desc: string;
 }
 
-export class UserDto {
-  @IsUUID()
+export class UserJobStatusTypeExpDto {
+  @IsString()
   @IsNotEmpty()
   id: string;
 
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
-  @IsString()
-  @IsNotEmpty()
-  email: string;
-
-  @IsString()
-  @IsNotEmpty()
-  emailVerified: string;
-
-  @IsString()
-  @IsNotEmpty()
-  image: string;
-
-  @IsString()
-  @IsNotEmpty()
-  gender: string;
-
-  @IsString()
-  @IsNotEmpty()
-  address: string;
+  @IsEnum(UserJobStatusTypeEnum)
+  jobStatusType: string;
 }
