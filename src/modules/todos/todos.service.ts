@@ -86,11 +86,11 @@ export default class TodosService {
     }
   }
 
-  public async updateTodo(id: string, tag_name: string, data: UpdateTodoDto) {
+  public async updateTodo(todoId: string, data: UpdateTodoDto) {
     try {
       return await prisma.todo_list.update({
         where: {
-          id: id,
+          id: todoId,
         },
         data: {
           title: data.title,
@@ -98,6 +98,7 @@ export default class TodosService {
           subheader: data.subheader,
           full_description: data.full_description,
           github_link: data.github_link,
+          tags:{disconnect: data.tags.map((tags) => ({ id: tags.id })),}
         },
         include: {
           tags: {

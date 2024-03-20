@@ -92,13 +92,13 @@ export class CreateUserDto {
   @IsOptional()
   prio?: number;
 
-  @IsDate()
+  @IsInt()
   @IsOptional()
-  start_time: Date;
+  start_time: number;
 
-  @IsDate()
+  @IsInt()
   @IsOptional()
-  end_time: Date;
+  end_time: number;
 }
 
 export class IUpdateUserDto {

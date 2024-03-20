@@ -97,10 +97,10 @@ export default class TodoController extends Api {
     next: NextFunction,
   ) => {
     try {
-      const id = req.params.id as string;
-      const tag_name = req.body.tag_name;
+      const todoId = req.params.todoId as string;
+      // const tag_name = req.body.tag_name;
       const updateData = req.body;
-      const todo = await this.todosService.updateTodo(id, tag_name, updateData);
+      const todo = await this.todosService.updateTodo(todoId, updateData);
       this.send(res, todo, HttpStatusCode.Ok, "updateTodos");
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {

@@ -16,20 +16,20 @@ todos.get("/:id", controller.getTodosById);
 todos
   .route("/create")
   .post(
-    verifyAuthToken,
+    verifyAuthAdminToken,
     RequestValidator.validate(CreateTodoDto),
     controller.createTodo,
   );
 
 todos.route("/tags").post(
-  //verifyAuthAdminToken,
+  verifyAuthAdminToken,
   RequestValidator.validate(CreateTagTodoDto),
   controller.createTagTodo,
 );
 
 todos.patch(
-  "/:id",
-  //   verifyAuthAdminToken,
+  "/:todoId",
+     verifyAuthAdminToken,
   RequestValidator.validate(UpdateTodoDto),
   controller.updateTodo,
 );
