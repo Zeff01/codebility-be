@@ -72,7 +72,6 @@ export class UpdateTodoDto {
   @IsOptional()
   github_link: string;
 
-
   @IsArray()
   @IsOptional()
   tags: UpdateTagsDto[];
@@ -81,4 +80,3 @@ export class UpdateTagsDto {
   @IsString()
   id: string;
 }
-

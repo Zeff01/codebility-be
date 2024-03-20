@@ -21,15 +21,17 @@ todos
     controller.createTodo,
   );
 
-todos.route("/tags").post(
-  verifyAuthAdminToken,
-  RequestValidator.validate(CreateTagTodoDto),
-  controller.createTagTodo,
-);
+todos
+  .route("/tags")
+  .post(
+    verifyAuthAdminToken,
+    RequestValidator.validate(CreateTagTodoDto),
+    controller.createTagTodo,
+  );
 
 todos.patch(
   "/:todoId",
-     verifyAuthAdminToken,
+  verifyAuthAdminToken,
   RequestValidator.validate(UpdateTodoDto),
   controller.updateTodo,
 );

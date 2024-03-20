@@ -98,7 +98,7 @@ export default class TodosService {
           subheader: data.subheader,
           full_description: data.full_description,
           github_link: data.github_link,
-          tags:{disconnect: data.tags.map((tags) => ({ id: tags.id })),}
+          tags: { disconnect: data.tags.map((tags) => ({ id: tags.id })) },
         },
         include: {
           tags: {
