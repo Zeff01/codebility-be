@@ -37,8 +37,8 @@ model Users {
   created_at        DateTime          @default(now())
   updated_at        DateTime          @default(now())
   position          String[]
-  start_time        BigInt?
-  end_time          BigInt?
+  start_time        Int?
+  end_time          Int?
   roleType          RoleTypeEnum      @default(INTERN)
   userType          UserTypeEnum      @default(APPLICANT)
   jobStatusType          UserJobStatusTypeEnum      @default(AVAILABLE)
