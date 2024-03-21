@@ -1063,6 +1063,13 @@
     "@types/connect" "*"
     "@types/node" "*"
 
+"@types/compression@^1.7.5":
+  version "1.7.5"
+  resolved "https://registry.npmjs.org/@types/compression/-/compression-1.7.5.tgz"
+  integrity sha512-AAQvK5pxMpaT+nDvhHrsBhLSYG5yQdtkaJE1WYieSNY2mVFKAgmU4ks65rkZD5oqnGCFLyQpUr1CqI4DmUMyDg==
+  dependencies:
+    "@types/express" "*"
+
 "@types/connect@*":
   version "3.4.35"
   resolved "https://registry.npmjs.org/@types/connect/-/connect-3.4.35.tgz"

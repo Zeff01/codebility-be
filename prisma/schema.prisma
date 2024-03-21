@@ -51,8 +51,23 @@ model Users {
   projects UserProjects[]
   clients UserClients[]
   notes             Notes[]
+ usersOnBoard        UserOnBoard[]
+
 
   @@map("users")
+}
+
+model UserOnBoard {
+  id                String            @id @default(auto()) @map("_id") @db.ObjectId
+    created_at        DateTime          @default(now())
+  updated_at        DateTime          @default(now())
+    userOnBoardId    String? @db.ObjectId
+    usersBoard      Users?     @relation(fields: [userOnBoardId], references: [id])
+
+  board     Board?    @relation(fields: [boardOnUsersId], references: [id])
+  boardOnUsersId   String? @db.ObjectId
+  @@index([userOnBoardId, boardOnUsersId])
+  @@map("useronboard")
 }
 
 model Board {
@@ -61,6 +76,8 @@ model Board {
   updated_at        DateTime          @default(now())
    name        String
    lists       List[]
+   boardProjects UserProjects[]  
+   boardOnUsers        UserOnBoard[]
    @@map("board")
 }
 
@@ -150,6 +167,7 @@ model todo_list {
   tags             Tags[]            @relation(fields: [tagId], references: [id])
   List        List?          @relation(fields: [listId], references: [id])
   listId      String? @db.ObjectId
+  
   @@map("todo_list")
 }
 
@@ -192,8 +210,9 @@ model UserProjects {
   user      Users?    @relation(fields: [usersId], references: [id])
   projectsId String?  @db.ObjectId
   project   Projects? @relation(fields: [projectsId], references: [id])
-  
-  @@index([usersId, projectsId])
+  board Board?  @relation(fields: [boardId], references: [id])
+   boardId String? @db.ObjectId
+  @@index([usersId, projectsId,boardId])
   @@map("userprojects")
   
 }

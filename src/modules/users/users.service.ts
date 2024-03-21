@@ -140,10 +140,6 @@ export default class UserService {
       orderBy: {
         prio: "asc",
       },
-      // include: {
-      //   time_logs: {
-      //     select: { time_in: true, time_out:true },
-      //   },
     });
   }
 

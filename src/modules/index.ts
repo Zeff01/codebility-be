@@ -8,9 +8,11 @@ import auth from "./auth/auth.route";
 import clients from "./clients/clients.route";
 import todos from "./todos/todos.route";
 import exp from "./exp/exp.route";
+import boards from "./board/board.route";
 const router: Router = Router();
 
 router.use("/auth", auth);
+router.use("/boards", boards);
 router.use("/users", users);
 // router.use("/user", user);
 router.use("/logs", time_logs);
