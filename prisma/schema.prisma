@@ -7,7 +7,7 @@ generator erd {
   output   = "./ERD.pdf"
   theme    = "forest"
   includeRelationFromFields = true
-  tableOnly = true
+  // tableOnly = true
 }
 
 datasource db {
@@ -54,6 +54,27 @@ model Users {
 
   @@map("users")
 }
+
+model Board {
+   id                String            @id @default(auto()) @map("_id") @db.ObjectId
+  created_at        DateTime          @default(now())
+  updated_at        DateTime          @default(now())
+   name        String
+   lists       List[]
+   @@map("board")
+}
+
+model List {
+   id                String            @id @default(auto()) @map("_id") @db.ObjectId
+  created_at        DateTime          @default(now())
+  updated_at        DateTime          @default(now())
+   name        String
+     board     Board    @relation(fields: [boardId], references: [id])
+  boardId   String @db.ObjectId
+  todo_list  todo_list[]
+   @@map("list")
+}
+
 
 model Work_Experience {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -127,7 +148,8 @@ model todo_list {
   updated_at       DateTime          @default(now())
   tagId            String[]          @db.ObjectId
   tags             Tags[]            @relation(fields: [tagId], references: [id])
-
+  List        List?          @relation(fields: [listId], references: [id])
+  listId      String? @db.ObjectId
   @@map("todo_list")
 }
 
@@ -178,8 +200,7 @@ model UserProjects {
 
 model Clients {
   id             String     @id @default(auto()) @map("_id") @db.ObjectId
-//  project Projects[]
-//  projectId          String?     @unique @db.ObjectId 
+
   project            Projects?      
   company_name   String
   company_logo   String?

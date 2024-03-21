@@ -82,6 +82,7 @@ users.route("/interns").get(controller.getUserInterns);
  * @return {Users} 200 - success response - application/json
  */
 users.route("/mentors").get(controller.getUserMentors);
+users.route("/admins").get(controller.getAdminInfo);
 /**
  * GET /users/team
  * @summary Get Users by Mentors

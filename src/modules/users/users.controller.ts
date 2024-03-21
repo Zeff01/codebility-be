@@ -55,8 +55,8 @@ export default class UserController extends Api {
     next: NextFunction,
   ) => {
     try {
-      const user = await this.userService.getAdminInfo(req.body);
-      this.send(res, user, HttpStatusCode.Created, "getAdminInfo");
+      const user = await this.userService.getAdminInfo();
+      this.send(res, user, HttpStatusCode.Ok, "getAdminInfo");
     } catch (e) {
       next(e);
     }

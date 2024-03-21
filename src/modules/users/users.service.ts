@@ -115,10 +115,12 @@ export default class UserService {
     }
   }
 
-  public async getAdminInfo(data: Users) {
-    return prisma.users.findFirst({
+  public async getAdminInfo() {
+    return prisma.users.findMany({
       where: {
-        email_address: data.email_address,
+        userType: {
+          equals: UserTypeEnum.ADMIN,
+        },
       },
     });
   }
