@@ -33,7 +33,7 @@ export class AddUsersToBoardDto {
   boardOnUsersId: string;
 
   @IsArray()
-  @IsOptional()
+  // @IsOptional()
   boardOnUsers: UsersBoardDto[];
 }
 

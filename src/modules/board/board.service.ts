@@ -120,6 +120,41 @@ export default class BoardService {
     }
   }
 
+  // public async addTodoToBoard(
+  //   // user_id: string[],
+  //   data: AddUsersToBoardDto,
+  // ) {
+  //   // const { ...updateData } = data;
+  //   try {
+  //     return await prisma.list.update({
+  //       where: {
+  //         id: data.boardOnUsersId,
+  //       },
+  //       data: {
+  //         boardOnUsers: {
+  //           create: data.boardOnUsers.map((userOnBoardId) => ({
+  //             usersBoard: {
+  //               connect: {
+  //                 id: userOnBoardId.userOnBoardId, // Assuming 'usersId' is the unique identifier for users
+  //               },
+  //             },
+  //           })),
+  //         },
+  //       },
+  //       include: {
+  //         boardOnUsers: {
+  //           include: { usersBoard: true },
+  //         },
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw new HttpInternalServerError(
+  //       "An error occurred while updating the project",
+  //     );
+  //   }
+  // }
+
   // public async createBoard(data: CreateBoardDto) {
   //     try {
   //       return await prisma.board.create({

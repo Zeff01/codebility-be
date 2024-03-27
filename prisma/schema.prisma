@@ -7,7 +7,7 @@ generator erd {
   output   = "./ERD.pdf"
   theme    = "forest"
   includeRelationFromFields = true
-  // tableOnly = true
+   tableOnly = true
 }
 
 datasource db {
@@ -63,7 +63,6 @@ model UserOnBoard {
   updated_at        DateTime          @default(now())
     userOnBoardId    String? @db.ObjectId
     usersBoard      Users?     @relation(fields: [userOnBoardId], references: [id])
-
   board     Board?    @relation(fields: [boardOnUsersId], references: [id])
   boardOnUsersId   String? @db.ObjectId
   @@index([userOnBoardId, boardOnUsersId])
@@ -191,10 +190,7 @@ model Projects {
   project_thumbnail String?
    viewType  ProjectViewTypeEnum?   @default(DEFAULT)
  created_at       DateTime          @default(now())
-  updated_at       DateTime          @default(now())
-  //  users             String[]    @db.ObjectId // IDs of related Users
-  // 
-  // client            Clients?   
+  updated_at       DateTime          @default(now())  
   client Clients?  @relation(fields: [clientId], references: [id])
   clientId          String?    @unique @db.ObjectId 
   todo_list         todo_list[]
@@ -233,8 +229,6 @@ model Clients {
   statusType  ClientStatusEnum?   @default(ACTIVE)
   created_at     DateTime   @default(now())
   updated_at     DateTime   @default(now())
-  // projectId          String?     @db.ObjectId 
-  // project            Projects?    @relation(fields: [projectId], references: [id])
  
   users UserClients[]
 
@@ -256,7 +250,7 @@ model Notes {
   userNoteId  String   @db.ObjectId
   userNote    Users    @relation(fields: [userNoteId], references: [id])
   projectId   String[] @db.ObjectId
-  // project      Projects  @relation(fields: [projectId], references: [id])
+
   title       String
   description String?
   github_link String?

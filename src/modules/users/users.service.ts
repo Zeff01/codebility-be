@@ -278,7 +278,7 @@ export default class UserService {
       return await prisma.users.findUniqueOrThrow({
         where: { id: id },
         include: {
-          // work_experience: true,
+          Work_Experience: true,
           // org_chart: true,
           // time_logs: true,
           // todo_list: true,
